@@ -9,9 +9,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.tomp2p:TomP2P:4.4" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty:3.5.3.Patched" level="project" />
-    <orderEntry type="library" name="Maven: jdbm:jdbm:3.0-alpha" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
+    <orderEntry type="library" name="Maven: net.tomp2p:tomp2p-dht:5.0-Beta8" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.0.28.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.0.28.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.0.28.Final" level="project" />
+    <orderEntry type="library" name="Maven: net.tomp2p:tomp2p-core:5.0-Beta8" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
   </component>
 </module>

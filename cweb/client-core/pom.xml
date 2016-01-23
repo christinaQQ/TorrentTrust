@@ -22,8 +22,8 @@
     <dependencies>
         <dependency>
             <groupId>net.tomp2p</groupId>
-            <artifactId>TomP2P</artifactId>
-            <version>4.4</version>
+            <artifactId>tomp2p-dht</artifactId>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 
