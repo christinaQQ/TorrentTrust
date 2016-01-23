@@ -16,5 +16,6 @@
     <orderEntry type="library" name="Maven: io.netty:netty-common:4.0.28.Final" level="project" />
     <orderEntry type="library" name="Maven: net.tomp2p:tomp2p-core:5.0-Beta8" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
+    <orderEntry type="library" name="Maven: edu.upenn.cis.testing:testrunner:1.5.7" level="project" />
   </component>
 </module>

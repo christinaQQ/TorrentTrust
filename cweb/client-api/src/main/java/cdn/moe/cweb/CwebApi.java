@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface CwebApi {
 
-    List<Vote> getVotesForUser();
+    List<Vote> getVotesForUser(User user);
 
     List<User> getTrustedUsersForUser(User user);
 

@@ -8,4 +8,5 @@ import java.util.List;
 public interface Vote {
 
     List<Assertion> getAssertions();
+    ContentObject getContentObject();
 }

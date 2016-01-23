@@ -30,6 +30,11 @@
             <artifactId>tomp2p-dht</artifactId>
             <version>LATEST</version>
         </dependency>
+        <dependency>
+            <groupId>edu.upenn.cis.testing</groupId>
+            <artifactId>testrunner</artifactId>
+            <version>1.5.7</version>
+        </dependency>
     </dependencies>
 
 </project>
