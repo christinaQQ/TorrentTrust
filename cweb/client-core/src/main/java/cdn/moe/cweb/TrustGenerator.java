@@ -1,15 +1,18 @@
 package cdn.moe.cweb;
 
 import javax.swing.text.AbstractDocument;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author eyeung
  */
 public class TrustGenerator {
 
-    public double correlationCoefficient(User a, User b, CwebApi api) {
+    CwebApi api;
+    public TrustGenerator(CwebApi api) {
+        this.api = api;
+    }
+    public double correlationCoefficient(User a, User b) {
         HashMap<ContentObject, Integer> overlapping_votes =
                 new HashMap<ContentObject, Integer>();
         List<Vote> A_votes = api.getVotesForUser(a);
@@ -48,4 +51,58 @@ public class TrustGenerator {
                 Math.sqrt(positive_a * (1-positive_a) * positive_b * (1-positive_b));
         return theta;
     }
+
+    // first iteration: Trust only users connected to A.
+    public double trustCoefficientDirect(User a, User b) {
+        List<User> trustedUsers = api.getTrustedUsersForUser(a);
+        return trustedUsers.contains(b) ? 1 : 0;
+    }
+
+    // second iteration: Trust any user in A's connected component
+    public double trustCoeffientNetwork(User a, User b) {
+        Queue<User> q = new ArrayDeque<User>();
+        HashSet<User> seen = new HashSet<>();
+        q.offer(a);
+        while (!q.isEmpty()) {
+            User u = q.poll();
+            if (seen.contains(u)) {
+                continue;
+            }
+            seen.add(u);
+            if (u == b) {
+                return 1;
+            }
+            for (User n : api.getTrustedUsersForUser(u)) {
+                q.offer(n);
+            }
+        }
+        return 0;
+    }
+
+    // third iteration: Measure trust on number of steps
+    public double trustCoeffientNumSteps(User a, User b, CwebApi api) {
+        Queue<User> q = new ArrayDeque<User>();
+        HashSet<User> seen = new HashSet<>();
+        q.offer(a);
+        HashMap<User, User> parents = new HashMap<>();
+        while (!q.isEmpty()) {
+            User u = q.poll();
+            if (seen.contains(u)) {
+                continue;
+            }
+            seen.add(u);
+            if (u == b) {
+                return 1;
+                // add logic here to retraverse
+            }
+            for (User n : api.getTrustedUsersForUser(u)) {
+                q.offer(n);
+                if (!parents.containsKey(n)) {
+                    parents.put(n, u);
+                }
+            }
+        }
+        return 0;
+    }
+
 }

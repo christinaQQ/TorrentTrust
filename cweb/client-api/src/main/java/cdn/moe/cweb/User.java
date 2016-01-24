@@ -5,5 +5,5 @@ package cdn.moe.cweb;
  */
 public interface User {
 
-    public String user_hash = "";
+    public String getUserId();
 }

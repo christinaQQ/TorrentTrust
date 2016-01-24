@@ -1,12 +1,14 @@
 package cdn.moe.cweb;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author davix
  */
 public interface CwebApi {
 
+    // some of these should be changed to sets.
     List<Vote> getVotesForUser(User user);
 
     List<User> getTrustedUsersForUser(User user);
