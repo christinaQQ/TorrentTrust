@@ -101,6 +101,8 @@ public class TrustGeneratorTest {
                 trustgen.trustCoefficientNumSteps(a, c, 3), .001);
         assertEquals("indirect connect not enough steps", 0,
                 trustgen.trustCoefficientNumSteps(a, c, 1), .001);
+        assertEquals("no connection num steps", 0,
+                trustgen.trustCoefficientNumSteps(a, d, 5), .001);
     }
 
     @org.junit.Test

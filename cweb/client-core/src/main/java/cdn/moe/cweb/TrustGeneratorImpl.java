@@ -1,6 +1,5 @@
 package cdn.moe.cweb;
 
-import javax.swing.text.AbstractDocument;
 import java.util.*;
 
 /**
