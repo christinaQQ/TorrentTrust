@@ -59,7 +59,7 @@ public class TrustGeneratorTest {
 
         CwebApi api = new CwebApiFakeImpl(userVotes, userGraph,
                 userObjVotes);
-        trustgen = new TrustGenerator(api);
+        trustgen = new TrustGeneratorImpl(api);
 
 
     }
@@ -85,13 +85,22 @@ public class TrustGeneratorTest {
 
     @org.junit.Test
     public void testTrustCoefficientNetwork() {
+        trustgen.trustCoefficientNetwork(a, b);
         assertEquals("simple connection", 1,
-                trustgen.trustCoeffientNetwork(a, b), .001);
-        assertEquals("not direct connection network", 1,
-                trustgen.trustCoeffientNetwork(a, c), .001);
+                trustgen.trustCoefficientNetwork(a, b), .001);
+        assertEquals("not direct connection network", 2.0,
+                trustgen.trustCoefficientNetwork(a, c), .001);
 
         assertEquals("no connection", 0,
-                trustgen.trustCoeffientNetwork(a, d), .001);
+                trustgen.trustCoefficientNetwork(a, d), .001);
+    }
+
+    @org.junit.Test
+    public void testTrustCoefficientNumSteps() {
+        assertEquals("indirect connection", 2,
+                trustgen.trustCoefficientNumSteps(a, c, 3), .001);
+        assertEquals("indirect connect not enough steps", 0,
+                trustgen.trustCoefficientNumSteps(a, c, 1), .001);
     }
 
     @org.junit.Test
