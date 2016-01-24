@@ -1,5 +1,8 @@
 package cdn.moe.cweb;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -34,7 +37,7 @@ public class TrustGeneratorTest {
     TrustGenerator trustgen;
     Map<User, List<Vote>> userVotes;
 
-    @org.junit.Before
+    @Before
     public void setUp() throws Exception {
         Assertion goodAssertion = new AssertionFakeImpl(1);
         Assertion badAssertion = new AssertionFakeImpl(-1);
@@ -64,12 +67,12 @@ public class TrustGeneratorTest {
 
     }
 
-    @org.junit.Test
+    @Test
     public void testCorrelationCoefficient() throws Exception {
 
     }
 
-    @org.junit.Test
+    @Test
     public void testTrustCoefficientDirect() {
         assertEquals("simple connection", 1,
                 trustgen.trustCoefficientDirect(a,b), .001);
@@ -83,7 +86,7 @@ public class TrustGeneratorTest {
                 trustgen.trustCoefficientDirect(b, c), .001);
     }
 
-    @org.junit.Test
+    @Test
     public void testTrustCoefficientNetwork() {
         trustgen.trustCoefficientNetwork(a, b);
         assertEquals("simple connection", 1,
@@ -95,7 +98,7 @@ public class TrustGeneratorTest {
                 trustgen.trustCoefficientNetwork(a, d), .001);
     }
 
-    @org.junit.Test
+    @Test
     public void testTrustCoefficientNumSteps() {
         assertEquals("indirect connection", 2,
                 trustgen.trustCoefficientNumSteps(a, c, 3), .001);
@@ -105,7 +108,7 @@ public class TrustGeneratorTest {
                 trustgen.trustCoefficientNumSteps(a, d, 5), .001);
     }
 
-    @org.junit.Test
+    @Test
     public void testPerfectVoteCorrelation() {
         Assertion goodAssertion = new AssertionFakeImpl(1);
         Assertion badAssertion = new AssertionFakeImpl(-1);
@@ -125,7 +128,7 @@ public class TrustGeneratorTest {
                 trustgen.correlationCoefficient(a, b), .001);
     }
 
-    @org.junit.Test
+    @Test
     public void testOppositeVoteCorrelation() {
         Assertion goodAssertion = new AssertionFakeImpl(1);
         Assertion badAssertion = new AssertionFakeImpl(-1);
@@ -149,7 +152,7 @@ public class TrustGeneratorTest {
                 trustgen.correlationCoefficient(a, b), .001);
     }
 
-    @org.junit.Test
+    @Test
     public void testSomeCorrelation() {
         Assertion goodAssertion = new AssertionFakeImpl(1);
         Assertion badAssertion = new AssertionFakeImpl(-1);

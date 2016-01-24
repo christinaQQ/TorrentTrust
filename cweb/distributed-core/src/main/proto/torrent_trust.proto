@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cdn.moe.cweb;
+
+option java_outer_classname = "TorrentTrustProtos";
+
+message User {
+  bytes public_key = 1;
+}
+
+message Vote {
+  message Assertion {
+    bytes content_hash = 1;
+    // TODO
+  }
+  repeated Assertion assertion = 1;
+}
