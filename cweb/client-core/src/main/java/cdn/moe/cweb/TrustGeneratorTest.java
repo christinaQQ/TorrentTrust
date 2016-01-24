@@ -137,6 +137,29 @@ public class TrustGeneratorTest {
         assertEquals("very close correlation", -1.0,
                 trustgen.correlationCoefficient(a, b), .001);
     }
-    
+
+    @org.junit.Test
+    public void testSomeCorrelation() {
+        Assertion goodAssertion = new AssertionFakeImpl(1);
+        Assertion badAssertion = new AssertionFakeImpl(-1);
+        ContentObject o1 = new ContentObjectFakeImpl("ian");
+        ContentObject o2 = new ContentObjectFakeImpl("davix");
+        ContentObject o3 = new ContentObjectFakeImpl("fifi");
+
+        Vote vote_o1 = new VoteImpl(Arrays.asList(goodAssertion), o1);
+        Vote vote_o2 = new VoteImpl(Arrays.asList(goodAssertion), o2);
+        Vote vote_o3 = new VoteImpl(Arrays.asList(badAssertion), o3);
+
+        Vote vote_o1_rev = new VoteImpl(Arrays.asList(goodAssertion), o1);
+        Vote vote_o2_rev = new VoteImpl(Arrays.asList(badAssertion), o2);
+        Vote vote_o3_rev = new VoteImpl(Arrays.asList(badAssertion), o3);
+
+        userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
+        userVotes.put(b, Arrays.asList(vote_o1_rev, vote_o2_rev, vote_o3_rev));
+        double theta = trustgen.correlationCoefficient(a, b);
+        System.out.println("theta = " + theta);
+        assertEquals("some correlation", 0.5,
+                trustgen.correlationCoefficient(a, b), .001);
+    }
 }
 
