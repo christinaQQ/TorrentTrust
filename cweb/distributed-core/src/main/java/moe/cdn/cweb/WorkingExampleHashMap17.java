@@ -55,6 +55,7 @@ public class WorkingExampleHashMap17 {
     }
 
     public static void main(String[] args) throws Exception {
+        // TODO: http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
         PeerDHT master = null;
         try {
             PeerDHT[] peers = createAndAttachPeersDHT(100, 4001);

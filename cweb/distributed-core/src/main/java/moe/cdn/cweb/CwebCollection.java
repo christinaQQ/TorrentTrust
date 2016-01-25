@@ -12,6 +12,8 @@ import net.tomp2p.storage.Data;
  * @author davix
  */
 public class CwebCollection<T extends Message> {
+    // TODO: Examine protection http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
+
     private final PeerDHT peer;
     private final Number160 locationKey;
     private final Number160 domainKey;
@@ -39,7 +41,7 @@ public class CwebCollection<T extends Message> {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startGetData() {
-        return peer.get(locationKey).domainKey(domainKey).all().start();
+        return peer.get(locationKey).domainKey(domainKey).start();
     }
 
     /**
