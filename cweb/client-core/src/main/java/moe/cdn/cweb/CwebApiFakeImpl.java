@@ -1,7 +1,7 @@
-package cdn.moe.cweb;
+package moe.cdn.cweb;
 
-import java.util.List;
-import java.util.Map;
+import moe.cdn.cweb.TorrentTrustProtos.*;
+import java.util.*;
 
 /**
  * @author eyeung
@@ -47,4 +47,5 @@ public class CwebApiFakeImpl implements CwebApi {
     public List<Vote> getVotesForUserForObject(String objectHash, User user) {
         return null;
     }
+
 }

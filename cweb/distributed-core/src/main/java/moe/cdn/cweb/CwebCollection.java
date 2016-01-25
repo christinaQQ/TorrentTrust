@@ -1,4 +1,4 @@
-package cdn.moe.cweb;
+package moe.cdn.cweb;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
@@ -17,7 +17,8 @@ public class CwebCollection<T extends Message> {
     private final Number160 domainKey;
     private final Parser<T> messageParser;
 
-    public CwebCollection(PeerDHT peer, Number160 locationKey, Number160 domainKey, Parser<T> messageParser) {
+    public CwebCollection(PeerDHT peer, Number160 locationKey, Number160 domainKey,
+                          Parser<T> messageParser) {
         this.peer = peer;
         this.locationKey = locationKey;
         this.domainKey = domainKey;
@@ -31,6 +32,7 @@ public class CwebCollection<T extends Message> {
     public FuturePut add(T t) {
         return startAddData(t);
     }
+
     /**
      * Starts a computation to get all data.
      *
@@ -44,7 +46,7 @@ public class CwebCollection<T extends Message> {
      * Starts a computation to add new data.
      *
      * @param t the data
-     * @return a {@link FutureGet} computation
+     * @return a {@link FuturePut} computation
      */
     protected FuturePut startAddData(T t) {
         return peer.add(locationKey).domainKey(domainKey).data(new Data(t.toByteArray())).start();

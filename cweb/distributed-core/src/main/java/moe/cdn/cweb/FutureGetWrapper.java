@@ -1,4 +1,4 @@
-package cdn.moe.cweb;
+package moe.cdn.cweb;
 
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;

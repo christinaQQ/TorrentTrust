@@ -3,13 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>moe.cdn</groupId>
-        <artifactId>cweb</artifactId>
+        <groupId>moe.cdn.cweb</groupId>
+        <artifactId>cweb-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>moe.cdn.cweb</groupId>
     <artifactId>distributed-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
 </project>

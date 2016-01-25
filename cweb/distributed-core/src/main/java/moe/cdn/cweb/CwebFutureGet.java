@@ -1,4 +1,4 @@
-package cdn.moe.cweb;
+package moe.cdn.cweb;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
@@ -6,7 +6,6 @@ import com.google.protobuf.Parser;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.storage.Data;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +32,7 @@ public class CwebFutureGet<T extends Message> extends FutureGetWrapper {
             try {
                 result.add(messageParser.parseFrom(entry.getValue().toBytes()));
             } catch (InvalidProtocolBufferException e) {
-                logger.warn(e.getLocalizedMessage(), e);
+                logger.warn(new InvalidProtocolBufferMessage(e));
             }
         }
         return result;
@@ -43,7 +42,7 @@ public class CwebFutureGet<T extends Message> extends FutureGetWrapper {
         try {
             return messageParser.parseFrom(data().toBytes());
         } catch (InvalidProtocolBufferException e) {
-            logger.warn(e.getLocalizedMessage(), e);
+            logger.warn(new InvalidProtocolBufferMessage(e));
             return null;
         }
     }

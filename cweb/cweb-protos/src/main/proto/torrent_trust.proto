@@ -10,8 +10,9 @@ message User {
 
 message Vote {
   message Assertion {
-    bytes content_hash = 1;
-    // TODO
+    enum Rating { BAD = 0; GOOD = 1; }
+    Rating rating = 1;
   }
-  repeated Assertion assertion = 1;
+  bytes content_hash = 1;
+  repeated Assertion assertion = 2;
 }
