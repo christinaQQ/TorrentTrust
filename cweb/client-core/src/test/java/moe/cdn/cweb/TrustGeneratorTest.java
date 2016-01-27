@@ -98,9 +98,6 @@ public class TrustGeneratorTest {
         userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
         userVotes.put(b, Arrays.asList(vote_o1, vote_o2, vote_o3));
 
-        double theta = trustGenerator.correlationCoefficient(a, b);
-
-        System.out.println("theta = " + theta);
         assertEquals("very close correlation", 1.0,
                 trustGenerator.correlationCoefficient(a, b), .001);
     }
@@ -118,9 +115,6 @@ public class TrustGeneratorTest {
         userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
         userVotes.put(b, Arrays.asList(vote_o1_rev, vote_o2_rev, vote_o3_rev));
 
-        double theta = trustGenerator.correlationCoefficient(a, b);
-
-        System.out.println("theta = " + theta);
         assertEquals("very close correlation", -1.0,
                 trustGenerator.correlationCoefficient(a, b), .001);
     }
@@ -138,9 +132,6 @@ public class TrustGeneratorTest {
         userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
         userVotes.put(b, Arrays.asList(vote_o1_rev, vote_o2_rev, vote_o3_rev));
 
-        double theta = trustGenerator.correlationCoefficient(a, b);
-
-        System.out.println("theta = " + theta);
         assertEquals("some correlation", 0.5,
                 trustGenerator.correlationCoefficient(a, b), .001);
     }
