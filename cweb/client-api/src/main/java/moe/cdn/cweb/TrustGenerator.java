@@ -12,7 +12,7 @@ public interface TrustGenerator {
      *
      * @param a the user making this call
      * @param b the user being queried
-     * @return a double representing the amount of correlation between them
+     * @return a double representing the amount of correlation between tahem
      */
     double correlationCoefficient(User a, User b);
 

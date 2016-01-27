@@ -94,7 +94,7 @@ public class TrustGeneratorImpl implements TrustGenerator {
             User u = q.poll();
             if (u == null) {
                 level += 1;
-                if (level >= num_steps) {
+                if (level >= num_steps || q.isEmpty()) {
                     return 0;
                 }
                 q.offer(null);
