@@ -2,6 +2,7 @@ package moe.cdn.cweb;
 
 import com.google.protobuf.ByteString;
 import moe.cdn.cweb.TorrentTrustProtos.*;
+import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -81,9 +82,8 @@ public class WorkingExampleHashMap17 {
             sender2.add(User.newBuilder().setPublicKey(ByteString.copyFromUtf8("19")).build())
                     .awaitUninterruptibly();
 
-            CwebFutureGet<User> futureGet = receiver.get();
-            futureGet.awaitUninterruptibly();
-            futureGet.all().forEach(d -> System.out.println("received: " + d));
+            CwebFutureGet<User> futureGet = receiver.doGet();
+            futureGet.get().all().forEach(d -> System.out.println("received: " + d));
         } finally {
             if (master != null) {
                 master.shutdown();

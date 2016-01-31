@@ -27,7 +27,7 @@ public class CwebCollection<T extends Message> {
         this.messageParser = messageParser;
     }
 
-    public CwebFutureGet<T> get() {
+    public CwebFutureGet<T> doGet() {
         return new CwebFutureGet<>(startGetData(), messageParser);
     }
 
@@ -41,7 +41,7 @@ public class CwebCollection<T extends Message> {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startGetData() {
-        return peer.get(locationKey).domainKey(domainKey).start();
+        return peer.get(locationKey).domainKey(domainKey).all().start();
     }
 
     /**

@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author davix
@@ -25,25 +27,45 @@ public class CwebFutureGet<T extends Message> extends FutureGetWrapper {
         this.messageParser = messageParser;
     }
 
-    public Collection<T> all() {
-        Map<Number640, Data> dataMap = dataMap();
-        Collection<T> result = new ArrayList<>(dataMap.size());
-        for (Map.Entry<Number640, Data> entry : dataMap.entrySet()) {
-            try {
-                result.add(messageParser.parseFrom(entry.getValue().toBytes()));
-            } catch (InvalidProtocolBufferException e) {
-                logger.warn(new InvalidProtocolBufferMessage(e));
-            }
-        }
-        return result;
+    @Override
+    public ResponseData get(long timeout, TimeUnit unit) throws InterruptedException,
+            TimeoutException {
+        return new CwebData(super.get(timeout, unit));
     }
 
-    public T one() {
-        try {
-            return messageParser.parseFrom(data().toBytes());
-        } catch (InvalidProtocolBufferException e) {
-            logger.warn(new InvalidProtocolBufferMessage(e));
-            return null;
+    @Override
+    public CwebData get() throws InterruptedException {
+        return new CwebData(super.get());
+    }
+
+    /**
+     * @author davix
+     */
+    public class CwebData extends ResponseDataWrapper {
+        private CwebData(ResponseData responseData) {
+            super(responseData);
+        }
+
+        public Collection<T> all() {
+            Map<Number640, Data> dataMap = dataMap();
+            Collection<T> result = new ArrayList<>(dataMap.size());
+            for (Map.Entry<Number640, Data> entry : dataMap.entrySet()) {
+                try {
+                    result.add(messageParser.parseFrom(entry.getValue().toBytes()));
+                } catch (InvalidProtocolBufferException e) {
+                    logger.warn(new InvalidProtocolBufferMessage(e));
+                }
+            }
+            return result;
+        }
+
+        public T one() {
+            try {
+                return messageParser.parseFrom(data().toBytes());
+            } catch (InvalidProtocolBufferException e) {
+                logger.warn(new InvalidProtocolBufferMessage(e));
+                return null;
+            }
         }
     }
 }
