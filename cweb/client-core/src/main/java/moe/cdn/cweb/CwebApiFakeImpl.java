@@ -1,6 +1,7 @@
 package moe.cdn.cweb;
 
-import moe.cdn.cweb.TorrentTrustProtos.*;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.User;
 import java.util.*;
 
 /**

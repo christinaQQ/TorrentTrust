@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package moe.cdn.cweb;
+
+option java_outer_classname = "SecurityProtos";
+
+message Hash {
+  // Type of hashing algorithm used
+  enum HashAlgorithm {
+    SHA256 = 0; // This is guaranteed to be available
+  }
+  HashAlgorithm algorithm = 1;
+  bytes hashvalue = 2;
+}
+
+message Signature {
+  // Type of signing algorithm used
+  enum SignatureAlgorithm {
+    SHA256withRSA = 0; // This is guaranteed to be available
+  }
+  
+  SignatureAlgorithm algorithm = 1;
+  
+  Key public_key = 2;
+  bytes signature = 3;
+}
+
+message Key {
+  // Type of key
+  enum KeyType {
+    PUBLIC = 0;
+    PRIVATE = 1;
+  }
+  
+  KeyType type = 1;
+  
+  // A hash of the key's bytes
+  Hash hash = 2;
+  bytes raw = 3;
+}
+
+message KeyPair {
+  Key public_key = 1;
+  Key private_key = 2;
+}

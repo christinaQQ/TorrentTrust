@@ -1,11 +1,31 @@
 syntax = "proto3";
 
+import "security.proto";
+
 package moe.cdn.cweb;
 
 option java_outer_classname = "TorrentTrustProtos";
 
 message User {
-  bytes public_key = 1;
+  // An assertion of trust by the user
+  message TrustAssertion {
+    enum Trust { TRUSTED = 0; NOT_TRUSTED = 1; }
+    Trust trust_assertion = 1;
+    Key public_key = 2;
+  }
+  
+  // A short handle that the user uses 
+  // This can overlap with other user handles
+  string handle = 1;
+  
+  Key public_key = 2;
+}
+
+message SignedUserRecord {  
+  User user = 1;
+  
+  // This signature must be signed with the same key as the public key in the user field
+  Signature signature = 2;
 }
 
 message Vote {
@@ -15,4 +35,9 @@ message Vote {
   }
   bytes content_hash = 1;
   repeated Assertion assertion = 2;
+}
+
+message SignedVote {  
+  Vote vote = 1;
+  Signature signature = 2;
 }

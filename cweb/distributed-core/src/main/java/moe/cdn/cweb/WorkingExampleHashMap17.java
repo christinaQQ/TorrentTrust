@@ -1,8 +1,26 @@
 package moe.cdn.cweb;
 
+import java.io.IOException;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 import com.google.protobuf.ByteString;
-import moe.cdn.cweb.TorrentTrustProtos.*;
-import net.tomp2p.dht.FuturePut;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.SecurityProtos.Signature;
+import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.User;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -11,10 +29,6 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class WorkingExampleHashMap17 {
 
@@ -64,25 +78,27 @@ public class WorkingExampleHashMap17 {
 
             bootstrap(peers);
 
-            CwebCollection<User> sender1 = new CwebCollection<>(peers[0],
+            CwebCollection<SignedUserRecord> sender1 = new CwebCollection<>(peers[0],
                     Number160.createHash("location"), Number160.createHash("domain"),
-                    User.PARSER);
-            CwebCollection<User> sender2 = new CwebCollection<>(peers[17],
+                    SignedUserRecord.PARSER);
+            CwebCollection<SignedUserRecord> sender2 = new CwebCollection<>(peers[17],
                     Number160.createHash("location"), Number160.createHash("domain"),
-                    User.PARSER);
+                    SignedUserRecord.PARSER);
 
-            CwebCollection<User> receiver = new CwebCollection<>(peers[23],
+            CwebCollection<SignedUserRecord> receiver = new CwebCollection<>(peers[23],
                     Number160.createHash("location"), Number160.createHash("domain"),
-                    User.PARSER);
+                    SignedUserRecord.PARSER);
+            
+            // Generate two keypairs
+            
+            sender1.add(buildSignedUserRecord(generateKeypair(), "17"))
+                    .awaitUninterruptibly();
+            sender1.add(buildSignedUserRecord(generateKeypair(), "18"))
+                    .awaitUninterruptibly();
+            sender2.add(buildSignedUserRecord(generateKeypair(), "19"))
+                    .awaitUninterruptibly();
 
-            sender1.add(User.newBuilder().setPublicKey(ByteString.copyFromUtf8("17")).build())
-                    .awaitUninterruptibly();
-            sender1.add(User.newBuilder().setPublicKey(ByteString.copyFromUtf8("18")).build())
-                    .awaitUninterruptibly();
-            sender2.add(User.newBuilder().setPublicKey(ByteString.copyFromUtf8("19")).build())
-                    .awaitUninterruptibly();
-
-            CwebFutureGet<User> futureGet = receiver.doGet();
+            CwebFutureGet<SignedUserRecord> futureGet = receiver.doGet();
             futureGet.get().all().forEach(d -> System.out.println("received: " + d));
         } finally {
             if (master != null) {
@@ -91,4 +107,55 @@ public class WorkingExampleHashMap17 {
         }
     }
 
+    private static Hash hashOf(byte[] bytes) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            return Hash.newBuilder()
+                    .setAlgorithm(HashAlgorithm.SHA256)
+                    .setHashvalue(ByteString.copyFrom(md.digest(bytes)))
+                    .build();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
+        }
+    }
+    
+    private static KeyPair generateKeypair() {
+        KeyPairGenerator keyGen;
+        try {
+            keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048, SecureRandom.getInstance("SHA1PRNG"));
+            java.security.KeyPair keypair = keyGen.generateKeyPair();
+            return KeyPair.newBuilder()
+                    .setPublicKey(Key.newBuilder()
+                            .setRaw(ByteString.copyFrom(keypair.getPublic().getEncoded()))
+                            .setHash(hashOf(keypair.getPublic().getEncoded()))
+                            .build())
+                    .setPrivateKey(Key.newBuilder()
+                            .setRaw(ByteString.copyFrom(keypair.getPrivate().getEncoded()))
+                            .setHash(hashOf(keypair.getPrivate().getEncoded()))
+                            .build())
+                    .build();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Some secure algorithm was missing.", e);
+        }
+    }
+    
+    private static Signature signMessage(KeyPair keypair, byte[] message) {
+        return Signature.newBuilder()
+                .setAlgorithm(SignatureAlgorithm.SHA256withRSA)
+                .setPublicKey(keypair.getPublicKey())
+                .setSignature(ByteString.copyFrom(new byte[]{}))
+                .build();
+    }
+    
+    private static SignedUserRecord buildSignedUserRecord(KeyPair keypair, String handle) {
+        User userRecord = User.newBuilder()
+                .setPublicKey(keypair.getPublicKey())
+                .setHandle(handle)
+                .build();
+        return SignedUserRecord.newBuilder()
+                    .setUser(userRecord)
+                    .setSignature(signMessage(keypair, userRecord.toByteArray()))
+                    .build();
+    }
 }

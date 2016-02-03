@@ -2,6 +2,9 @@ package moe.cdn.cweb;
 
 import java.util.List;
 
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+
 
 /**
  * @author davix
@@ -9,12 +12,12 @@ import java.util.List;
 public interface CwebApi {
 
     // some of these should be changed to sets.
-    List<TorrentTrustProtos.Vote> getVotesForUser(TorrentTrustProtos.User user);
+    List<Vote> getVotesForUser(User user);
 
-    List<TorrentTrustProtos.User> getTrustedUsersForUser(TorrentTrustProtos.User user);
+    List<User> getTrustedUsersForUser(User user);
 
-    List<TorrentTrustProtos.User> getVotedUsersForObject(String objectHash);
+    List<User> getVotedUsersForObject(String objectHash);
 
-    List<TorrentTrustProtos.Vote> getVotesForUserForObject(String objectHash, TorrentTrustProtos.User user);
+    List<Vote> getVotesForUserForObject(String objectHash, User user);
 
 }
