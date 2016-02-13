@@ -1,4 +1,4 @@
-package moe.cdn.cweb;
+package moe.cdn.cweb.dht;
 
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author davix
  */
-public class ResponseDataWrapper implements ResponseData {
+class ResponseDataWrapper implements ResponseData {
     private final ResponseData underlying;
 
     public ResponseDataWrapper(ResponseData underlying) {
@@ -49,9 +49,10 @@ public class ResponseDataWrapper implements ResponseData {
     }
 
     @Override
-    public void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData, Map<PeerAddress,
-            DigestResult> rawDigest, Map<PeerAddress, Byte> rawStatus, FutureDone<Void>
-            futuresCompleted) {
+    public void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData,
+            Map<PeerAddress, DigestResult> rawDigest,
+            Map<PeerAddress, Byte> rawStatus,
+            FutureDone<Void> futuresCompleted) {
         underlying.receivedData(rawData, rawDigest, rawStatus, futuresCompleted);
     }
 

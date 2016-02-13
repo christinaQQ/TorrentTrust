@@ -50,6 +50,11 @@
             <artifactId>tomp2p-replication</artifactId>
             <version>LATEST</version>
         </dependency>
+        <dependency>
+        	<groupId>moe.cdn.cweb</groupId>
+        	<artifactId>distributed-api</artifactId>
+        	<version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

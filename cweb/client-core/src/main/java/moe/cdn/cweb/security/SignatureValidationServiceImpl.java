@@ -8,15 +8,18 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Optional;
 
+import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
-public class FakeSignatureValidationServiceImpl implements SignatureValidationService {
+public class SignatureValidationServiceImpl implements SignatureValidationService {
 
     private final KeyLookupService keyLookupService;
-
-    public FakeSignatureValidationServiceImpl(KeyLookupService keyLookupService) {
+    
+    @Inject
+    public SignatureValidationServiceImpl(KeyLookupService keyLookupService) {
         this.keyLookupService = keyLookupService;
     }
 

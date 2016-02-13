@@ -41,7 +41,7 @@ public class FakeSignatureValidationServiceImplTest {
 
     private static final byte[] MESSAGE = "Attack at dawn".getBytes();
 
-    private FakeSignatureValidationServiceImpl validator;
+    private SignatureValidationServiceImpl validator;
 
     static {
         WEB_OF_TRUST = new LinkedList<>();
@@ -52,7 +52,7 @@ public class FakeSignatureValidationServiceImplTest {
     // We should actually mock things at this point
     public FakeSignatureValidationServiceImplTest() {
         KeyLookupService keyLookupService = new FakeKeyLookupServiceImpl(WEB_OF_TRUST);
-        validator = new FakeSignatureValidationServiceImpl(keyLookupService);
+        validator = new SignatureValidationServiceImpl(keyLookupService);
     }
 
     @Test

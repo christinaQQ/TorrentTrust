@@ -1,15 +1,18 @@
-package moe.cdn.cweb;
+package moe.cdn.cweb.dht;
+
+import org.apache.logging.log4j.message.Message;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.apache.logging.log4j.message.Message;
-import org.apache.logging.log4j.util.MessageSupplier;
-import org.apache.logging.log4j.util.Supplier;
 
 /**
  * @author davix
  */
-public class InvalidProtocolBufferMessage implements Message {
+class InvalidProtocolBufferMessage implements Message {
+
+    private static final long serialVersionUID = -6369395150347435770L;
+
     private final InvalidProtocolBufferException e;
+
     public InvalidProtocolBufferMessage(InvalidProtocolBufferException e) {
         this.e = e;
     }

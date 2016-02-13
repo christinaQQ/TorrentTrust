@@ -12,7 +12,7 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 public class FakeKeyLookupServiceImpl implements KeyLookupService {
 
     private final Map<Hash, SignedUserRecord> keyserver;
-
+    
     public FakeKeyLookupServiceImpl() {
         this.keyserver = new HashMap<>();
     }

@@ -11,7 +11,7 @@ public class CwebApiFakeImpl implements CwebApi {
     Map<User, List<Vote>> userVotes;
     Map<User, List<User>> trustedGraph;
     Map<String, List<User>> userObjVotes;
-
+    
     public CwebApiFakeImpl(Map<User, List<Vote>>userVotes,
             Map<User, List<User>> trustedGraph,
                            Map<String, List<User>> userObjVotes) {

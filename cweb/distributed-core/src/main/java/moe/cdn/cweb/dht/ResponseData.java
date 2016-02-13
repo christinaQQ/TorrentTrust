@@ -1,4 +1,4 @@
-package moe.cdn.cweb;
+package moe.cdn.cweb.dht;
 
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author davix
  */
-public interface ResponseData {
+interface ResponseData {
     Map<PeerAddress, Map<Number640, Data>> rawData();
 
     Map<PeerAddress, DigestResult> rawDigest();

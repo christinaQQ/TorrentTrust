@@ -1,4 +1,4 @@
-package moe.cdn.cweb;
+package moe.cdn.cweb.dht;
 
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author davix
  */
-public class FutureGetWrapper implements Future<ResponseData> {
+class FutureGetWrapper implements Future<ResponseData> {
     private final FutureGet underlying;
     private volatile boolean cancelled;
 

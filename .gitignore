@@ -19,3 +19,6 @@ buildNumber.properties
 # Binary folders
 bin/
 target/
+
+# Logs
+logs/

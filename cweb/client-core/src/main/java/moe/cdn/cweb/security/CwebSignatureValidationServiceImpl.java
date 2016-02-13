@@ -1,5 +1,7 @@
 package moe.cdn.cweb.security;
 
+import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
@@ -8,7 +10,7 @@ public class CwebSignatureValidationServiceImpl implements CwebSignatureValidati
 
     private final SignatureValidationService signatureValidationService;
 
-    // @Inject
+    @Inject
     public CwebSignatureValidationServiceImpl(
             SignatureValidationService signatureValidationService) {
         this.signatureValidationService = signatureValidationService;
