@@ -94,14 +94,19 @@ public class WorkingExampleHashMap17 {
 
             CwebCollectionImpl<SignedUserRecord> receiver = new CwebCollectionImpl<>(peers[23],
                     Number160.createHash("domain"), SignedUserRecord.PARSER);
-
+            
+            CwebMap<Hash, SignedUserRecord> map1 =
+                    new CwebMapImpl<>(sender1, KEY_REDUCER, KEY_FILTER);
+            CwebMap<Hash, SignedUserRecord> map2 =
+                    new CwebMapImpl<>(sender2, KEY_REDUCER, KEY_FILTER);
+            
             CwebMap<Hash, SignedUserRecord> map =
                     new CwebMapImpl<>(receiver, KEY_REDUCER, KEY_FILTER);
 
             // Generate two keypairs
 
-            map.put(USER17.getUser().getPublicKey().getHash(), USER17).put();
-            map.put(USER18.getUser().getPublicKey().getHash(), USER18).put();
+            map1.put(USER17.getUser().getPublicKey().getHash(), USER17).put();
+            map2.put(USER18.getUser().getPublicKey().getHash(), USER18).put();
             map.put(USER19.getUser().getPublicKey().getHash(), USER19).put();
 
             CwebFutureGet<SignedUserRecord> futureGet =
