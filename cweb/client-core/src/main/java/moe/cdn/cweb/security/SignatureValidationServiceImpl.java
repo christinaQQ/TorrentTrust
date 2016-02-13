@@ -14,7 +14,7 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
-public class SignatureValidationServiceImpl implements SignatureValidationService {
+class SignatureValidationServiceImpl implements SignatureValidationService {
 
     private final KeyLookupService keyLookupService;
     

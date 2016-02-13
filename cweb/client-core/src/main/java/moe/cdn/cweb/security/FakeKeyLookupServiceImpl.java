@@ -9,7 +9,7 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 
-public class FakeKeyLookupServiceImpl implements KeyLookupService {
+class FakeKeyLookupServiceImpl implements KeyLookupService {
 
     private final Map<Hash, SignedUserRecord> keyserver;
     

@@ -6,13 +6,12 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 
-public class CwebSignatureValidationServiceImpl implements CwebSignatureValidationService {
+class CwebSignatureServiceImpl implements CwebSignatureValidationService {
 
     private final SignatureValidationService signatureValidationService;
 
     @Inject
-    public CwebSignatureValidationServiceImpl(
-            SignatureValidationService signatureValidationService) {
+    public CwebSignatureServiceImpl(SignatureValidationService signatureValidationService) {
         this.signatureValidationService = signatureValidationService;
     }
 
@@ -23,12 +22,15 @@ public class CwebSignatureValidationServiceImpl implements CwebSignatureValidati
 
     @Override
     public boolean validateVote(SignedVote signedVote) {
-        return validate(signedVote.getVote().toByteArray(), signedVote.getSignature());
+        return signedVote.getVote().getOwnerPublicKey()
+                .equals(signedVote.getSignature().getPublicKey())
+                && validate(signedVote.getVote().toByteArray(), signedVote.getSignature());
     }
 
     @Override
     public boolean validateUser(SignedUserRecord signedUser) {
-        return validate(signedUser.getUser().toByteArray(), signedUser.getSignature());
+        return signedUser.getUser().getPublicKey().equals(signedUser.getSignature().getPublicKey())
+                && validate(signedUser.getUser().toByteArray(), signedUser.getSignature());
     }
 
 }

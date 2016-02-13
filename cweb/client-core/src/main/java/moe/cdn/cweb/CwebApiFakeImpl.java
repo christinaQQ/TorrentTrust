@@ -1,8 +1,11 @@
 package moe.cdn.cweb;
 
-import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import java.util.List;
+import java.util.Map;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import java.util.*;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 /**
  * @author eyeung
@@ -10,11 +13,11 @@ import java.util.*;
 public class CwebApiFakeImpl implements CwebApi {
     Map<User, List<Vote>> userVotes;
     Map<User, List<User>> trustedGraph;
-    Map<String, List<User>> userObjVotes;
-    
-    public CwebApiFakeImpl(Map<User, List<Vote>>userVotes,
+    Map<String, List<Vote>> userObjVotes;
+
+    public CwebApiFakeImpl(Map<User, List<Vote>> userVotes,
             Map<User, List<User>> trustedGraph,
-                           Map<String, List<User>> userObjVotes) {
+            Map<String, List<Vote>> userObjVotes) {
         this.userVotes = userVotes;
         this.trustedGraph = trustedGraph;
         this.userObjVotes = userObjVotes;
@@ -37,16 +40,10 @@ public class CwebApiFakeImpl implements CwebApi {
     }
 
     @Override
-    public List<User> getVotedUsersForObject(String objectHash) {
+    public List<Vote> getVotes(Hash objectHash) {
         if (objectHash == null) {
             throw new IllegalArgumentException("Bad objecthash");
         }
         return userObjVotes.get(objectHash);
     }
-
-    @Override
-    public List<Vote> getVotesForUserForObject(String objectHash, User user) {
-        return null;
-    }
-
 }

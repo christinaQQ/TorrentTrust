@@ -11,13 +11,14 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.dht.CwebMap;
+import moe.cdn.cweb.dht.annotations.UserMap;
 
-public class KeyLookupServiceImpl implements KeyLookupService {
+class KeyLookupServiceImpl implements KeyLookupService {
 
     private final CwebMap<Hash, SignedUserRecord> keyServiceDht;
 
     @Inject
-    public KeyLookupServiceImpl(CwebMap<Hash, SignedUserRecord> keyServiceDht) {
+    public KeyLookupServiceImpl(@UserMap CwebMap<Hash, SignedUserRecord> keyServiceDht) {
         this.keyServiceDht = keyServiceDht;
     }
 

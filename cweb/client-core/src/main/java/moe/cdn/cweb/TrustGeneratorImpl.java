@@ -1,9 +1,16 @@
 package moe.cdn.cweb;
 
-import com.google.protobuf.ByteString;
-import moe.cdn.cweb.TorrentTrustProtos.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
-import java.util.*;
+import com.google.inject.Inject;
+import com.google.protobuf.ByteString;
+
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 /**
  * @author eyeung
@@ -12,6 +19,7 @@ public class TrustGeneratorImpl implements TrustGenerator {
 
     private final CwebApi api;
 
+    @Inject
     public TrustGeneratorImpl(CwebApi api) {
         this.api = api;
     }
@@ -35,8 +43,9 @@ public class TrustGeneratorImpl implements TrustGenerator {
         List<Vote> A_votes = api.getVotesForUser(a);
         List<Vote> B_votes = api.getVotesForUser(b);
         for (Vote v : A_votes) {
-            ByteString co = v.getContentHash();
-            // FIXME(eyeung): change assertion weighting when vote assertion interface is finalized
+            ByteString co = v.getContentHash().getHashvalue();
+            // FIXME(eyeung): change assertion weighting when vote assertion
+            // interface is finalized
             int assertion = ratingToIntValue(v.getAssertion(0).getRating());
             overlapping_votes.put(co, assertion);
         }
@@ -44,7 +53,7 @@ public class TrustGeneratorImpl implements TrustGenerator {
         double positive_b = 0;
         double positive_both = 0;
         for (Vote v : B_votes) {
-            ByteString co = v.getContentHash();
+            ByteString co = v.getContentHash().getHashvalue();
             // FIXME(eyeung)
             int b_assertion = ratingToIntValue(v.getAssertion(0).getRating());
             if (b_assertion > 0) {
@@ -64,8 +73,8 @@ public class TrustGeneratorImpl implements TrustGenerator {
         positive_b = positive_b / (double) B_votes.size();
         positive_both = positive_both / (double) overlapping_votes.keySet().size();
 
-        double theta = (positive_both - positive_a * positive_b) /
-                Math.sqrt(positive_a * (1 - positive_a) * positive_b * (1 - positive_b));
+        double theta = (positive_both - positive_a * positive_b)
+                / Math.sqrt(positive_a * (1 - positive_a) * positive_b * (1 - positive_b));
         return theta;
     }
 

@@ -2,6 +2,7 @@ package moe.cdn.cweb.dht;
 
 import java.math.BigInteger;
 
+import com.google.inject.Inject;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
 
@@ -22,6 +23,7 @@ public class CwebCollectionImpl<T extends Message> implements CwebCollection<T> 
     private final Number160 domainKey;
     private final Parser<T> messageParser;
 
+    @Inject
     public CwebCollectionImpl(PeerDHT peer, Number160 domainKey, Parser<T> messageParser) {
         this.peer = peer;
         this.domainKey = domainKey;

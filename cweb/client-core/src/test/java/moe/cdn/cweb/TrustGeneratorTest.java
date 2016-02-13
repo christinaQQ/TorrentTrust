@@ -7,6 +7,8 @@ import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.Key.KeyType;
 import moe.cdn.cweb.TorrentTrustProtos.*;
+import moe.cdn.cweb.vote.VoteUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +29,7 @@ public class TrustGeneratorTest {
             User.newBuilder().setPublicKey(generateFakePublicKey("c")).build();
     private static final User d =
             User.newBuilder().setPublicKey(generateFakePublicKey("d")).build();
-    
+
     TrustGenerator trustGenerator;
     Map<User, List<Vote>> userVotes;
     Vote.Assertion goodAssertion =
@@ -36,8 +38,8 @@ public class TrustGeneratorTest {
             Vote.Assertion.newBuilder().setRating(Vote.Assertion.Rating.BAD).build();
 
     private static Vote makeVote(String contentHash, List<Vote.Assertion> assertions) {
-        return Vote.newBuilder().setContentHash(ByteString.copyFromUtf8(contentHash))
-                .addAllAssertion(assertions).build();
+        return VoteUtils.createVote(contentHash, a.getPublicKey()).addAllAssertion(assertions)
+                .build();
     }
 
     @Before
@@ -49,7 +51,7 @@ public class TrustGeneratorTest {
         userGraph.put(c, Collections.emptyList());
 
         userVotes = new HashMap<>();
-        Map<String, List<User>> userObjVotes = new HashMap<>();
+        Map<String, List<Vote>> userObjVotes = new HashMap<>();
 
         CwebApi api = new CwebApiFakeImpl(userVotes, userGraph, userObjVotes);
         trustGenerator = new TrustGeneratorImpl(api);

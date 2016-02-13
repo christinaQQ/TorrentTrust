@@ -8,6 +8,8 @@ message Hash {
   // Type of hashing algorithm used
   enum HashAlgorithm {
     SHA256 = 0; // This is guaranteed to be available
+    SHA1 = 1;
+    TORRENT = 2; // Identity of torrent (Usually SHA1 but we want futureproofness)
   }
   HashAlgorithm algorithm = 1;
   bytes hashvalue = 2;
