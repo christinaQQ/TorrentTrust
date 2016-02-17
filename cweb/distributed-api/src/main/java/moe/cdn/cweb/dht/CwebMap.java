@@ -1,27 +1,17 @@
 package moe.cdn.cweb.dht;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 
-public interface CwebMap<K extends Message, V extends Message> extends CwebCollection<V> {
-    /**
-     * Get an object from the CwebMap
-     * 
-     * @return
-     */
-    CwebFutureGet<V> get(K key);
+import java.math.BigInteger;
+import java.util.Collection;
 
-    /**
-     * Check if an object is contained in the CwebMap
-     * 
-     * @return
-     */
-    CwebFutureGet<Boolean> contains(K key);
-
-    /**
-     * Insert an object into the CwebMap
-     * 
-     * @param data
-     * @return
-     */
-    CwebFuturePut put(K key, V data);
+public interface CwebMap<K extends Message, V extends Message> {
+    ListenableFuture<V> get(K key);
+    ListenableFuture<V> get(BigInteger key);
+    ListenableFuture<Collection<V>> all(K key);
+    ListenableFuture<Collection<V>> all(BigInteger key);
+    ListenableFuture<Boolean> contains(K key);
+    ListenableFuture<Boolean> put(K key, V data);
+    ListenableFuture<Boolean> put(BigInteger key, V value);
 }

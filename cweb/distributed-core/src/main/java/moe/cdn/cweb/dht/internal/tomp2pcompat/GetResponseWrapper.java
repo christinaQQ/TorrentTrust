@@ -1,4 +1,4 @@
-package moe.cdn.cweb.dht;
+package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
@@ -11,10 +11,10 @@ import java.util.Map;
 /**
  * @author davix
  */
-class ResponseDataWrapper implements ResponseData {
-    private final ResponseData underlying;
+public class GetResponseWrapper implements GetResponse {
+    private final GetResponse underlying;
 
-    public ResponseDataWrapper(ResponseData underlying) {
+    public GetResponseWrapper(GetResponse underlying) {
         this.underlying = underlying;
     }
 

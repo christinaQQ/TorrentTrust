@@ -2,72 +2,60 @@ package moe.cdn.cweb.dht;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 
 public class CwebMapImpl<K extends Message, V extends Message> implements CwebMap<K, V> {
 
-    private final CwebCollection<V> collection;
+    private final DhtNode<V> collection;
     private final Function<K, BigInteger> keyReducer;
-    private final BiPredicate<K, V> valueFilter;
+    private final BiPredicate<K, V> notCollision; // FIXME: 2/17/2016 collisions?
 
-    public CwebMapImpl(CwebCollection<V> collection,
-            Function<K, BigInteger> keyReducer,
-            BiPredicate<K, V> valueFilter) {
+    public CwebMapImpl(DhtNode<V> collection,
+                       Function<K, BigInteger> keyReducer,
+                       BiPredicate<K, V> notCollision) {
         this.collection = collection;
         this.keyReducer = keyReducer;
-        this.valueFilter = valueFilter;
+        this.notCollision = notCollision;
     }
 
     @Override
-    public CwebFutureGet<V> get(K key) {
-        return new CwebMapFutureGetImpl<V>(collection.get(keyReducer.apply(key)),
-                value -> valueFilter.test(key, value));
+    public ListenableFuture<V> get(K key) {
+        return get(keyReducer.apply(key));
     }
 
     @Override
-    public CwebFutureGet<Boolean> contains(K key) {
-        return new FutureContains(get(key));
+    public ListenableFuture<V> get(BigInteger key) {
+        return collection.getOne(key);
     }
 
     @Override
-    public CwebFuturePut put(K key, V value) {
+    public ListenableFuture<Collection<V>> all(BigInteger key) {
+        return collection.getAll(key);
+    }
+
+    @Override
+    public ListenableFuture<Collection<V>> all(K key) {
+        return collection.getAll(keyReducer.apply(key));
+    }
+
+    @Override
+    public ListenableFuture<Boolean> contains(K key) {
+        return Futures.transform(get(key), Objects::nonNull);
+    }
+
+    @Override
+    public ListenableFuture<Boolean> put(K key, V value) {
         return collection.put(keyReducer.apply(key), value);
     }
 
     @Override
-    public CwebFuturePut put(BigInteger key, V value) {
+    public ListenableFuture<Boolean> put(BigInteger key, V value) {
         return collection.put(key, value);
-    }
-
-    @Override
-    public CwebFutureGet<V> get(BigInteger key) {
-        return collection.get(key);
-    }
-
-    private static class FutureContains implements CwebFutureGet<Boolean> {
-
-        private final CwebFutureGet<?> futureGet;
-
-        FutureContains(CwebFutureGet<?> futureGet) {
-            this.futureGet = futureGet;
-        }
-
-        @Override
-        public Collection<Boolean> getAll() throws InterruptedException {
-            return Collections.singleton(!futureGet.getAll().isEmpty());
-        }
-
-        @Override
-        public Collection<Boolean> getAll(long timeout, TimeUnit units)
-                throws InterruptedException, TimeoutException {
-            return Collections.singleton(!futureGet.getAll(timeout, units).isEmpty());
-        }
-
     }
 }

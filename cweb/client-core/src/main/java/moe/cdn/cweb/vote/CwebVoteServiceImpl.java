@@ -1,6 +1,7 @@
 package moe.cdn.cweb.vote;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
@@ -26,11 +27,11 @@ class CwebVoteServiceImpl implements CwebVoteService {
     @Override
     public Collection<SignedVote> getAllVotes(Hash objectHash) {
         try {
-            return voteMap.get(objectHash).getAll().stream()
-                    .filter(v -> signatureValidationService.validateVote(v))
+            return voteMap.all(objectHash).get().stream()
+                    .filter(signatureValidationService::validateVote)
                     .collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while attempting to get votes.");
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -40,9 +41,9 @@ class CwebVoteServiceImpl implements CwebVoteService {
             return false;
         }
         try {
-            return voteMap.put(vote.getVote().getContentHash(), vote).put();
-        } catch (InterruptedException e) {
-            return false;
+            return voteMap.put(vote.getVote().getContentHash(), vote).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 }

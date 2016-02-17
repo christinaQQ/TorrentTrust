@@ -2,6 +2,7 @@ package moe.cdn.cweb.security;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
@@ -25,7 +26,7 @@ class KeyLookupServiceImpl implements KeyLookupService {
     @Override
     public Optional<SignedUserRecord> findOwner(Key publicKey) {
         try {
-            Collection<SignedUserRecord> records = keyServiceDht.get(publicKey.getHash()).getAll()
+            Collection<SignedUserRecord> records = keyServiceDht.all(publicKey.getHash()).get()
                     .stream().filter(u -> u.getUser().getPublicKey().equals(publicKey))
                     .collect(Collectors.toList());
             if (records.isEmpty()) {
@@ -38,13 +39,15 @@ class KeyLookupServiceImpl implements KeyLookupService {
             }
         } catch (InterruptedException e) {
             throw new KeyLookupServiceException("Lookup was interrupted.");
+        } catch (ExecutionException e) {
+            throw new KeyLookupServiceException(e);
         }
     }
 
     @Override
     public Optional<Key> findKey(Hash keyHash) {
         try {
-            Collection<SignedUserRecord> records = keyServiceDht.get(keyHash).getAll();
+            Collection<SignedUserRecord> records = keyServiceDht.all(keyHash).get();
             if (records.isEmpty()) {
                 return Optional.empty();
             } else if (records.size() > 1) {
@@ -54,6 +57,8 @@ class KeyLookupServiceImpl implements KeyLookupService {
             }
         } catch (InterruptedException e) {
             throw new KeyLookupServiceException("Lookup was interrupted.");
+        } catch (ExecutionException e) {
+            throw new KeyLookupServiceException(e);
         }
     }
 

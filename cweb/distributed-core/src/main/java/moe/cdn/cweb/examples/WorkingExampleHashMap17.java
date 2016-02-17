@@ -6,27 +6,28 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Future;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
-import moe.cdn.cweb.dht.CwebCollectionImpl;
-import moe.cdn.cweb.dht.CwebFutureGet;
-import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.CwebMapImpl;
+import moe.cdn.cweb.dht.*;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
-import net.tomp2p.futures.Futures;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
 
-public class WorkingExampleHashMap17 {
+import javax.inject.Inject;
 
+public class WorkingExampleHashMap17 {
+    static final Random RND = new Random(17);
     private static final SignedUserRecord USER17 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "17");
     private static final SignedUserRecord USER18 =
@@ -38,10 +39,7 @@ public class WorkingExampleHashMap17 {
             h -> new BigInteger(SignatureUtils.sha1(h.getHashvalue().toByteArray()));
     private static final BiPredicate<Hash, SignedUserRecord> KEY_FILTER =
             (h, u) -> u.getUser().getPublicKey().getHash().equals(h);
-
-
-    static final Random RND = new Random(17);
-
+    private static DhtNodeFactory DHT_REQUEST_FACTORY = new CwebDhtNodeFactory();
 
     static PeerDHT[] createAndAttachPeersDHT(int nr, int port) throws IOException {
         // TODO replace
@@ -55,7 +53,7 @@ public class WorkingExampleHashMap17 {
             } else {
                 peers[i] = new PeerBuilderDHT(
                         new PeerBuilder(new Number160(RND)).masterPeer(peers[0].peer()).start())
-                                .start();
+                        .start();
             }
             new IndirectReplication(peers[i]).replicationFactor(5).start();
         }
@@ -75,7 +73,7 @@ public class WorkingExampleHashMap17 {
         List<FutureBootstrap> allFutures =
                 Arrays.stream(peers).map(p -> p.peer().bootstrap().bootstrapTo(all).start())
                         .collect(Collectors.toList());
-        Futures.whenAll(allFutures).awaitUninterruptibly();
+        net.tomp2p.futures.Futures.whenAll(allFutures).awaitUninterruptibly();
     }
 
     public static void main(String[] args) throws Exception {
@@ -87,31 +85,36 @@ public class WorkingExampleHashMap17 {
 
             bootstrap(peers);
 
-            CwebCollectionImpl<SignedUserRecord> sender1 = new CwebCollectionImpl<>(peers[0],
-                    Number160.createHash("domain"), SignedUserRecord.PARSER);
-            CwebCollectionImpl<SignedUserRecord> sender2 = new CwebCollectionImpl<>(peers[17],
-                    Number160.createHash("domain"), SignedUserRecord.PARSER);
+            DhtNode<SignedUserRecord> sender1 = DHT_REQUEST_FACTORY.create(peers[0],
+                    "domain", SignedUserRecord.PARSER);
+            DhtNode<SignedUserRecord> sender2 = DHT_REQUEST_FACTORY.create(peers[17],
+                    "domain", SignedUserRecord.PARSER);
 
-            CwebCollectionImpl<SignedUserRecord> receiver = new CwebCollectionImpl<>(peers[23],
-                    Number160.createHash("domain"), SignedUserRecord.PARSER);
-            
+            DhtNode<SignedUserRecord> receiver = DHT_REQUEST_FACTORY.create(
+                    peers[23], "domain", SignedUserRecord.PARSER);
+
             CwebMap<Hash, SignedUserRecord> map1 =
                     new CwebMapImpl<>(sender1, KEY_REDUCER, KEY_FILTER);
             CwebMap<Hash, SignedUserRecord> map2 =
                     new CwebMapImpl<>(sender2, KEY_REDUCER, KEY_FILTER);
-            
-            CwebMap<Hash, SignedUserRecord> map =
+
+            CwebMap<Hash, SignedUserRecord> map3 =
                     new CwebMapImpl<>(receiver, KEY_REDUCER, KEY_FILTER);
 
-            // Generate two keypairs
+            // insert some data and wait
+            Futures.successfulAsList(
+                    map1.put(USER17.getUser().getPublicKey().getHash(), USER17),
+                    map2.put(USER18.getUser().getPublicKey().getHash(), USER18),
+                    map3.put(USER19.getUser().getPublicKey().getHash(), USER19));
 
-            map1.put(USER17.getUser().getPublicKey().getHash(), USER17).put();
-            map2.put(USER18.getUser().getPublicKey().getHash(), USER18).put();
-            map.put(USER19.getUser().getPublicKey().getHash(), USER19).put();
+            Future<SignedUserRecord> one = map3.get(USER18.getUser().getPublicKey().getHash());
+            System.out.println("getOne() ==> " + one.get());
 
-            CwebFutureGet<SignedUserRecord> futureGet =
-                    map.get(USER18.getUser().getPublicKey().getHash());
-            futureGet.getAll().forEach(d -> System.out.println("expecting user 18: " + d));
+            Future<Collection<SignedUserRecord>> all = map3.all(
+                    USER18.getUser().getPublicKey().getHash());
+            System.out.println("getAll() ==> " + all.get());
+
+            System.out.println("Done.");
         } finally {
             if (master != null) {
                 master.shutdown();

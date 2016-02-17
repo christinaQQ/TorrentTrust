@@ -1,4 +1,4 @@
-package moe.cdn.cweb.dht;
+package moe.cdn.cweb.dht.internal;
 
 import org.apache.logging.log4j.message.Message;
 

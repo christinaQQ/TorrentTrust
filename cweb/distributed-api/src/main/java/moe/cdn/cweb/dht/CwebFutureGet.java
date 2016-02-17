@@ -1,25 +1,8 @@
 package moe.cdn.cweb.dht;
 
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Optional;
+import java.util.concurrent.Future;
 
-public interface CwebFutureGet<T> {
-    /**
-     * Blocks until a collection of content can be returned
-     * 
-     * @return
-     * @throws InterruptedException
-     */
-    Collection<T> getAll() throws InterruptedException;
+public interface CwebFutureGet<T> extends Future<Optional<T>> {
 
-    /**
-     * Blocks for {@code timeout} until a collection of content can be returned
-     * 
-     * @return
-     * @throws InterruptedException
-     * @throws TimeoutException
-     */
-    Collection<T> getAll(long timeout, TimeUnit units)
-            throws InterruptedException, TimeoutException;
 }
