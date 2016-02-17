@@ -1,6 +1,6 @@
 package moe.cdn.cweb;
 
-import moe.cdn.cweb.TorrentTrustProtos.*;
+import moe.cdn.cweb.TorrentTrustProtos.User;
 
 /**
  * @author eyeung

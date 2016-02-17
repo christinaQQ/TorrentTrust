@@ -1,5 +1,10 @@
 package moe.cdn.cweb.security;
 
+import com.google.inject.Inject;
+import moe.cdn.cweb.SecurityProtos.Signature;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -8,16 +13,10 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Optional;
 
-import com.google.inject.Inject;
-
-import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-
 class SignatureValidationServiceImpl implements SignatureValidationService {
 
     private final KeyLookupService keyLookupService;
-    
+
     @Inject
     public SignatureValidationServiceImpl(KeyLookupService keyLookupService) {
         this.keyLookupService = keyLookupService;

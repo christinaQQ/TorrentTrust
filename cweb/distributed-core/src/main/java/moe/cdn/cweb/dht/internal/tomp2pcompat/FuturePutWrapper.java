@@ -51,8 +51,7 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      * Adds all requests that have been created for the DHT operations. Those were created after
      * the routing process.
      *
-     * @param futureResponse
-     *            The futurRepsonse that has been created
+     * @param futureResponse The futurRepsonse that has been created
      */
     public FuturePut addRequests(FutureResponse futureResponse) {
         return underlying.addRequests(futureResponse);
@@ -61,8 +60,8 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
     /**
      * Adds a listener to the response future and releases all aquired channels in channel creator.
      *
-     * @param channelCreator
-     *            The channel creator that will be shutdown and all connections will be closed
+     * @param channelCreator The channel creator that will be shutdown and all connections will
+     *                       be closed
      */
     public void addFutureDHTReleaseListener(ChannelCreator channelCreator) {
         underlying.addFutureDHTReleaseListener(channelCreator);
@@ -84,8 +83,7 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      * FutureRouting has to be
      * completed successfully.
      *
-     * @param futureRouting
-     *            The future object to set
+     * @param futureRouting The future object to set
      */
     public void futureRouting(FutureRouting futureRouting) {
         underlying.futureRouting(futureRouting);
@@ -199,7 +197,8 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
     }
 
     @Override
-    public PutResponse get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
+    public PutResponse get(long timeout, TimeUnit unit) throws InterruptedException,
+            TimeoutException {
         boolean ok = underlying.await(unit.toMillis(timeout));
         if (!ok) {
             throw new TimeoutException();

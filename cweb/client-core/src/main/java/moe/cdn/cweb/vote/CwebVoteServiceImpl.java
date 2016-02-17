@@ -1,16 +1,15 @@
 package moe.cdn.cweb.vote;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.annotations.VoteMap;
 import moe.cdn.cweb.security.CwebSignatureValidationService;
+
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 class CwebVoteServiceImpl implements CwebVoteService {
 
@@ -19,7 +18,7 @@ class CwebVoteServiceImpl implements CwebVoteService {
 
     @Inject
     public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-            @VoteMap CwebMap<Hash, SignedVote> voteMap) {
+                               @VoteMap CwebMap<Hash, SignedVote> voteMap) {
         this.signatureValidationService = signatureValidationService;
         this.voteMap = voteMap;
     }

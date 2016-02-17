@@ -1,12 +1,6 @@
 package moe.cdn.cweb.examples;
 
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
 import com.google.protobuf.ByteString;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
@@ -16,13 +10,17 @@ import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+
 /**
  * This class is only used by the example. Please remove when not needed.
- * 
+ * <p>
  * The actual user objects never need to be built into distributed-core
- * 
- * @author jim
  *
+ * @author jim
  */
 final class SignatureUtils {
     static final byte[] sha1(byte[] bytes) {

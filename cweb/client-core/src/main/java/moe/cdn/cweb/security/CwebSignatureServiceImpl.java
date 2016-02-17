@@ -1,7 +1,6 @@
 package moe.cdn.cweb.security;
 
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;

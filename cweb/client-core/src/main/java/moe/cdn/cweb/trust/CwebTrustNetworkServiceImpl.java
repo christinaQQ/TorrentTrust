@@ -1,16 +1,15 @@
 package moe.cdn.cweb.trust;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
-
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.User.TrustAssertion;
 import moe.cdn.cweb.security.CwebSignatureValidationService;
 import moe.cdn.cweb.security.KeyLookupService;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Optional;
 
 class CwebTrustNetworkServiceImpl implements CwebTrustNetworkService {
 
@@ -19,7 +18,7 @@ class CwebTrustNetworkServiceImpl implements CwebTrustNetworkService {
 
     @Inject
     public CwebTrustNetworkServiceImpl(KeyLookupService keyLookupService,
-            CwebSignatureValidationService signatureValidationService) {
+                                       CwebSignatureValidationService signatureValidationService) {
         this.keyLookupService = keyLookupService;
         this.signatureValidationService = signatureValidationService;
     }

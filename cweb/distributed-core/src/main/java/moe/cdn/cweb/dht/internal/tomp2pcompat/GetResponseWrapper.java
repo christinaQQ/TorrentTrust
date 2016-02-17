@@ -50,9 +50,9 @@ public class GetResponseWrapper implements GetResponse {
 
     @Override
     public void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData,
-            Map<PeerAddress, DigestResult> rawDigest,
-            Map<PeerAddress, Byte> rawStatus,
-            FutureDone<Void> futuresCompleted) {
+                             Map<PeerAddress, DigestResult> rawDigest,
+                             Map<PeerAddress, Byte> rawStatus,
+                             FutureDone<Void> futuresCompleted) {
         underlying.receivedData(rawData, rawDigest, rawStatus, futuresCompleted);
     }
 

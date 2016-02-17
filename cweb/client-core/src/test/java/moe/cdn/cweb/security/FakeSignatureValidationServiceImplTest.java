@@ -1,24 +1,6 @@
 package moe.cdn.cweb.security;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.Test;
-
 import com.google.protobuf.ByteString;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
@@ -27,6 +9,16 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
+import org.junit.Test;
+
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FakeSignatureValidationServiceImplTest {
 
@@ -41,42 +33,18 @@ public class FakeSignatureValidationServiceImplTest {
 
     private static final byte[] MESSAGE = "Attack at dawn".getBytes();
 
-    private SignatureValidationServiceImpl validator;
-
     static {
         WEB_OF_TRUST = new LinkedList<>();
         WEB_OF_TRUST.add(signUserRecord(KEY_PAIR_ALICE, ALICE));
         WEB_OF_TRUST.add(signUserRecord(KEY_PAIR_BOB, BOB));
     }
 
+    private SignatureValidationServiceImpl validator;
+
     // We should actually mock things at this point
     public FakeSignatureValidationServiceImplTest() {
         KeyLookupService keyLookupService = new FakeKeyLookupServiceImpl(WEB_OF_TRUST);
         validator = new SignatureValidationServiceImpl(keyLookupService);
-    }
-
-    @Test
-    public void testCanValidateAliceSignature() {
-        // Create a signed message
-        Signature legitSignature = sign(MESSAGE, KEY_PAIR_ALICE);
-        // Validate it
-        assertTrue(validator.validate(MESSAGE, legitSignature));
-    }
-
-    @Test
-    public void testCannotValidateIncorrectSignature() {
-        // Create a signed message signing from jim
-        Signature legitSignature = sign(MESSAGE, KEY_PAIR_ALICE);
-        Signature notSoLegitSignature =
-                legitSignature.toBuilder().setPublicKey(KEY_PAIR_BOB.getPublicKey()).build();
-        // Validate it
-        assertFalse(validator.validate(MESSAGE, notSoLegitSignature));;
-    }
-
-    @Test
-    public void testCannotValidateMallorySignature() {
-        Signature nonExistantUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
-        assertFalse(validator.validate(MESSAGE, nonExistantUserSignature));
     }
 
     private static Signature sign(byte[] data, KeyPair keypair) {
@@ -138,6 +106,31 @@ public class FakeSignatureValidationServiceImplTest {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
         }
+    }
+
+    @Test
+    public void testCanValidateAliceSignature() {
+        // Create a signed message
+        Signature legitSignature = sign(MESSAGE, KEY_PAIR_ALICE);
+        // Validate it
+        assertTrue(validator.validate(MESSAGE, legitSignature));
+    }
+
+    @Test
+    public void testCannotValidateIncorrectSignature() {
+        // Create a signed message signing from jim
+        Signature legitSignature = sign(MESSAGE, KEY_PAIR_ALICE);
+        Signature notSoLegitSignature =
+                legitSignature.toBuilder().setPublicKey(KEY_PAIR_BOB.getPublicKey()).build();
+        // Validate it
+        assertFalse(validator.validate(MESSAGE, notSoLegitSignature));
+        ;
+    }
+
+    @Test
+    public void testCannotValidateMallorySignature() {
+        Signature nonExistantUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
+        assertFalse(validator.validate(MESSAGE, nonExistantUserSignature));
     }
 
 }

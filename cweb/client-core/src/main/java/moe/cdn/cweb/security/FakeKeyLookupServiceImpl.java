@@ -1,18 +1,18 @@
 package moe.cdn.cweb.security;
 
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
-
 class FakeKeyLookupServiceImpl implements KeyLookupService {
 
     private final Map<Hash, SignedUserRecord> keyserver;
-    
+
     public FakeKeyLookupServiceImpl() {
         this.keyserver = new HashMap<>();
     }

@@ -1,18 +1,17 @@
 package moe.cdn.cweb.security;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.annotations.UserMap;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 class KeyLookupServiceImpl implements KeyLookupService {
 

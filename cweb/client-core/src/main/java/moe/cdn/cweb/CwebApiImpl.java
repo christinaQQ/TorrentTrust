@@ -1,15 +1,14 @@
 package moe.cdn.cweb;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.trust.CwebTrustNetworkService;
 import moe.cdn.cweb.vote.CwebVoteService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 class CwebApiImpl implements CwebApi {
 
@@ -36,5 +35,5 @@ class CwebApiImpl implements CwebApi {
     public List<Vote> getVotes(Hash objectHash) {
         return null;
     }
-    
+
 }

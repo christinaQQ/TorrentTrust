@@ -1,7 +1,6 @@
 package moe.cdn.cweb;
 
 import com.google.inject.AbstractModule;
-
 import moe.cdn.cweb.dht.DhtModule;
 import moe.cdn.cweb.security.SecurityModule;
 import moe.cdn.cweb.trust.TrustNetworkModule;

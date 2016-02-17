@@ -13,8 +13,6 @@ import net.tomp2p.peers.Number160;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 
 /**
  * @author davix

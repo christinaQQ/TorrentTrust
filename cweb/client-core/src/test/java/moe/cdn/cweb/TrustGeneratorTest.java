@@ -1,20 +1,19 @@
 package moe.cdn.cweb;
 
 import com.google.protobuf.ByteString;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.Key.KeyType;
-import moe.cdn.cweb.TorrentTrustProtos.*;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.vote.VoteUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author eyeung
@@ -40,6 +39,13 @@ public class TrustGeneratorTest {
     private static Vote makeVote(String contentHash, List<Vote.Assertion> assertions) {
         return VoteUtils.createVote(contentHash, a.getPublicKey()).addAllAssertion(assertions)
                 .build();
+    }
+
+    private static Key generateFakePublicKey(String id) {
+        return Key.newBuilder().setType(KeyType.PUBLIC)
+                .setHash(Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
+                        .setHashvalue(ByteString.EMPTY).build())
+                .setRaw(ByteString.copyFromUtf8(id)).build();
     }
 
     @Before
@@ -136,13 +142,6 @@ public class TrustGeneratorTest {
         userVotes.put(b, Arrays.asList(vote_o1_rev, vote_o2_rev, vote_o3_rev));
 
         assertEquals("some correlation", 0.5, trustGenerator.correlationCoefficient(a, b), .001);
-    }
-
-    private static Key generateFakePublicKey(String id) {
-        return Key.newBuilder().setType(KeyType.PUBLIC)
-                .setHash(Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
-                        .setHashvalue(ByteString.EMPTY).build())
-                .setRaw(ByteString.copyFromUtf8(id)).build();
     }
 }
 

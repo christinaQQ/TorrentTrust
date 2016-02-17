@@ -11,8 +11,12 @@ import java.util.Collection;
  */
 public interface DhtNode<T extends Message> {
     ListenableFuture<T> getOne(BigInteger key);
+
     ListenableFuture<T> getOne(BigInteger key, BigInteger subKey);
+
     ListenableFuture<Collection<T>> getAll(BigInteger key);
+
     ListenableFuture<Boolean> add(BigInteger key, T t);
+
     ListenableFuture<Boolean> put(BigInteger key, T t);
 }

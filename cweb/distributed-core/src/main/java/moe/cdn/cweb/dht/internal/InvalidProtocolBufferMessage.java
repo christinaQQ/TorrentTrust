@@ -1,8 +1,7 @@
 package moe.cdn.cweb.dht.internal;
 
-import org.apache.logging.log4j.message.Message;
-
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.apache.logging.log4j.message.Message;
 
 /**
  * @author davix

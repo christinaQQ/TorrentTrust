@@ -1,10 +1,10 @@
 package moe.cdn.cweb;
 
-import java.util.List;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
+
+import java.util.List;
 
 
 /**
@@ -13,9 +13,10 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
 public interface CwebApi {
 
     // some of these should be changed to sets.
+
     /**
      * Gets a user's voting history
-     * 
+     *
      * @param user
      * @return
      */
@@ -23,7 +24,7 @@ public interface CwebApi {
 
     /**
      * Gets the users in a user's local trust neighborhood
-     * 
+     *
      * @param user
      * @return
      */
@@ -31,7 +32,7 @@ public interface CwebApi {
 
     /**
      * Gets all votes for an object
-     * 
+     *
      * @param objectHash
      * @return
      */

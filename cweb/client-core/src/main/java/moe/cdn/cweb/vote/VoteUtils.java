@@ -1,14 +1,14 @@
 package moe.cdn.cweb.vote;
 
 import com.google.protobuf.ByteString;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 public class VoteUtils {
-    private VoteUtils() {}
+    private VoteUtils() {
+    }
 
     public static Vote.Builder createVote(String contentHash, Key publicKey) {
         return Vote.newBuilder()
