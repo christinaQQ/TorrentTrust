@@ -33,7 +33,7 @@ message Vote {
   message Assertion {
     enum Rating { BAD = 0; GOOD = 1; }
     Rating rating = 1;
-    string property = 2;
+    string contentProperty = 2;
   }
   Hash content_hash = 1;
   
