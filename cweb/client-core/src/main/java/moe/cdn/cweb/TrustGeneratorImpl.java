@@ -10,7 +10,35 @@ import java.util.*;
 /**
  * @author eyeung
  */
+
 public class TrustGeneratorImpl implements TrustGenerator {
+
+    private class VoteWrapperObject {
+        Vote vote;
+        private VoteWrapperObject(Vote v) {
+            this.vote = v;
+        }
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+
+            if (!(o instanceof VoteWrapperObject)) {
+                return false;
+            }
+
+            VoteWrapperObject otherVote = (VoteWrapperObject) o;
+            return (this.vote.getContentHash() == otherVote.vote.getContentHash());
+        }
+
+        @Override
+        public int hashCode() {
+            return this.vote.getContentHash().hashCode();
+        }
+    }
+
+
 
     private final CwebApi api;
 
@@ -34,39 +62,62 @@ public class TrustGeneratorImpl implements TrustGenerator {
 
     @Override
     public double correlationCoefficient(User a, User b) {
-        HashMap<ByteString, Integer> overlapping_votes = new HashMap<>();
-        List<Vote> A_votes = api.getVotesForUser(a);
-        List<Vote> B_votes = api.getVotesForUser(b);
-        for (Vote v : A_votes) {
-            ByteString co = v.getContentHash().getHashvalue();
-            // FIXME(eyeung): change assertion weighting when vote assertion
-            // interface is finalized
-            int assertion = ratingToIntValue(v.getAssertion(0).getRating());
-            overlapping_votes.put(co, assertion);
+        Set<VoteWrapperObject> A_votes = new HashSet<>();
+        Set<VoteWrapperObject> B_votes = new HashSet<>();
+        Set<VoteWrapperObject> overlappingVotes = new HashSet<>();
+
+        for (Vote v : api.getVotesForUser(a)) {
+            A_votes.add(new VoteWrapperObject(v));
         }
+        for (Vote v : api.getVotesForUser(b)) {
+            B_votes.add(new VoteWrapperObject(v));
+        }
+        overlappingVotes = new HashSet<>(A_votes);
+        overlappingVotes.retainAll(B_votes);
+
         double positive_a = 0;
         double positive_b = 0;
         double positive_both = 0;
-        for (Vote v : B_votes) {
-            ByteString co = v.getContentHash().getHashvalue();
-            // FIXME(eyeung)
-            int b_assertion = ratingToIntValue(v.getAssertion(0).getRating());
-            if (b_assertion > 0) {
-                positive_b += 1;
-            }
-            if (overlapping_votes.containsKey(co)) {
-                if (overlapping_votes.get(co) > 0) {
-                    positive_a += 1;
-                    if (b_assertion > 0) {
-                        positive_both += 1;
-                    }
+
+        double total_assertions_a = 0;
+        double total_assertions_b = 0;
+        double total_assertions_both = 0;
+
+        // calculate positive a
+        for (VoteWrapperObject v : A_votes) {
+            for (Vote.Assertion assertion : v.vote.getAssertionList()) {
+                if (assertion.getRating() == Vote.Assertion.Rating.GOOD) {
+                    positive_a++;
                 }
+                total_assertions_a++;
             }
-            overlapping_votes.put(co, b_assertion);
         }
-        positive_a = positive_a / (double) A_votes.size();
-        positive_b = positive_b / (double) B_votes.size();
-        positive_both = positive_both / (double) overlapping_votes.keySet().size();
+
+        //calculate positive b
+        for (VoteWrapperObject v : B_votes) {
+            for (Vote.Assertion assertion : v.vote.getAssertionList()) {
+                if (assertion.getRating() == Vote.Assertion.Rating.GOOD) {
+                    positive_b++;
+                }
+                total_assertions_b++;
+            }
+        }
+
+        //calculate positive both
+        for (VoteWrapperObject v : overlappingVotes) {
+            //FIXME: eyeung this is wrong, you need to look at actual assertions
+            for (Vote.Assertion assertion : v.vote.getAssertionList()) {
+                if (assertion.getRating() == Vote.Assertion.Rating.GOOD) {
+                    positive_both++;
+                }
+                total_assertions_both++;
+            }
+        }
+
+
+        positive_a = positive_a /  total_assertions_a;
+        positive_b = positive_b / total_assertions_b;
+        positive_both = positive_both / total_assertions_both;
 
         double theta = (positive_both - positive_a * positive_b)
                 / Math.sqrt(positive_a * (1 - positive_a) * positive_b * (1 - positive_b));
