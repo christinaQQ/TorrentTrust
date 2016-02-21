@@ -1,0 +1,6 @@
+*.tsv
+*.data
+*.tmp
+
+# Python cruft
+*.pyc
