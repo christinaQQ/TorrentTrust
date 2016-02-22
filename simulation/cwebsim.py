@@ -5,14 +5,16 @@ import math
 _local_neighborhood = {}
 def _generate_local_neighborhood(u, cutoff = 2):
   # bfs on users assigning 0-1 trust  
-  q = [(u, 0)]
+  q, qset = [(u, 0)], set([u])
   seen = set()
   while len(q) > 0:
     p, dist = q.pop()
+    qset.remove(p)
     seen.add(p)
     for f in p.trusted():
-      if not f in q and dist + 1 <= cutoff:
+      if not f in seen and not f in qset and dist + 1 <= cutoff:
         q.append((f, dist + 1))
+        qset.add(f)
   _local_neighborhood[u.name] = seen
   
 def calculateTrustMetric(u, v, cutoff = 2):
@@ -64,7 +66,7 @@ def getAllScores(users, targets, trustCutoff = 2):
   for user in users:
     for target in targets:
       score = getScore(user, target, trustCutoff)
-      print "{}\t{}\t{}\t{}\t{}".format(user, target, score, user.designation, target.designation)
+      print "{}\t{}\t{}\t{}\t{}".format(user.name, target.name, score, user.designation, target.designation)
   return scores
 
 if __name__ == "__main__":
