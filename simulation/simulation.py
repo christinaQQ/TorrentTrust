@@ -1,4 +1,5 @@
 import random
+import json
 
 # Some designations
 GOOD, EVIL = "GOOD", "EVIL"
@@ -23,6 +24,7 @@ class User (object):
     self.votes = []
     self.votedTargets = set()
     self.name = name
+    self.group = name
     self.designation = designation
     self.votingFunction = self._defaultVotingFunction if votingFunction == None else votingFuntion
   
@@ -31,7 +33,7 @@ class User (object):
     if target.designation == "GOOD":
       return Vote(user, target, 1.0)
     else:
-      if user.designation == "EVIL" and target.owner == user.name:
+      if user.designation == "EVIL" and target.owner == user.group:
         return Vote(user, target, 1.0)
       return Vote(user, target, -1.0)
   
@@ -58,7 +60,7 @@ class User (object):
     self.votes.append(vote)
   
   def __str__(self):
-    return "User: {}, {}, {} trusted peers".format(self.name, self.designation, len(self._trusted))
+    return "User: {} ({}), {}, {} trusted peers".format(self.name, self.group, self.designation, len(self._trusted))
   
   def __repr__(self):
     return "User(name={}, designation={}, votingFuntion={}, trusted={}, _votes={}, _votedTargets={})".format(repr(self.name), repr(self.designation), repr(self.votingFunction), repr(self._trusted), repr(self.votes), repr(self.votedTargets))
@@ -121,7 +123,7 @@ def generateRandomizedCluster(clusterSize, minDegree = 1, maxDegree = 50, design
 
 def generateClique(cliqueSize, designation = 'GOOD', namePrefix = 'Group1'):
   users = []
-  for name in nameGenerator(namePrefix, clusterSize):
+  for name in nameGenerator(namePrefix, cliqueSize):
     users.append(User(name, designation))
   for user in users:
     for friend in users:
@@ -154,6 +156,21 @@ def randomJoinTrust(usersA, usersB, samples = 10, depth = 1):
       u.addTrusted(v)
       v.addTrusted(u)
 
+def flattenVoting(users, targets):
+  for user in users:
+    for vote in votes:
+      print vote
+
+def flattenGraph(users):
+  output = {}
+  for user in users:
+    output[user.name] = {}
+    output[user.name]['designation'] = user.designation
+    output[user.name]['trusted'] = []
+    for n in user.trusted():
+      output[user.name]['trusted'].append(n.name)
+  return json.dumps(output)
+
 # Users casting votes, targets accepting votes, votes cast per user
 def castVotes(users, targets, sampleSize = 50):
   for user in users:
@@ -167,7 +184,7 @@ def guaranteedCasting(users, targets):
     if target.owner == None:
       continue
     for user in users:
-      if user.name == target.owner:
+      if user.group == target.owner:
         if not user in target.votedUsers: 
           user.vote(target)
 

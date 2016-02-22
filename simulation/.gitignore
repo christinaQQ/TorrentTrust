@@ -2,5 +2,10 @@
 *.data
 *.tmp
 
+*.json
+
+# Temp folder
+tmp/
+
 # Python cruft
 *.pyc
