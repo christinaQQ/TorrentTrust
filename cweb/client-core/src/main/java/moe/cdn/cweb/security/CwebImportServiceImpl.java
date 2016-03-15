@@ -12,8 +12,8 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.annotations.UserMap;
-import moe.cdn.cweb.dht.annotations.VoteMap;
+import moe.cdn.cweb.dht.annotations.UserDomain;
+import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.security.utils.SignatureUtils;
 
 public class CwebImportServiceImpl implements CwebImportService {
@@ -24,8 +24,8 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Inject
     public CwebImportServiceImpl(KeyPair userKeyPair,
-            @UserMap CwebMap<Hash, SignedUserRecord> userMap,
-            @VoteMap CwebMap<Hash, SignedVote> voteMap) {
+            @UserDomain CwebMap<Hash, SignedUserRecord> userMap,
+            @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
         this.userKeyPair = userKeyPair;
         this.userMap = userMap;
         this.voteMap = voteMap;
