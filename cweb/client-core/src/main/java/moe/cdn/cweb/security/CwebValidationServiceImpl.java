@@ -1,17 +1,21 @@
 package moe.cdn.cweb.security;
 
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 
-class CwebSignatureServiceImpl implements CwebSignatureValidationService {
+class CwebValidationServiceImpl implements CwebSignatureValidationService {
 
     private final SignatureValidationService signatureValidationService;
 
     @Inject
-    public CwebSignatureServiceImpl(SignatureValidationService signatureValidationService) {
-        this.signatureValidationService = signatureValidationService;
+    public CwebValidationServiceImpl(SignatureValidationService signatureValidationService) {
+        this.signatureValidationService = checkNotNull(signatureValidationService);
     }
 
     @Override

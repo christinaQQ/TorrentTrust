@@ -1,17 +1,16 @@
 package moe.cdn.cweb.security;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.Optional;
+
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Optional;
+import moe.cdn.cweb.security.utils.KeyUtils;
 
 class SignatureValidationServiceImpl implements SignatureValidationService {
 
@@ -32,18 +31,14 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
                 try {
                     java.security.Signature verifier =
                             java.security.Signature.getInstance("SHA256withRSA");
-                    X509EncodedKeySpec publicKeySpec =
-                            new X509EncodedKeySpec(signature.getPublicKey().getRaw().toByteArray());
-                    KeyFactory kf = KeyFactory.getInstance("RSA");
-                    verifier.initVerify(kf.generatePublic(publicKeySpec));
+                   
+                    verifier.initVerify(KeyUtils.importPublicKey(signature.getPublicKey()));
                     verifier.update(data);
                     return verifier.verify(signature.getSignature().toByteArray());
                 } catch (NoSuchAlgorithmException e) {
                     throw new UnsupportedAlgorithmException();
                 } catch (InvalidKeyException e) {
                     throw new RuntimeException("Key decoding failed.", e);
-                } catch (InvalidKeySpecException e) {
-                    throw new RuntimeException("Key spec failed", e);
                 } catch (SignatureException e) {
                     throw new RuntimeException("Lol What's a SignatureException", e);
                 }

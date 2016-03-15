@@ -10,7 +10,7 @@ public class SecurityModule extends AbstractModule {
         bind(KeyLookupService.class).to(KeyLookupServiceImpl.class).in(Singleton.class);
         bind(SignatureValidationService.class).to(SignatureValidationServiceImpl.class)
                 .in(Singleton.class);
-        bind(CwebSignatureValidationService.class).to(CwebSignatureServiceImpl.class)
+        bind(CwebSignatureValidationService.class).to(CwebValidationServiceImpl.class)
                 .in(Singleton.class);
     }
 
