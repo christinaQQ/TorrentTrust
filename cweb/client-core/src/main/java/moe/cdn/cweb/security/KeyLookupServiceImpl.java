@@ -6,7 +6,7 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.annotations.UserMap;
+import moe.cdn.cweb.dht.annotations.UserDomain;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -18,7 +18,7 @@ class KeyLookupServiceImpl implements KeyLookupService {
     private final CwebMap<Hash, SignedUserRecord> keyServiceDht;
 
     @Inject
-    public KeyLookupServiceImpl(@UserMap CwebMap<Hash, SignedUserRecord> keyServiceDht) {
+    public KeyLookupServiceImpl(@UserDomain CwebMap<Hash, SignedUserRecord> keyServiceDht) {
         this.keyServiceDht = keyServiceDht;
     }
 

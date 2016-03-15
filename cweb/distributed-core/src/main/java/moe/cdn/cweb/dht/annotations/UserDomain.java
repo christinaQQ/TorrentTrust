@@ -8,9 +8,12 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * Indicates an injection for the user domain of the DHT.
+ * @author davix
+ */
 @BindingAnnotation
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
-public @interface UserMap {
-
+public @interface UserDomain {
 }

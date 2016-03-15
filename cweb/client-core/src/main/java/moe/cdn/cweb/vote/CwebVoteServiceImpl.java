@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.annotations.VoteMap;
+import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.security.CwebSignatureValidationService;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ class CwebVoteServiceImpl implements CwebVoteService {
 
     @Inject
     public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-                               @VoteMap CwebMap<Hash, SignedVote> voteMap) {
+                               @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
         this.signatureValidationService = signatureValidationService;
         this.voteMap = voteMap;
     }
