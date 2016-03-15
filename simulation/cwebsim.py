@@ -74,7 +74,7 @@ if __name__ == "__main__":
   
   if len(sys.argv) <= 1:
     print """
-cwebsim [bfsdepth] [malicious clique] [interconnects]
+cwebsim [bfsdepth] [malicious clique] [interconnects] [social_network_file]
 
 Parameters listed in order:
 
@@ -88,15 +88,20 @@ Parameters listed in order:
 	interclique connections: 
 		0 - no connections, 
 		non-0-# # of connections to connect between spammers and legit users
+  social_network_file:
+    0 - don't read from file
+    name of a file from which graph is created
 """
     exit(1)
   params = sys.argv[1:]
-  bfsdepth, malclique, interconnect = tuple(params)
-  with open('graphdump-' + "_".join(params) +'.json', 'w') as f:
+  bfsdepth, malclique, interconnect, social_network_file = tuple(params)
+  with open('graphdump-' + "_".join(params).replace('/', '-') +'.json', 'w') as f:
     allItems = sim.generateContent(4000, {'GOOD': 80, 'EVIL': 20})
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
     
-    if malclique == "true":
+    if social_network_file:
+      oneBigCluster = sim.generateFromFile(social_network_file, 50)
+    elif malclique == "true":
       badCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")
       sys.stderr.write("Created {} spammers...\n".format(len(badCluster)))
   

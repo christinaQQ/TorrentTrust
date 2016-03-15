@@ -131,6 +131,26 @@ def generateClique(cliqueSize, designation = 'GOOD', namePrefix = 'Group1'):
         user.addTrusted(friend)
   return users
 
+def generateFromFile(fileName, clusterSize, designation = 'GOOD', namePrefix = 'Group1'):
+  users = []
+  for name in nameGenerator(namePrefix, clusterSize):
+    users.append(User(name, designation))
+  with open(fileName, 'r') as f:
+    while (f.readline().strip() != "<FRIENDS>"):
+      continue
+    for line in f:
+      if line.strip() == "</FRIENDS>":
+        break
+      l = line.split('-')
+      user = int(l[1]) - 1
+      friend = int(l[2]) - 1
+      users[user].addTrusted(users[friend])
+      # look into this: the data is undirected
+      users[friend].addTrusted(users[user])
+
+  return users
+
+
 def assignEvilTargets(evilUsers, targets, targetsPerUser = 3):
   targetset = set(targets)
   for user in evilUsers:
@@ -187,5 +207,7 @@ def guaranteedCasting(users, targets):
       if user.group == target.owner:
         if not user in target.votedUsers: 
           user.vote(target)
+
+
 
 
