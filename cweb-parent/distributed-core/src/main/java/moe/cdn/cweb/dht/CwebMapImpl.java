@@ -3,7 +3,6 @@ package moe.cdn.cweb.dht;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
-import moe.cdn.cweb.dht.annotations.UserDomain;
 
 import javax.inject.Inject;
 import java.math.BigInteger;

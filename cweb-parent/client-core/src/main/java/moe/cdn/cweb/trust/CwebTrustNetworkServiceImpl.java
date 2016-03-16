@@ -41,7 +41,8 @@ class CwebTrustNetworkServiceImpl implements CwebTrustNetworkService {
             maybeUsers.add(Futures.transform(keyLookupService.findOwner(t.getPublicKey()),
                     (Function<Optional<SignedUser>, Optional<User>>)
                             maybeOwner -> maybeOwner.map(
-                            o -> signatureValidationService.validateUser(o) ? o.getUser() : null)));
+                                    o -> signatureValidationService.validateUser(o) ? o.getUser()
+                                                                                    : null)));
         }
         try {
             return Futures.successfulAsList(maybeUsers).get()

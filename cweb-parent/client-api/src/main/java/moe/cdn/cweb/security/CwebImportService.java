@@ -1,7 +1,6 @@
 package moe.cdn.cweb.security;
 
 import com.google.protobuf.Message;
-
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
@@ -9,7 +8,7 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
 public interface CwebImportService extends SignatureImportService {
     /**
      * Imports a vote on an object and signs it with the current user's key
-     * 
+     *
      * @param vote
      * @return
      */
@@ -18,7 +17,7 @@ public interface CwebImportService extends SignatureImportService {
     /**
      * Imports a new user into the trust network updating the existing record if
      * it exists. Signs with the current user's key.
-     * 
+     *
      * @param user
      * @return
      */

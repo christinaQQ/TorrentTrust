@@ -17,13 +17,16 @@ class CwebValidationServiceImpl extends SignatureValidationServiceImpl
     @Override
     public boolean validateVote(SignedVote signedVote) {
         // must check that the owner of the vote is owner of the signature
-        return signedVote.getVote().getOwnerPublicKey().equals(signedVote.getSignature().getPublicKey())
-                && validateAndCheckSignatureKeyInNetwork(signedVote.getSignature(), signedVote.getVote());
+        return signedVote.getVote().getOwnerPublicKey().equals(signedVote.getSignature()
+                .getPublicKey())
+                && validateAndCheckSignatureKeyInNetwork(signedVote.getSignature(), signedVote
+                .getVote());
     }
 
     @Override
     public boolean validateUser(SignedUser signedUser) {
-        return validateSelfSigned(signedUser.getSignature(), signedUser.getUser(), signedUser.getUser());
+        return validateSelfSigned(signedUser.getSignature(), signedUser.getUser(), signedUser
+                .getUser());
     }
 
 }

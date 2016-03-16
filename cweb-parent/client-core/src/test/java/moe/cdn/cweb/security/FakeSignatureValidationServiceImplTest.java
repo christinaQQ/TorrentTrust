@@ -130,7 +130,8 @@ public class FakeSignatureValidationServiceImplTest {
     @Test
     public void testCannotValidateMallorySignature() {
         Signature nonExistantUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
-        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(nonExistantUserSignature, MESSAGE));
+        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(nonExistantUserSignature,
+                MESSAGE));
     }
 
 }

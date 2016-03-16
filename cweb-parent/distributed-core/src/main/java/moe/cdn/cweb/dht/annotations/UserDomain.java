@@ -10,6 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Indicates an injection for the user domain of the DHT.
+ *
  * @author davix
  */
 @BindingAnnotation

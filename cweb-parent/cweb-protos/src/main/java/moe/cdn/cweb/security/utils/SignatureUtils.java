@@ -1,16 +1,15 @@
 package moe.cdn.cweb.security.utils;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
-
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.security.UnsupportedAlgorithmException;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 
 /**
  * Utilities for signing and verification of signatures
@@ -19,7 +18,8 @@ import moe.cdn.cweb.security.UnsupportedAlgorithmException;
  */
 public final class SignatureUtils {
     // Please don't instantiate this class
-    private SignatureUtils() {}
+    private SignatureUtils() {
+    }
 
     public static boolean validateMessage(Signature signature, byte[] message) {
         try {

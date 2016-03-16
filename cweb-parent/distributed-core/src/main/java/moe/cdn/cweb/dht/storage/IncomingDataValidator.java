@@ -52,7 +52,8 @@ class IncomingDataValidator {
 
     private boolean validateUserRawData(Data data) {
         try {
-            TorrentTrustProtos.SignedUser signedUser = TorrentTrustProtos.SignedUser.PARSER.parseFrom(data.toBytes());
+            TorrentTrustProtos.SignedUser signedUser = TorrentTrustProtos.SignedUser.PARSER
+                    .parseFrom(data.toBytes());
             return cwebSignatureValidationService.validateUser(signedUser);
         } catch (InvalidProtocolBufferException e) {
             return false;

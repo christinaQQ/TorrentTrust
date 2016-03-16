@@ -4,9 +4,10 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 
 public interface CwebSignatureValidationService extends SignatureValidationService {
-    
+
     /**
      * Validates a signed vote to make sure it's authentic
+     *
      * @param signedVote
      * @return indicator boolean of whether the vote is authentic
      */
@@ -14,6 +15,7 @@ public interface CwebSignatureValidationService extends SignatureValidationServi
 
     /**
      * Validates a signed user to make sure it's authentic
+     *
      * @param signedUser
      * @return indicator boolean of whether the user is authentic
      */

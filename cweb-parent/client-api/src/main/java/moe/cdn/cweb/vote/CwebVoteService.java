@@ -1,10 +1,10 @@
 package moe.cdn.cweb.vote;
 
-import java.util.Collection;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
+
+import java.util.Collection;
 
 public interface CwebVoteService {
     /**
@@ -20,7 +20,7 @@ public interface CwebVoteService {
      *
      * @param vote
      * @return boolean indicator indicating whether the vote was successfully
-     *         cast
+     * cast
      */
     boolean castVote(SignedVote vote);
 }

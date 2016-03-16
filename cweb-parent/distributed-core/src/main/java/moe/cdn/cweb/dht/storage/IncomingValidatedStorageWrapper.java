@@ -1,6 +1,5 @@
 package moe.cdn.cweb.dht.storage;
 
-import com.google.inject.Inject;
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.storage.Data;

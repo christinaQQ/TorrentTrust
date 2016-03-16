@@ -1,7 +1,6 @@
 package moe.cdn.cweb;
 
 import com.google.inject.Inject;
-import com.google.protobuf.ByteString;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
@@ -13,34 +12,8 @@ import java.util.*;
 
 public class TrustGeneratorImpl implements TrustGenerator {
 
-    private class VoteWrapperObject {
-        Vote vote;
-        private VoteWrapperObject(Vote v) {
-            this.vote = v;
-        }
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            }
-
-            if (!(o instanceof VoteWrapperObject)) {
-                return false;
-            }
-
-            VoteWrapperObject otherVote = (VoteWrapperObject) o;
-            return (this.vote.getContentHash().equals(otherVote.vote.getContentHash()));
-        }
-
-        @Override
-        public int hashCode() {
-            return this.vote.getContentHash().hashCode();
-        }
-    }
-
-
-
     private final CwebApi api;
+
 
     @Inject
     public TrustGeneratorImpl(CwebApi api) {
@@ -118,7 +91,8 @@ public class TrustGeneratorImpl implements TrustGenerator {
         for (VoteWrapperObject v : overlappingVotes.keySet()) {
             List<Vote.Assertion> A_assertions = v.vote.getAssertionList();
             List<Vote.Assertion> B_assertions = overlappingVotes.get(v).vote.getAssertionList();
-            // okay screw sets, let's do it with lists for something working and make efficient later
+            // okay screw sets, let's do it with lists for something working and make efficient
+            // later
 //            Set<Vote.Assertion> A_assertions = new HashSet<>(A_vote.vote.getAssertionList());
 //            Set<Vote.Assertion> B_assertions = new HashSet<>(B_vote.vote.getAssertionList());
 
@@ -127,7 +101,7 @@ public class TrustGeneratorImpl implements TrustGenerator {
                     if (a_assertion.getContentProperty() == b_assertion.getContentProperty()) {
                         total_assertions_both++;
                         if (a_assertion.getRating() == b_assertion.getRating()
-                                && a_assertion.getRating() == Vote.Assertion.Rating.GOOD ) {
+                                && a_assertion.getRating() == Vote.Assertion.Rating.GOOD) {
                             positive_both++;
                         }
                     }
@@ -136,7 +110,7 @@ public class TrustGeneratorImpl implements TrustGenerator {
         }
 
 
-        positive_a = positive_a /  total_assertions_a;
+        positive_a = positive_a / total_assertions_a;
         positive_b = positive_b / total_assertions_b;
         positive_both = positive_both / total_assertions_both;
 
@@ -188,5 +162,32 @@ public class TrustGeneratorImpl implements TrustGenerator {
             }
         }
         return 0;
+    }
+
+    private class VoteWrapperObject {
+        Vote vote;
+
+        private VoteWrapperObject(Vote v) {
+            this.vote = v;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+
+            if (!(o instanceof VoteWrapperObject)) {
+                return false;
+            }
+
+            VoteWrapperObject otherVote = (VoteWrapperObject) o;
+            return (this.vote.getContentHash().equals(otherVote.vote.getContentHash()));
+        }
+
+        @Override
+        public int hashCode() {
+            return this.vote.getContentHash().hashCode();
+        }
     }
 }
