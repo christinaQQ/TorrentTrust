@@ -5,6 +5,7 @@ import com.google.protobuf.Message;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 /**
  * @author davix
@@ -19,4 +20,6 @@ public interface DhtNode<T extends Message> {
     ListenableFuture<Boolean> add(BigInteger key, T t);
 
     ListenableFuture<Boolean> put(BigInteger key, T t);
+
+    Future<Void> shutdown();
 }

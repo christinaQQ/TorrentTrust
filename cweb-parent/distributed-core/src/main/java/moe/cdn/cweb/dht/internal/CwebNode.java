@@ -6,19 +6,18 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
-import moe.cdn.cweb.dht.internal.tomp2pcompat.FutureGetWrapper;
-import moe.cdn.cweb.dht.internal.tomp2pcompat.FuturePutWrapper;
-import moe.cdn.cweb.dht.internal.tomp2pcompat.GetResponse;
-import moe.cdn.cweb.dht.internal.tomp2pcompat.PutResponse;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.*;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.futures.BaseFuture;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
 import java.math.BigInteger;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 /**
  * Entry point for DHT operations.
@@ -130,4 +129,12 @@ public class CwebNode<T extends Message> {
         return self.put(locationKey).domainKey(domainKey).data(new Data(t.toByteArray())).start();
     }
 
+    public Future<Void> shutdown() {
+        return new BaseFutureAsListenableFuture<Void, BaseFuture>(self.shutdown()) {
+            @Override
+            protected Void toValueAfterGet() {
+                return null;
+            }
+        };
+    }
 }

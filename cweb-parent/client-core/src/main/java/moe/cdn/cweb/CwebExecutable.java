@@ -43,6 +43,8 @@ public class CwebExecutable {
         ListenableFuture<Optional<SignedUser>> owner = keyLookupService.findOwner(user
                 .getPublicKey());
         System.out.println("owner of <user>'s public key: " + owner.get());
+
+        signedVoteDhtNode.shutdown().get();
     }
 
 }

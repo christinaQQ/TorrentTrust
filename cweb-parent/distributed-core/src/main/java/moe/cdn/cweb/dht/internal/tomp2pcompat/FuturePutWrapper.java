@@ -16,19 +16,17 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author davix
  */
-public class FuturePutWrapper implements ListenableFuture<PutResponse> {
-    private final FuturePut underlying;
-    private volatile boolean cancelled;
+public class FuturePutWrapper extends BaseFutureAsListenableFuture<PutResponse, FuturePut> {
 
-    public FuturePutWrapper(FuturePut underlying) {
-        this.underlying = underlying;
+    public FuturePutWrapper(FuturePut futurePut) {
+        super(futurePut);
     }
 
     /**
      * @return A reference to the builder that contains the data we were looking for
      */
     public DHTBuilder<?> builder() {
-        return underlying.builder();
+        return baseFuture.builder();
     }
 
     /**
@@ -44,7 +42,7 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      * @return A future that finishes if all running futures are finished.
      */
     public FutureForkJoin<FutureResponse> futureRequests() {
-        return underlying.futureRequests();
+        return baseFuture.futureRequests();
     }
 
     /**
@@ -54,7 +52,7 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      * @param futureResponse The futurRepsonse that has been created
      */
     public FuturePut addRequests(FutureResponse futureResponse) {
-        return underlying.addRequests(futureResponse);
+        return baseFuture.addRequests(futureResponse);
     }
 
     /**
@@ -64,7 +62,7 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      *                       be closed
      */
     public void addFutureDHTReleaseListener(ChannelCreator channelCreator) {
-        underlying.addFutureDHTReleaseListener(channelCreator);
+        baseFuture.addFutureDHTReleaseListener(channelCreator);
     }
 
     /**
@@ -75,7 +73,7 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      * @return The future object during the previous routing, or null if routing failed completely.
      */
     public FutureRouting futureRouting() {
-        return underlying.futureRouting();
+        return baseFuture.futureRouting();
     }
 
     /**
@@ -86,129 +84,96 @@ public class FuturePutWrapper implements ListenableFuture<PutResponse> {
      * @param futureRouting The future object to set
      */
     public void futureRouting(FutureRouting futureRouting) {
-        underlying.futureRouting(futureRouting);
+        baseFuture.futureRouting(futureRouting);
     }
 
     public FutureDone<Void> futuresCompleted() {
-        return underlying.futuresCompleted();
+        return baseFuture.futuresCompleted();
     }
 
     public FuturePut await() throws InterruptedException {
-        return underlying.await();
+        return baseFuture.await();
     }
 
     public FuturePut awaitUninterruptibly() {
-        return underlying.awaitUninterruptibly();
+        return baseFuture.awaitUninterruptibly();
     }
 
     public boolean await(long timeoutMillis) throws InterruptedException {
-        return underlying.await(timeoutMillis);
+        return baseFuture.await(timeoutMillis);
     }
 
     public boolean awaitUninterruptibly(long timeoutMillis) {
-        return underlying.awaitUninterruptibly(timeoutMillis);
+        return baseFuture.awaitUninterruptibly(timeoutMillis);
     }
 
     public boolean isCompleted() {
-        return underlying.isCompleted();
+        return baseFuture.isCompleted();
     }
 
     public boolean isFailed() {
-        return underlying.isFailed();
+        return baseFuture.isFailed();
     }
 
     public FuturePut failed(BaseFuture origin) {
-        return underlying.failed(origin);
+        return baseFuture.failed(origin);
     }
 
     public FuturePut failed(String failed, BaseFuture origin) {
-        return underlying.failed(failed, origin);
+        return baseFuture.failed(failed, origin);
     }
 
     public FuturePut failed(Throwable t) {
-        return underlying.failed(t);
+        return baseFuture.failed(t);
     }
 
     public FuturePut failed(String failed, Throwable t) {
-        return underlying.failed(failed, t);
+        return baseFuture.failed(failed, t);
     }
 
     public FuturePut failed(String failed) {
-        return underlying.failed(failed);
+        return baseFuture.failed(failed);
     }
 
     public String failedReason() {
-        return underlying.failedReason();
+        return baseFuture.failedReason();
     }
 
     public BaseFuture.FutureType type() {
-        return underlying.type();
+        return baseFuture.type();
     }
 
     public FuturePut awaitListeners() throws InterruptedException {
-        return underlying.awaitListeners();
+        return baseFuture.awaitListeners();
     }
 
     public FuturePut awaitListenersUninterruptibly() {
-        return underlying.awaitListenersUninterruptibly();
+        return baseFuture.awaitListenersUninterruptibly();
     }
 
     public FuturePut addListener(BaseFutureListener<? extends BaseFuture> listener) {
-        return underlying.addListener(listener);
+        return baseFuture.addListener(listener);
     }
 
     public FuturePut removeListener(BaseFutureListener<? extends BaseFuture> listener) {
-        return underlying.removeListener(listener);
+        return baseFuture.removeListener(listener);
     }
 
     public FuturePut addCancel(Cancel cancelListener) {
-        return underlying.addCancel(cancelListener);
+        return baseFuture.addCancel(cancelListener);
     }
 
     public FuturePut removeCancel(Cancel cancelListener) {
-        return underlying.removeCancel(cancelListener);
+        return baseFuture.removeCancel(cancelListener);
     }
 
     public void cancel() {
-        underlying.cancel();
+        baseFuture.cancel();
     }
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        underlying.cancel();
-        // TODO: tomp2p futures suck
-        cancelled = true;
-        return true;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public boolean isDone() {
-        return underlying.isCompleted();
-    }
-
-    @Override
-    public PutResponse get() throws InterruptedException {
-        return new Result(underlying.await());
-    }
-
-    @Override
-    public PutResponse get(long timeout, TimeUnit unit) throws InterruptedException,
-            TimeoutException {
-        boolean ok = underlying.await(unit.toMillis(timeout));
-        if (!ok) {
-            throw new TimeoutException();
-        }
-        return new Result(underlying);
-    }
-
-    @Override
-    public void addListener(Runnable listener, Executor executor) {
-        underlying.addListener(new ListenerWrapper(executor, listener));
+    protected PutResponse toValueAfterGet() {
+        return new Result(baseFuture);
     }
 
     static class Result implements PutResponse {

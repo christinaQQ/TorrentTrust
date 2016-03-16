@@ -13,6 +13,7 @@ import net.tomp2p.peers.Number160;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 /**
  * @author davix
@@ -59,6 +60,11 @@ public class CwebDhtNodeFactory implements DhtNodeFactory {
         @Override
         public ListenableFuture<Boolean> put(BigInteger key, T t) {
             return Futures.transform(cwebNode.put(key, t), CwebPutResults::ok);
+        }
+
+        @Override
+        public Future<Void> shutdown() {
+            return cwebNode.shutdown();
         }
     }
 }

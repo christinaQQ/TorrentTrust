@@ -19,19 +19,17 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author davix
  */
-public class FutureGetWrapper implements ListenableFuture<GetResponse> {
-    private final FutureGet underlying;
-    private volatile boolean cancelled;
+public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, FutureGet> {
 
-    public FutureGetWrapper(FutureGet underlying) {
-        this.underlying = underlying;
+    public FutureGetWrapper(FutureGet futureGet) {
+        super(futureGet);
     }
 
     /**
      * @return A reference to the builder that contains the data we were looking for
      */
     public DHTBuilder<?> builder() {
-        return underlying.builder();
+        return baseFuture.builder();
     }
 
     /**
@@ -47,7 +45,7 @@ public class FutureGetWrapper implements ListenableFuture<GetResponse> {
      * @return A future that finishes if all running futures are finished.
      */
     public FutureForkJoin<FutureResponse> futureRequests() {
-        return underlying.futureRequests();
+        return baseFuture.futureRequests();
     }
 
     /**
@@ -57,7 +55,7 @@ public class FutureGetWrapper implements ListenableFuture<GetResponse> {
      * @param futureResponse The futurRepsonse that has been created
      */
     public FutureGet addRequests(FutureResponse futureResponse) {
-        return underlying.addRequests(futureResponse);
+        return baseFuture.addRequests(futureResponse);
     }
 
     /**
@@ -67,7 +65,7 @@ public class FutureGetWrapper implements ListenableFuture<GetResponse> {
      *                       be closed
      */
     public void addFutureDHTReleaseListener(ChannelCreator channelCreator) {
-        underlying.addFutureDHTReleaseListener(channelCreator);
+        baseFuture.addFutureDHTReleaseListener(channelCreator);
     }
 
     /**
@@ -78,7 +76,7 @@ public class FutureGetWrapper implements ListenableFuture<GetResponse> {
      * @return The future object during the previous routing, or null if routing failed completely.
      */
     public FutureRouting futureRouting() {
-        return underlying.futureRouting();
+        return baseFuture.futureRouting();
     }
 
     /**
@@ -89,133 +87,100 @@ public class FutureGetWrapper implements ListenableFuture<GetResponse> {
      * @param futureRouting The future object to set
      */
     public void futureRouting(FutureRouting futureRouting) {
-        underlying.futureRouting(futureRouting);
+        baseFuture.futureRouting(futureRouting);
     }
 
     public FutureDone<Void> futuresCompleted() {
-        return underlying.futuresCompleted();
+        return baseFuture.futuresCompleted();
     }
 
     public FutureGet await() throws InterruptedException {
-        return underlying.await();
+        return baseFuture.await();
     }
 
     public FutureGet awaitUninterruptibly() {
-        return underlying.awaitUninterruptibly();
+        return baseFuture.awaitUninterruptibly();
     }
 
     public boolean await(long timeoutMillis) throws InterruptedException {
-        return underlying.await(timeoutMillis);
+        return baseFuture.await(timeoutMillis);
     }
 
     public boolean awaitUninterruptibly(long timeoutMillis) {
-        return underlying.awaitUninterruptibly(timeoutMillis);
+        return baseFuture.awaitUninterruptibly(timeoutMillis);
     }
 
     public boolean isCompleted() {
-        return underlying.isCompleted();
+        return baseFuture.isCompleted();
     }
 
     public boolean isSuccess() {
-        return underlying.isSuccess();
+        return baseFuture.isSuccess();
     }
 
     public boolean isFailed() {
-        return underlying.isFailed();
+        return baseFuture.isFailed();
     }
 
     public FutureGet failed(BaseFuture origin) {
-        return underlying.failed(origin);
+        return baseFuture.failed(origin);
     }
 
     public FutureGet failed(String failed, BaseFuture origin) {
-        return underlying.failed(failed, origin);
+        return baseFuture.failed(failed, origin);
     }
 
     public FutureGet failed(Throwable t) {
-        return underlying.failed(t);
+        return baseFuture.failed(t);
     }
 
     public FutureGet failed(String failed, Throwable t) {
-        return underlying.failed(failed, t);
+        return baseFuture.failed(failed, t);
     }
 
     public FutureGet failed(String failed) {
-        return underlying.failed(failed);
+        return baseFuture.failed(failed);
     }
 
     public String failedReason() {
-        return underlying.failedReason();
+        return baseFuture.failedReason();
     }
 
     public BaseFuture.FutureType type() {
-        return underlying.type();
+        return baseFuture.type();
     }
 
     public FutureGet awaitListeners() throws InterruptedException {
-        return underlying.awaitListeners();
+        return baseFuture.awaitListeners();
     }
 
     public FutureGet awaitListenersUninterruptibly() {
-        return underlying.awaitListenersUninterruptibly();
+        return baseFuture.awaitListenersUninterruptibly();
     }
 
     public FutureGet addListener(BaseFutureListener<? extends BaseFuture> listener) {
-        return underlying.addListener(listener);
+        return baseFuture.addListener(listener);
     }
 
     public FutureGet removeListener(BaseFutureListener<? extends BaseFuture> listener) {
-        return underlying.removeListener(listener);
+        return baseFuture.removeListener(listener);
     }
 
     public FutureGet addCancel(Cancel cancelListener) {
-        return underlying.addCancel(cancelListener);
+        return baseFuture.addCancel(cancelListener);
     }
 
     public FutureGet removeCancel(Cancel cancelListener) {
-        return underlying.removeCancel(cancelListener);
+        return baseFuture.removeCancel(cancelListener);
     }
 
     public void cancel() {
-        underlying.cancel();
+        baseFuture.cancel();
     }
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        underlying.cancel();
-        // TODO: tomp2p futures suck
-        cancelled = true;
-        return true;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public boolean isDone() {
-        return underlying.isCompleted();
-    }
-
-    @Override
-    public GetResponse get() throws InterruptedException, ExecutionException {
-        return new Result(underlying.await());
-    }
-
-    @Override
-    public GetResponse get(long timeout, TimeUnit unit) throws InterruptedException,
-            TimeoutException {
-        boolean ok = underlying.await(unit.toMillis(timeout));
-        if (!ok) {
-            throw new TimeoutException();
-        }
-        return new Result(underlying);
-    }
-
-    @Override
-    public void addListener(Runnable listener, Executor executor) {
-        underlying.addListener(new ListenerWrapper(executor, listener));
+    protected Result toValueAfterGet() {
+        return new Result(baseFuture);
     }
 
     /**
