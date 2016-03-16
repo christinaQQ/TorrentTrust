@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>cweb</module>
+        <module>cweb-parent</module>
         <module>cwebapp</module>
     </modules>
 
