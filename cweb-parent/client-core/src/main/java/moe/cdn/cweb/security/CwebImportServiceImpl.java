@@ -1,15 +1,10 @@
 package moe.cdn.cweb.security;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.concurrent.ExecutionException;
-
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
@@ -18,16 +13,20 @@ import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.security.utils.SignatureUtils;
 
+import java.util.concurrent.ExecutionException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class CwebImportServiceImpl implements CwebImportService {
 
     private final KeyPair userKeyPair;
-    private final CwebMap<Hash, SignedUserRecord> userMap;
+    private final CwebMap<Hash, SignedUser> userMap;
     private final CwebMap<Hash, SignedVote> voteMap;
 
     @Inject
     public CwebImportServiceImpl(KeyPair userKeyPair,
-            @UserDomain CwebMap<Hash, SignedUserRecord> userMap,
-            @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
+                                 @UserDomain CwebMap<Hash, SignedUser> userMap,
+                                 @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
         this.userKeyPair = checkNotNull(userKeyPair);
         this.userMap = checkNotNull(userMap);
         this.voteMap = checkNotNull(voteMap);
@@ -40,11 +39,11 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Override
     public boolean importSignature(User user, Signature signature) {
-        SignedUserRecord signedUserRecord =
-                SignedUserRecord.newBuilder().setSignature(signature).setUser(user).build();
+        SignedUser signedUser =
+                SignedUser.newBuilder().setSignature(signature).setUser(user).build();
         try {
             return userMap
-                    .put(signedUserRecord.getUser().getPublicKey().getHash(), signedUserRecord)
+                    .put(signedUser.getUser().getPublicKey().getHash(), signedUser)
                     .get();
         } catch (InterruptedException | ExecutionException e) {
             return false;

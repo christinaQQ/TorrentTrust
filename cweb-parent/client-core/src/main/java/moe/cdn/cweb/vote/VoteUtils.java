@@ -13,7 +13,7 @@ public class VoteUtils {
     public static Vote.Builder createVote(String contentHash, Key publicKey) {
         return Vote.newBuilder()
                 .setContentHash(Hash.newBuilder().setAlgorithm(HashAlgorithm.TORRENT)
-                        .setHashvalue(ByteString.copyFromUtf8(contentHash)))
+                        .setHashValue(ByteString.copyFromUtf8(contentHash)))
                 .setOwnerPublicKey(publicKey);
     }
 }

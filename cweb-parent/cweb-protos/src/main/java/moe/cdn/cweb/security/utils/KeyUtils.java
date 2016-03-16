@@ -1,21 +1,15 @@
 package moe.cdn.cweb.security.utils;
 
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
+import com.google.protobuf.ByteString;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+
+import java.security.*;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-
-import com.google.protobuf.ByteString;
-
-import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
 
 /**
  * Utilities for creation and manipulation of keys.
@@ -23,12 +17,15 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
  * @author jim
  */
 public final class KeyUtils {
-    // Please don't instantiate this class
-    private KeyUtils() {}
+    /**
+     * This class should not be instantiated.
+     */
+    private KeyUtils() {
+    }
 
     /**
      * Builds a cweb-proto keypair from public and private Java keys.
-     * 
+     *
      * @param publicKey
      * @param privateKey
      * @return
@@ -44,10 +41,10 @@ public final class KeyUtils {
 
     /**
      * Generates a new cweb-proto keypair.
-     * 
+     *
      * @return
      */
-    public static final KeyPair generateKeypair() {
+    public static final KeyPair generateKeyPair() {
         KeyPairGenerator keyGen;
         try {
             keyGen = KeyPairGenerator.getInstance("RSA");

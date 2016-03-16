@@ -1,8 +1,11 @@
 package moe.cdn.cweb.security;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,22 +14,22 @@ import java.util.Optional;
 
 class FakeKeyLookupServiceImpl implements KeyLookupService {
 
-    private final Map<Hash, SignedUserRecord> keyserver;
+    private final Map<Hash, SignedUser> keyserver;
 
     public FakeKeyLookupServiceImpl() {
         this.keyserver = new HashMap<>();
     }
 
-    public FakeKeyLookupServiceImpl(List<SignedUserRecord> records) {
+    public FakeKeyLookupServiceImpl(List<SignedUser> records) {
         this();
-        for (SignedUserRecord record : records) {
+        for (TorrentTrustProtos.SignedUser record : records) {
             keyserver.put(record.getUser().getPublicKey().getHash(), record);
         }
     }
 
     @Override
-    public Optional<SignedUserRecord> findOwner(Key publicKey) {
-        return Optional.ofNullable(keyserver.get(publicKey.getHash()));
+    public ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey) {
+        return Futures.immediateFuture(Optional.ofNullable(keyserver.get(publicKey.getHash())));
     }
 
     @Override

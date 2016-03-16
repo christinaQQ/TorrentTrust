@@ -38,7 +38,7 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>LATEST</version>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>net.tomp2p</groupId>

@@ -21,7 +21,7 @@ public final class SignatureUtils {
     // Please don't instantiate this class
     private SignatureUtils() {}
 
-    public static final boolean validateMessage(Signature signature, byte[] message) {
+    public static boolean validateMessage(Signature signature, byte[] message) {
         try {
             java.security.Signature verifier = java.security.Signature.getInstance("SHA256withRSA");
 
@@ -37,7 +37,7 @@ public final class SignatureUtils {
         }
     }
 
-    public static final Signature signMessage(KeyPair keypair, byte[] message) {
+    public static Signature signMessage(KeyPair keypair, byte[] message) {
         try {
             java.security.Signature signer = java.security.Signature.getInstance("SHA256withRSA");
             signer.initSign(KeyUtils.importPrivateKey(keypair.getPrivateKey()));
@@ -54,11 +54,11 @@ public final class SignatureUtils {
         }
     }
 
-    public static final Signature signMessage(KeyPair keypair, Message message) {
+    public static Signature signMessage(KeyPair keypair, Message message) {
         return signMessage(keypair, message.toByteArray());
     }
 
-    public static final boolean validateMessage(Signature signature, Message message) {
+    public static boolean validateMessage(Signature signature, Message message) {
         return validateMessage(signature, message.toByteArray());
     }
 }

@@ -1,10 +1,12 @@
 package moe.cdn.cweb.security;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.*;
 
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 public interface KeyLookupService {
     /**
@@ -13,7 +15,7 @@ public interface KeyLookupService {
      * @param publicKey
      * @return a user record or nothing
      */
-    Optional<SignedUserRecord> findOwner(Key publicKey);
+    ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey);
 
     /**
      * Find all keys that hash to the provided hash

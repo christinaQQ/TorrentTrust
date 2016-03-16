@@ -3,7 +3,9 @@ package moe.cdn.cweb.dht;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
+import moe.cdn.cweb.dht.annotations.UserDomain;
 
+import javax.inject.Inject;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,6 +18,7 @@ public class CwebMapImpl<K extends Message, V extends Message> implements CwebMa
     private final Function<K, BigInteger> keyReducer;
     private final BiPredicate<K, V> notCollision; // FIXME: 2/17/2016 collisions?
 
+    @Inject
     public CwebMapImpl(DhtNode<V> collection,
                        Function<K, BigInteger> keyReducer,
                        BiPredicate<K, V> notCollision) {

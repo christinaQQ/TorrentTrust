@@ -7,7 +7,7 @@ import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class FakeSignatureValidationServiceImplTest {
     private static final User ALICE = generateUser(KEY_PAIR_ALICE.getPublicKey(), "Alice");
     private static final User BOB = generateUser(KEY_PAIR_BOB.getPublicKey(), "Bob");
 
-    private static final List<SignedUserRecord> WEB_OF_TRUST;
+    private static final List<SignedUser> WEB_OF_TRUST;
 
     private static final byte[] MESSAGE = "Attack at dawn".getBytes();
 
@@ -70,8 +70,8 @@ public class FakeSignatureValidationServiceImplTest {
         }
     }
 
-    private static SignedUserRecord signUserRecord(KeyPair keypair, User user) {
-        return SignedUserRecord.newBuilder().setUser(user)
+    private static SignedUser signUserRecord(KeyPair keypair, User user) {
+        return SignedUser.newBuilder().setUser(user)
                 .setSignature(sign(user.toByteArray(), keypair)).build();
     }
 
@@ -102,7 +102,7 @@ public class FakeSignatureValidationServiceImplTest {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
-                    .setHashvalue(ByteString.copyFrom(md.digest(bytes))).build();
+                    .setHashValue(ByteString.copyFrom(md.digest(bytes))).build();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
         }
@@ -113,7 +113,7 @@ public class FakeSignatureValidationServiceImplTest {
         // Create a signed message
         Signature legitSignature = sign(MESSAGE, KEY_PAIR_ALICE);
         // Validate it
-        assertTrue(validator.validate(MESSAGE, legitSignature));
+        assertTrue(validator.validateAndCheckSignatureKeyInNetwork(legitSignature, MESSAGE));
     }
 
     @Test
@@ -123,14 +123,14 @@ public class FakeSignatureValidationServiceImplTest {
         Signature notSoLegitSignature =
                 legitSignature.toBuilder().setPublicKey(KEY_PAIR_BOB.getPublicKey()).build();
         // Validate it
-        assertFalse(validator.validate(MESSAGE, notSoLegitSignature));
+        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(notSoLegitSignature, MESSAGE));
         ;
     }
 
     @Test
     public void testCannotValidateMallorySignature() {
         Signature nonExistantUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
-        assertFalse(validator.validate(MESSAGE, nonExistantUserSignature));
+        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(nonExistantUserSignature, MESSAGE));
     }
 
 }

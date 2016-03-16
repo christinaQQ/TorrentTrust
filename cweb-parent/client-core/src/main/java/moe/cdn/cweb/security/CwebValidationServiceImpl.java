@@ -1,39 +1,29 @@
 package moe.cdn.cweb.security;
 
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.inject.Inject;
-
-import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 
-class CwebValidationServiceImpl implements CwebSignatureValidationService {
+import javax.inject.Inject;
 
-    private final SignatureValidationService signatureValidationService;
+class CwebValidationServiceImpl extends SignatureValidationServiceImpl
+        implements CwebSignatureValidationService {
 
     @Inject
-    public CwebValidationServiceImpl(SignatureValidationService signatureValidationService) {
-        this.signatureValidationService = checkNotNull(signatureValidationService);
-    }
-
-    @Override
-    public boolean validate(byte[] data, Signature signature) {
-        return signatureValidationService.validate(data, signature);
+    public CwebValidationServiceImpl(KeyLookupService keyLookupService) {
+        super(keyLookupService);
     }
 
     @Override
     public boolean validateVote(SignedVote signedVote) {
-        return signedVote.getVote().getOwnerPublicKey()
-                .equals(signedVote.getSignature().getPublicKey())
-                && validate(signedVote.getVote().toByteArray(), signedVote.getSignature());
+        // must check that the owner of the vote is owner of the signature
+        return signedVote.getVote().getOwnerPublicKey().equals(signedVote.getSignature().getPublicKey())
+                && validateAndCheckSignatureKeyInNetwork(signedVote.getSignature(), signedVote.getVote());
     }
 
     @Override
-    public boolean validateUser(SignedUserRecord signedUser) {
-        return signedUser.getUser().getPublicKey().equals(signedUser.getSignature().getPublicKey())
-                && validate(signedUser.getUser().toByteArray(), signedUser.getSignature());
+    public boolean validateUser(SignedUser signedUser) {
+        return validateSelfSigned(signedUser.getSignature(), signedUser.getUser(), signedUser.getUser());
     }
 
 }

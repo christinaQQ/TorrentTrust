@@ -1,5 +1,6 @@
 package moe.cdn.cweb.dht.storage;
 
+import com.google.inject.Inject;
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.storage.Data;
@@ -11,7 +12,7 @@ import java.util.NavigableMap;
  *
  * @author davix
  */
-public class IncomingValidatedStorageWrapper extends StorageWrapper {
+class IncomingValidatedStorageWrapper extends StorageWrapper {
     private final IncomingDataValidator incomingDataValidator;
 
     public IncomingValidatedStorageWrapper(Storage storage,
@@ -43,6 +44,7 @@ public class IncomingValidatedStorageWrapper extends StorageWrapper {
         if (incomingDataValidator.validate(key.domainKey(), value)) {
             return super.put(key, value);
         }
+        // TODO: Give a response to indicate validation failed
         return null;
     }
 }

@@ -44,7 +44,7 @@ public class TrustGeneratorTest {
     private static Key generateFakePublicKey(String id) {
         return Key.newBuilder().setType(KeyType.PUBLIC)
                 .setHash(Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
-                        .setHashvalue(ByteString.EMPTY).build())
+                        .setHashValue(ByteString.EMPTY).build())
                 .setRaw(ByteString.copyFromUtf8(id)).build();
     }
 

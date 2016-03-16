@@ -1,6 +1,6 @@
 package moe.cdn.cweb.security;
 
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 
 public interface CwebSignatureValidationService extends SignatureValidationService {
@@ -17,5 +17,5 @@ public interface CwebSignatureValidationService extends SignatureValidationServi
      * @param signedUser
      * @return indicator boolean of whether the user is authentic
      */
-    boolean validateUser(SignedUserRecord signedUser);
+    boolean validateUser(SignedUser signedUser);
 }

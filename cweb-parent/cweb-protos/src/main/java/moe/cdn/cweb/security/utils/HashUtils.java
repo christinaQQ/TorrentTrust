@@ -12,7 +12,7 @@ public final class HashUtils {
     // Please don't instantiate this class
     private HashUtils() {}
 
-    static final byte[] sha1(byte[] bytes) {
+    public static byte[] sha1(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             return md.digest(bytes);
@@ -21,17 +21,17 @@ public final class HashUtils {
         }
     }
 
-    public static final Hash hashOf(byte[] bytes) {
+    public static Hash hashOf(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
-                    .setHashvalue(ByteString.copyFrom(md.digest(bytes))).build();
+                    .setHashValue(ByteString.copyFrom(md.digest(bytes))).build();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
         }
     }
 
-    public static final Hash hashOf(String bytes) {
+    public static Hash hashOf(String bytes) {
         return hashOf(bytes.getBytes());
     }
 }

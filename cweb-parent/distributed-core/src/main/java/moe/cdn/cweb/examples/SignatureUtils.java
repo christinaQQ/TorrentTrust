@@ -7,7 +7,7 @@ import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
 import java.security.KeyPairGenerator;
@@ -23,7 +23,10 @@ import java.security.SecureRandom;
  * @author jim
  */
 final class SignatureUtils {
-    static final byte[] sha1(byte[] bytes) {
+    private SignatureUtils() {
+    }
+
+    static byte[] sha1(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             return md.digest(bytes);
@@ -32,17 +35,17 @@ final class SignatureUtils {
         }
     }
 
-    static final Hash hashOf(byte[] bytes) {
+    static Hash hashOf(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
-                    .setHashvalue(ByteString.copyFrom(md.digest(bytes))).build();
+                    .setHashValue(ByteString.copyFrom(md.digest(bytes))).build();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
         }
     }
 
-    static final KeyPair generateKeypair() {
+    static KeyPair generateKeypair() {
         KeyPairGenerator keyGen;
         try {
             keyGen = KeyPairGenerator.getInstance("RSA");
@@ -61,16 +64,16 @@ final class SignatureUtils {
         }
     }
 
-    static final Signature signMessage(KeyPair keypair, byte[] message) {
+    static Signature signMessage(KeyPair keypair, byte[] message) {
         return Signature.newBuilder().setAlgorithm(SignatureAlgorithm.SHA256withRSA)
                 .setPublicKey(keypair.getPublicKey())
-                .setSignature(ByteString.copyFrom(new byte[] {})).build();
+                .setSignature(ByteString.copyFrom(message)).build();
     }
 
-    static final SignedUserRecord buildSignedUserRecord(KeyPair keypair, String handle) {
+    static TorrentTrustProtos.SignedUser buildSignedUserRecord(KeyPair keypair, String handle) {
         User userRecord =
                 User.newBuilder().setPublicKey(keypair.getPublicKey()).setHandle(handle).build();
-        return SignedUserRecord.newBuilder().setUser(userRecord)
+        return TorrentTrustProtos.SignedUser.newBuilder().setUser(userRecord)
                 .setSignature(signMessage(keypair, userRecord.toByteArray())).build();
     }
 }

@@ -1,7 +1,7 @@
 package moe.cdn.cweb.dht.storage;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
-public class IncomingDataValidator {
+class IncomingDataValidator {
     private static final Logger logger = LogManager.getLogger();
     private final Number160 voteDomainKey;
     private final Number160 userDomainKey;
@@ -31,6 +31,7 @@ public class IncomingDataValidator {
 
 
     public boolean validate(Number160 domainKey, Data data) {
+        logger.trace("domain = {}, data = {}", domainKey, data);
         if (voteDomainKey.equals(domainKey)) {
             return validateVoteRawData(data);
         }
@@ -51,7 +52,7 @@ public class IncomingDataValidator {
 
     private boolean validateUserRawData(Data data) {
         try {
-            SignedUserRecord signedUser = SignedUserRecord.PARSER.parseFrom(data.toBytes());
+            TorrentTrustProtos.SignedUser signedUser = TorrentTrustProtos.SignedUser.PARSER.parseFrom(data.toBytes());
             return cwebSignatureValidationService.validateUser(signedUser);
         } catch (InvalidProtocolBufferException e) {
             return false;

@@ -16,7 +16,7 @@ import java.util.NavigableMap;
  *
  * @author davix
  */
-public class StorageWrapper implements Storage {
+class StorageWrapper implements Storage {
     private final Storage storage;
 
     public StorageWrapper(Storage storage) {

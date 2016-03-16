@@ -22,7 +22,7 @@ message User {
   repeated TrustAssertion trusted = 3;
 }
 
-message SignedUserRecord {  
+message SignedUser {
   User user = 1;
   
   // This signature must be signed with the same key as the public key in the user field

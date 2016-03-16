@@ -2,7 +2,8 @@ package moe.cdn.cweb.examples;
 
 import com.google.common.util.concurrent.Futures;
 import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.dht.*;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
@@ -25,16 +26,16 @@ import java.util.stream.Collectors;
 
 public class WorkingExampleHashMap17 {
     static final Random RND = new Random(17);
-    private static final SignedUserRecord USER17 =
+    private static final TorrentTrustProtos.SignedUser USER17 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "17");
-    private static final SignedUserRecord USER18 =
+    private static final TorrentTrustProtos.SignedUser USER18 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "18");
-    private static final SignedUserRecord USER19 =
+    private static final TorrentTrustProtos.SignedUser USER19 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "19");
 
     private static final Function<Hash, BigInteger> KEY_REDUCER =
-            h -> new BigInteger(SignatureUtils.sha1(h.getHashvalue().toByteArray()));
-    private static final BiPredicate<Hash, SignedUserRecord> KEY_FILTER =
+            h -> new BigInteger(SignatureUtils.sha1(h.getHashValue().toByteArray()));
+    private static final BiPredicate<Hash, TorrentTrustProtos.SignedUser> KEY_FILTER =
             (h, u) -> u.getUser().getPublicKey().getHash().equals(h);
     private static DhtNodeFactory DHT_REQUEST_FACTORY = new CwebDhtNodeFactory();
 
@@ -82,20 +83,20 @@ public class WorkingExampleHashMap17 {
 
             bootstrap(peers);
 
-            DhtNode<SignedUserRecord> sender1 = DHT_REQUEST_FACTORY.create(peers[0],
-                    "domain", SignedUserRecord.PARSER);
-            DhtNode<SignedUserRecord> sender2 = DHT_REQUEST_FACTORY.create(peers[17],
-                    "domain", SignedUserRecord.PARSER);
+            DhtNode<TorrentTrustProtos.SignedUser> sender1 = DHT_REQUEST_FACTORY.create(peers[0],
+                    "domain", SignedUser.PARSER);
+            DhtNode<SignedUser> sender2 = DHT_REQUEST_FACTORY.create(peers[17],
+                    "domain", SignedUser.PARSER);
 
-            DhtNode<SignedUserRecord> receiver = DHT_REQUEST_FACTORY.create(
-                    peers[23], "domain", SignedUserRecord.PARSER);
+            DhtNode<TorrentTrustProtos.SignedUser> receiver = DHT_REQUEST_FACTORY.create(
+                    peers[23], "domain", TorrentTrustProtos.SignedUser.PARSER);
 
-            CwebMap<Hash, SignedUserRecord> map1 =
+            CwebMap<Hash, SignedUser> map1 =
                     new CwebMapImpl<>(sender1, KEY_REDUCER, KEY_FILTER);
-            CwebMap<Hash, SignedUserRecord> map2 =
+            CwebMap<Hash, TorrentTrustProtos.SignedUser> map2 =
                     new CwebMapImpl<>(sender2, KEY_REDUCER, KEY_FILTER);
 
-            CwebMap<Hash, SignedUserRecord> map3 =
+            CwebMap<Hash, SignedUser> map3 =
                     new CwebMapImpl<>(receiver, KEY_REDUCER, KEY_FILTER);
 
             // insert some data and wait
@@ -104,10 +105,10 @@ public class WorkingExampleHashMap17 {
                     map2.put(USER18.getUser().getPublicKey().getHash(), USER18),
                     map3.put(USER19.getUser().getPublicKey().getHash(), USER19));
 
-            Future<SignedUserRecord> one = map3.get(USER18.getUser().getPublicKey().getHash());
+            Future<SignedUser> one = map3.get(USER18.getUser().getPublicKey().getHash());
             System.out.println("getOne() ==> " + one.get());
 
-            Future<Collection<SignedUserRecord>> all = map3.all(
+            Future<Collection<SignedUser>> all = map3.all(
                     USER18.getUser().getPublicKey().getHash());
             System.out.println("getAll() ==> " + all.get());
 
