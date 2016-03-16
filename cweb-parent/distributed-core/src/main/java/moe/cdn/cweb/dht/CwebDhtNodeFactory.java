@@ -11,7 +11,7 @@ import moe.cdn.cweb.dht.internal.CwebPutResults;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 
-import java.math.BigInteger;
+import moe.cdn.cweb.security.utils.CwebId;
 import java.util.Collection;
 import java.util.concurrent.Future;
 
@@ -34,31 +34,31 @@ public class CwebDhtNodeFactory implements DhtNodeFactory {
         }
 
         @Override
-        public ListenableFuture<T> getOne(BigInteger key) {
+        public ListenableFuture<T> getOne(CwebId key) {
             return Futures.transform(cwebNode.get(key),
                     (Function<? super CwebGetResults<T>, ? extends T>) CwebGetResults::one);
         }
 
         @Override
-        public ListenableFuture<T> getOne(BigInteger key, BigInteger subKey) {
+        public ListenableFuture<T> getOne(CwebId key, CwebId subKey) {
             return Futures.transform(cwebNode.get(key, subKey),
                     (Function<? super CwebGetResults<T>, ? extends T>) CwebGetResults::one);
         }
 
         @Override
-        public ListenableFuture<Collection<T>> getAll(BigInteger key) {
+        public ListenableFuture<Collection<T>> getAll(CwebId key) {
             return Futures.transform(cwebNode.all(key),
                     (Function<? super CwebGetResults<T>, ? extends Collection<T>>)
                             CwebGetResults::all);
         }
 
         @Override
-        public ListenableFuture<Boolean> add(BigInteger key, T t) {
+        public ListenableFuture<Boolean> add(CwebId key, T t) {
             return Futures.transform(cwebNode.add(key, t), CwebPutResults::ok);
         }
 
         @Override
-        public ListenableFuture<Boolean> put(BigInteger key, T t) {
+        public ListenableFuture<Boolean> put(CwebId key, T t) {
             return Futures.transform(cwebNode.put(key, t), CwebPutResults::ok);
         }
 

@@ -1,31 +1,33 @@
 package moe.cdn.cweb.dht;
 
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+
 import com.google.common.net.HostAndPort;
 
-import java.math.BigInteger;
-import java.util.Collection;
+import moe.cdn.cweb.security.utils.CwebId;
 
 /**
  * @author davix
  */
 public interface PeerEnvironment {
+
+
     Collection<IdAndAddress> getPeerAddresses();
-    
+
     int getLocalTcpPort();
-    
+
     int getLocalUdpPort();
-    
+
+    CwebId getMyId();
+
     /**
      * @author davix
      */
     class IdAndAddress {
-        final BigInteger id;
+        final CwebId id;
         final HostAndPort hostAndPort;
 
-        public IdAndAddress(BigInteger id, HostAndPort hostAndPort) {
-            Preconditions.checkArgument(id.signum() == 1, "id must be positive");
-            Preconditions.checkArgument(id.bitLength() < 160, "id must be less than 160 bits long");
+        public IdAndAddress(CwebId id, HostAndPort hostAndPort) {
             this.id = id;
             this.hostAndPort = hostAndPort;
         }

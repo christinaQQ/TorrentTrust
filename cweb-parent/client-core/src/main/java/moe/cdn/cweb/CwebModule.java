@@ -1,13 +1,16 @@
 package moe.cdn.cweb;
 
+import moe.cdn.cweb.security.utils.CwebId;
+import java.util.Arrays;
+import java.util.Random;
+
 import com.google.inject.AbstractModule;
+
 import moe.cdn.cweb.dht.DhtModule;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.security.SecurityModule;
 import moe.cdn.cweb.trust.TrustNetworkModule;
 import moe.cdn.cweb.vote.VoteModule;
-
-import java.util.Arrays;
 
 public class CwebModule extends AbstractModule {
 
@@ -23,8 +26,10 @@ public class CwebModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(PeerEnvironment.class)
-                .toInstance(GlobalEnvironment.newBuilderFromArgs(args).setPort(1717).build());
+        // TODO: allow configuring ports
+        // TODO: allow setting the local node id
+        bind(PeerEnvironment.class).toInstance(GlobalEnvironment.newBuilderFromArgs(args)
+                .setPort(1717).setId(new CwebId(new Random())).build());
 
         install(new DhtModule());
         install(new SecurityModule());

@@ -1,12 +1,23 @@
 package moe.cdn.cweb.dht.internal;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
-import moe.cdn.cweb.dht.internal.tomp2pcompat.*;
+
+import moe.cdn.cweb.dht.internal.tomp2pcompat.BaseFutureAsListenableFuture;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.FutureGetWrapper;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.FuturePutWrapper;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.GetResponse;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.PutResponse;
+import moe.cdn.cweb.dht.util.Number160s;
+import moe.cdn.cweb.security.utils.CwebId;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerDHT;
@@ -14,18 +25,14 @@ import net.tomp2p.futures.BaseFuture;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
-import java.math.BigInteger;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
-
 /**
  * Entry point for DHT operations.
  *
  * @author davix
  */
 public class CwebNode<T extends Message> {
-    private static final Executor EXECUTOR = ForkJoinPool.commonPool(); // FIXME tomp2p workaround
+    // FIXME tomp2p workaround
+    private static final Executor EXECUTOR = ForkJoinPool.commonPool();
     private final PeerDHT self;
     private final Number160 domainKey;
     private final Parser<T> messageParser;
@@ -40,44 +47,39 @@ public class CwebNode<T extends Message> {
         this.messageParser = messageParser;
     }
 
-    private static Number160 toNumber160(BigInteger key) {
-        // FIXME: validate size of key?
-        return new Number160(key.toByteArray());
-    }
-
-    public ListenableFuture<CwebGetResults<T>> all(BigInteger key) {
-        FutureGetWrapper f = new FutureGetWrapper(startAllData(toNumber160(key)));
+    public ListenableFuture<CwebGetResults<T>> all(CwebId key) {
+        FutureGetWrapper f = new FutureGetWrapper(startAllData(Number160s.fromCwebId(key)));
         return Futures.transform(f,
-                (Function<GetResponse, CwebGetResultsImpl<T>>)
-                        r -> new CwebGetResultsImpl<T>(messageParser, r), EXECUTOR);
+                (Function<GetResponse, CwebGetResultsImpl<T>>) r -> new CwebGetResultsImpl<T>(
+                        messageParser, r),
+                EXECUTOR);
     }
 
-    public ListenableFuture<CwebGetResults<T>> get(BigInteger key) {
-        FutureGetWrapper f = new FutureGetWrapper(startGetData(toNumber160(key)));
+    public ListenableFuture<CwebGetResults<T>> get(CwebId key) {
+        FutureGetWrapper f = new FutureGetWrapper(startGetData(Number160s.fromCwebId(key)));
         return Futures.transform(f,
-                (Function<GetResponse, CwebGetResultsImpl<T>>)
-                        r -> new CwebGetResultsImpl<T>(messageParser, r), EXECUTOR);
+                (Function<GetResponse, CwebGetResultsImpl<T>>) r -> new CwebGetResultsImpl<T>(
+                        messageParser, r),
+                EXECUTOR);
     }
 
-    public ListenableFuture<CwebGetResults<T>> get(BigInteger key, BigInteger subKey) {
+    public ListenableFuture<CwebGetResults<T>> get(CwebId key, CwebId subKey) {
         FutureGetWrapper f = new FutureGetWrapper(
-                startGetData(toNumber160(key),
-                        toNumber160(subKey)));
+                startGetData(Number160s.fromCwebId(key), Number160s.fromCwebId(subKey)));
         return Futures.transform(f,
-                (Function<GetResponse, CwebGetResultsImpl<T>>)
-                        r -> new CwebGetResultsImpl<T>(messageParser, r), EXECUTOR);
+                (Function<GetResponse, CwebGetResultsImpl<T>>) r -> new CwebGetResultsImpl<T>(
+                        messageParser, r),
+                EXECUTOR);
     }
 
-    public ListenableFuture<CwebPutResults> add(BigInteger key, T t) {
-        FuturePutWrapper f = new FuturePutWrapper(
-                startAddData(toNumber160(key), t));
+    public ListenableFuture<CwebPutResults> add(CwebId key, T t) {
+        FuturePutWrapper f = new FuturePutWrapper(startAddData(Number160s.fromCwebId(key), t));
         return Futures.transform(f,
                 (Function<PutResponse, CwebPutResultsImpl>) CwebPutResultsImpl::new, EXECUTOR);
     }
 
-    public ListenableFuture<CwebPutResults> put(BigInteger key, T t) {
-        FuturePutWrapper f = new FuturePutWrapper(
-                startPutData(toNumber160(key), t));
+    public ListenableFuture<CwebPutResults> put(CwebId key, T t) {
+        FuturePutWrapper f = new FuturePutWrapper(startPutData(Number160s.fromCwebId(key), t));
         return Futures.transform(f,
                 (Function<PutResponse, CwebPutResultsImpl>) CwebPutResultsImpl::new, EXECUTOR);
     }

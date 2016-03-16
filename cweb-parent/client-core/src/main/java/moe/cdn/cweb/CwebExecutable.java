@@ -26,22 +26,22 @@ public class CwebExecutable {
      */
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Injector injector = Guice.createInjector(new CwebModule(args));
+
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
-        DhtNode<TorrentTrustProtos.SignedVote> signedVoteDhtNode = injector.getInstance(
-                new Key<DhtNode<TorrentTrustProtos.SignedVote>>() {
-                });
+
+        DhtNode<TorrentTrustProtos.SignedVote> signedVoteDhtNode =
+                injector.getInstance(new Key<DhtNode<TorrentTrustProtos.SignedVote>>() {});
         CwebImportService cwebImportService = injector.getInstance(CwebImportService.class);
 
-        TorrentTrustProtos.User user = TorrentTrustProtos.User.newBuilder()
-                .setHandle("name")
+        TorrentTrustProtos.User user = TorrentTrustProtos.User.newBuilder().setHandle("name")
                 .setPublicKey(injector.getInstance(SecurityProtos.KeyPair.class).getPublicKey())
                 .build();
         boolean b = cwebImportService.importUser(user);
         System.out.println("imported user <user>: " + b);
 
         KeyLookupService keyLookupService = injector.getInstance(KeyLookupService.class);
-        ListenableFuture<Optional<SignedUser>> owner = keyLookupService.findOwner(user
-                .getPublicKey());
+        ListenableFuture<Optional<SignedUser>> owner =
+                keyLookupService.findOwner(user.getPublicKey());
         System.out.println("owner of <user>'s public key: " + owner.get());
 
         signedVoteDhtNode.shutdown().get();

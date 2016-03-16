@@ -15,14 +15,14 @@ import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
 
 import javax.inject.Singleton;
-import java.math.BigInteger;
+import moe.cdn.cweb.security.utils.CwebId;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public class SecurityModule extends AbstractModule {
 
-    private static final Function<Hash, BigInteger> BIG_INTEGER_REDUCER =
-            hash -> new BigInteger(HashUtils.sha1(hash.toByteArray()));
+    private static final Function<Hash, CwebId> BIG_INTEGER_REDUCER =
+            hash -> new CwebId(HashUtils.sha1(hash.toByteArray()));
 
     private static final BiPredicate<Hash, SignedUser> HASH_SIGNED_USER_BI_PREDICATE =
             (hash, signedUser) -> signedUser.getUser().getPublicKey().getHash().equals(hash);
