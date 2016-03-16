@@ -11,7 +11,11 @@ import java.util.Collection;
  */
 public interface PeerEnvironment {
     Collection<IdAndAddress> getPeerAddresses();
-
+    
+    int getLocalTcpPort();
+    
+    int getLocalUdpPort();
+    
     /**
      * @author davix
      */

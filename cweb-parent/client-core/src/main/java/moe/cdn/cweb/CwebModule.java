@@ -23,7 +23,8 @@ public class CwebModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(PeerEnvironment.class).toInstance(new GlobalEnvironment(args));
+        bind(PeerEnvironment.class)
+                .toInstance(GlobalEnvironment.newBuilderFromArgs(args).setPort(1717).build());
 
         install(new DhtModule());
         install(new SecurityModule());

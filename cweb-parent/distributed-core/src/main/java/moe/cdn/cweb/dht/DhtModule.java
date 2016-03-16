@@ -28,25 +28,31 @@ public class DhtModule extends AbstractModule {
     private static final Logger logger = LogManager.getLogger();
 
     @Provides
-    static DhtNode<SignedUser> provideSignedUserDhtNode(
-            DhtNodeFactory factory, PeerDHT self, @UserDomain String domainKey) {
+    static DhtNode<SignedUser> provideSignedUserDhtNode(DhtNodeFactory factory,
+            PeerDHT self,
+            @UserDomain String domainKey) {
         return factory.create(self, domainKey, SignedUser.PARSER);
     }
 
     @Provides
-    static DhtNode<SignedVote> provideSignedVoteDhtNode(
-            DhtNodeFactory factory, PeerDHT self, @VoteDomain String domainKey) {
+    static DhtNode<SignedVote> provideSignedVoteDhtNode(DhtNodeFactory factory,
+            PeerDHT self,
+            @VoteDomain String domainKey) {
         return factory.create(self, domainKey, SignedVote.PARSER);
     }
 
     @Provides
     @Singleton
-    static PeerDHT providePeerDHT(@MyPeerId Number160 id, Storage storage,
-                                  PeerEnvironment peerEnvironment) throws IOException {
-        PeerDHT peerDHT = new PeerBuilderDHT(new PeerBuilder(id).start()).storage(storage).start();
+    static PeerDHT providePeerDHT(@MyPeerId Number160 id,
+            Storage storage,
+            PeerEnvironment peerEnvironment) throws IOException {
+        PeerDHT peerDHT =
+                new PeerBuilderDHT(new PeerBuilder(id).tcpPort(peerEnvironment.getLocalTcpPort())
+                        .udpPort(peerEnvironment.getLocalUdpPort()).start()).storage(storage)
+                                .start();
 
-        List<PeerAddress> peerAddresses = peerEnvironment.getPeerAddresses().stream()
-                .map(idAndAddress -> {
+        List<PeerAddress> peerAddresses =
+                peerEnvironment.getPeerAddresses().stream().map(idAndAddress -> {
                     if (idAndAddress.id.bitLength() > Number160.BITS) {
                         throw new IllegalArgumentException(
                                 "ID should be at most 160 bits: " + idAndAddress.id);
