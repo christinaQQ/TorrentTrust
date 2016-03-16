@@ -8,8 +8,6 @@ public class CwebExecutable {
     public static void main(String[] args) {
         Injector injector = Guice.createInjector(new CwebModule());
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
-
-
     }
 
 }

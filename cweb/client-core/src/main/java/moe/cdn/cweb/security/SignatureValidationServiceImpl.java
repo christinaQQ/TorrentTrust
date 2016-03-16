@@ -1,8 +1,7 @@
 package moe.cdn.cweb.security;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Optional;
 
 import com.google.inject.Inject;
@@ -10,7 +9,7 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.security.utils.SignatureUtils;
 
 class SignatureValidationServiceImpl implements SignatureValidationService {
 
@@ -18,7 +17,7 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
 
     @Inject
     public SignatureValidationServiceImpl(KeyLookupService keyLookupService) {
-        this.keyLookupService = keyLookupService;
+        this.keyLookupService = checkNotNull(keyLookupService);
     }
 
     public boolean validate(byte[] data, Signature signature, User user) {
@@ -28,20 +27,7 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
                     return false;
                 }
                 // Validate the signature
-                try {
-                    java.security.Signature verifier =
-                            java.security.Signature.getInstance("SHA256withRSA");
-                   
-                    verifier.initVerify(KeyUtils.importPublicKey(signature.getPublicKey()));
-                    verifier.update(data);
-                    return verifier.verify(signature.getSignature().toByteArray());
-                } catch (NoSuchAlgorithmException e) {
-                    throw new UnsupportedAlgorithmException();
-                } catch (InvalidKeyException e) {
-                    throw new RuntimeException("Key decoding failed.", e);
-                } catch (SignatureException e) {
-                    throw new RuntimeException("Lol What's a SignatureException", e);
-                }
+                return SignatureUtils.validateMessage(signature, data);
             case UNRECOGNIZED:
             default:
                 throw new UnsupportedAlgorithmException();

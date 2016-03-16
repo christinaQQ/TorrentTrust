@@ -1,5 +1,6 @@
 package moe.cdn.cweb.security;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
@@ -19,7 +20,7 @@ class KeyLookupServiceImpl implements KeyLookupService {
 
     @Inject
     public KeyLookupServiceImpl(@UserDomain CwebMap<Hash, SignedUserRecord> keyServiceDht) {
-        this.keyServiceDht = keyServiceDht;
+        this.keyServiceDht = checkNotNull(keyServiceDht);
     }
 
     @Override

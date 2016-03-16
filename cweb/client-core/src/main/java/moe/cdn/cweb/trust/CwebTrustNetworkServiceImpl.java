@@ -1,5 +1,6 @@
 package moe.cdn.cweb.trust;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.inject.Inject;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUserRecord;
 import moe.cdn.cweb.TorrentTrustProtos.User;
@@ -18,9 +19,9 @@ class CwebTrustNetworkServiceImpl implements CwebTrustNetworkService {
 
     @Inject
     public CwebTrustNetworkServiceImpl(KeyLookupService keyLookupService,
-                                       CwebSignatureValidationService signatureValidationService) {
-        this.keyLookupService = keyLookupService;
-        this.signatureValidationService = signatureValidationService;
+            CwebSignatureValidationService signatureValidationService) {
+        this.keyLookupService = checkNotNull(keyLookupService);
+        this.signatureValidationService = checkNotNull(signatureValidationService);
     }
 
     @Override

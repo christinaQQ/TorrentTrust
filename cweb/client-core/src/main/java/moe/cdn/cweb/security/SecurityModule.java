@@ -12,6 +12,7 @@ public class SecurityModule extends AbstractModule {
                 .in(Singleton.class);
         bind(CwebSignatureValidationService.class).to(CwebValidationServiceImpl.class)
                 .in(Singleton.class);
+        bind(CwebImportService.class).to(CwebImportServiceImpl.class).in(Singleton.class);;
     }
 
 }

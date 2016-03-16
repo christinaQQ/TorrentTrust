@@ -30,4 +30,8 @@ public final class HashUtils {
             throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
         }
     }
+
+    public static final Hash hashOf(String bytes) {
+        return hashOf(bytes.getBytes());
+    }
 }

@@ -8,6 +8,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -71,8 +72,8 @@ public final class KeyUtils {
     }
 
     public static final PrivateKey importPrivateKey(Key privateKey) {
-        X509EncodedKeySpec privateKeySpec =
-                new X509EncodedKeySpec(privateKey.getRaw().toByteArray());
+        PKCS8EncodedKeySpec privateKeySpec =
+                new PKCS8EncodedKeySpec(privateKey.getRaw().toByteArray());
         try {
             KeyFactory kf = KeyFactory.getInstance("RSA");
             return kf.generatePrivate(privateKeySpec);

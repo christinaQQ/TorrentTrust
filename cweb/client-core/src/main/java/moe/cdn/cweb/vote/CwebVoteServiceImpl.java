@@ -1,15 +1,19 @@
 package moe.cdn.cweb.vote;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.security.CwebSignatureValidationService;
-
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 class CwebVoteServiceImpl implements CwebVoteService {
 
@@ -18,17 +22,17 @@ class CwebVoteServiceImpl implements CwebVoteService {
 
     @Inject
     public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-                               @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
-        this.signatureValidationService = signatureValidationService;
-        this.voteMap = voteMap;
+            @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
+        this.signatureValidationService = checkNotNull(signatureValidationService);
+        this.voteMap = checkNotNull(voteMap);
     }
 
     @Override
-    public Collection<SignedVote> getAllVotes(Hash objectHash) {
+    public List<Vote> getAllVotes(Hash objectHash) {
         try {
             return voteMap.all(objectHash).get().stream()
                     .filter(signatureValidationService::validateVote)
-                    .collect(Collectors.toList());
+                    .map(validatedVote -> validatedVote.getVote()).collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }

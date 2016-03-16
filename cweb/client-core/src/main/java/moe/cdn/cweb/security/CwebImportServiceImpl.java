@@ -1,5 +1,7 @@
 package moe.cdn.cweb.security;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.concurrent.ExecutionException;
 
 import com.google.inject.Inject;
@@ -26,9 +28,9 @@ public class CwebImportServiceImpl implements CwebImportService {
     public CwebImportServiceImpl(KeyPair userKeyPair,
             @UserDomain CwebMap<Hash, SignedUserRecord> userMap,
             @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
-        this.userKeyPair = userKeyPair;
-        this.userMap = userMap;
-        this.voteMap = voteMap;
+        this.userKeyPair = checkNotNull(userKeyPair);
+        this.userMap = checkNotNull(userMap);
+        this.voteMap = checkNotNull(voteMap);
     }
 
     @Override
@@ -41,7 +43,8 @@ public class CwebImportServiceImpl implements CwebImportService {
         SignedUserRecord signedUserRecord =
                 SignedUserRecord.newBuilder().setSignature(signature).setUser(user).build();
         try {
-            return userMap.put(signedUserRecord.getUser().getPublicKey().getHash(), signedUserRecord)
+            return userMap
+                    .put(signedUserRecord.getUser().getPublicKey().getHash(), signedUserRecord)
                     .get();
         } catch (InterruptedException | ExecutionException e) {
             return false;
@@ -50,7 +53,8 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Override
     public boolean importSignature(Vote vote, Signature signature) {
-        SignedVote signedVote = SignedVote.newBuilder().setSignature(signature).setVote(vote).build();
+        SignedVote signedVote =
+                SignedVote.newBuilder().setSignature(signature).setVote(vote).build();
         try {
             return voteMap.put(signedVote.getVote().getContentHash(), signedVote).get();
         } catch (InterruptedException | ExecutionException e) {
