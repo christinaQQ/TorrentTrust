@@ -17,6 +17,7 @@ def _generate_local_neighborhood(u, cutoff = 2):
         q.append((f, dist + 1))
         qset.add(f)
   _local_neighborhood[u.name] = seen
+
   
 def calculateTrustMetric(u, v, cutoff = 2):
   if cutoff < 0:
@@ -102,9 +103,8 @@ if __name__ == "__main__":
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
     
     if social_network_file:
-      oneBigCluster = sim.generateFromFile(social_network_file)
-
-
+      oneBigCluster = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'BAD': .2}, 
+        malConnectivity = .1)
 
     elif malclique == "true":
       badCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")
