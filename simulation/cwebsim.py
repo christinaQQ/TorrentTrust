@@ -1,5 +1,6 @@
 import simulation as sim
 import math
+import argparse
 
 # Trust metric stuff
 _local_neighborhood = {}
@@ -71,36 +72,40 @@ def getAllScores(users, targets, trustCutoff = 2):
 
 if __name__ == "__main__":
   import sys
-  
-  if len(sys.argv) <= 1:
-    print """
-cwebsim [bfsdepth] [malicious clique] [interconnects] [social_network_file]
 
-Parameters listed in order:
+  parser = argparse.ArgumentParser(description='Simulate Cweb with many parameters')
+  parser.add_argument('-b', '--bfsdepth', type=int, help='''-1 (always output 1),
+                                                      0 (always output 0 if not self),
+                                                      1 ~ any (bfs depth k)''')
+  parser.add_argument('-m', '--malclique', type=bool, help = '''malicious clique:
+                                                        "true" has malicious users,
+                                                        "false" doesnt have any
+                                                      ''')
+  parser.add_argument('-i', '--interconnect', type=int, help = '''
+                                                  0 - no connections,
+                                                  non-0-# # of connections to connect between spammers and legit users
+                                                        ''')
+  parser.add_argument('-sf', '--social_network_file', type=str, help = '''
+                                                social_network_file:
+                                                  0 - don't read from file
+                                                  name of a file from which graph is created
+                                                ''')
 
-	bfsdepth : 
-		-1 (always output 1), 
-		0 (always output 0 if not self), 
-		1 ~ any (bfs depth k)
-	malicious clique: 
-		"true" has malicious users, 
-		"false" doesnt have any
-	interclique connections: 
-		0 - no connections, 
-		non-0-# # of connections to connect between spammers and legit users
-  social_network_file:
-    0 - don't read from file
-    name of a file from which graph is created
-"""
-    exit(1)
-  params = sys.argv[1:]
-  bfsdepth, malclique, interconnect, social_network_file = tuple(params)
-  with open('graphdump-' + "_".join(params).replace('/', '-') +'.json', 'w') as f:
+  args = parser.parse_args()
+  bfsdepth = args.bfsdepth
+  interconnect = args.bfsdepth
+  malclique = args.malclique
+  social_network_file = args.social_network_file
+
+  with open('graphdump-' + "_".join(map(str, vars(args).values())).replace('/', '-') +'.json', 'w') as f:
     allItems = sim.generateContent(4000, {'GOOD': 80, 'EVIL': 20})
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
     
     if social_network_file:
-      oneBigCluster = sim.generateFromFile(social_network_file, 50)
+      oneBigCluster = sim.generateFromFile(social_network_file)
+
+
+
     elif malclique == "true":
       badCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")
       sys.stderr.write("Created {} spammers...\n".format(len(badCluster)))

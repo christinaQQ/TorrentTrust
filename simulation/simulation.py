@@ -131,11 +131,17 @@ def generateClique(cliqueSize, designation = 'GOOD', namePrefix = 'Group1'):
         user.addTrusted(friend)
   return users
 
-def generateFromFile(fileName, clusterSize, designation = 'GOOD', namePrefix = 'Group1'):
-  users = []
-  for name in nameGenerator(namePrefix, clusterSize):
-    users.append(User(name, designation))
+def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1'):
   with open(fileName, 'r') as f:
+    f.readline()
+    # first get the number of people in the cluster
+    clusterSize = 0
+    while (f.readline().strip() != "</PEOPLE>"):
+      clusterSize +=1
+    users = []
+    for name in nameGenerator(namePrefix, clusterSize):
+      users.append(User(name, designation))
+    #now read in friend connections
     while (f.readline().strip() != "<FRIENDS>"):
       continue
     for line in f:
