@@ -1,5 +1,6 @@
 package moe.cdn.cweb;
 
+import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
@@ -8,6 +9,7 @@ import moe.cdn.cweb.trust.CwebTrustNetworkService;
 import moe.cdn.cweb.vote.CwebVoteService;
 
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 class CwebApiImpl implements CwebApi {
@@ -34,6 +36,11 @@ class CwebApiImpl implements CwebApi {
     @Override
     public List<Vote> getVotes(Hash objectHash) {
         return voteService.getAllVotes(objectHash).stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public Future<Void> shutdown() {
+        return voteService.shutdown();
     }
 
 }

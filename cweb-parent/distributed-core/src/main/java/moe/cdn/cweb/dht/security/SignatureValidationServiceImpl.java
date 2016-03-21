@@ -1,10 +1,13 @@
-package moe.cdn.cweb.security;
+package moe.cdn.cweb.dht.security;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.dht.security.KeyLookupService;
+import moe.cdn.cweb.dht.security.SignatureValidationService;
+import moe.cdn.cweb.security.UnsupportedAlgorithmException;
 import moe.cdn.cweb.security.utils.SignatureUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

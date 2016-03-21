@@ -3,7 +3,7 @@ package moe.cdn.cweb.dht;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 import java.util.Collection;
 import java.util.concurrent.Future;
 

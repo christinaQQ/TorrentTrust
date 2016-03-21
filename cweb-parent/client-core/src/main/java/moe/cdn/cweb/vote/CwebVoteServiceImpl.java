@@ -6,10 +6,11 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
-import moe.cdn.cweb.security.CwebSignatureValidationService;
+import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -17,11 +18,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 class CwebVoteServiceImpl implements CwebVoteService {
 
     private final CwebSignatureValidationService signatureValidationService;
-    private final CwebMap<Hash, SignedVote> voteMap;
+    private final CwebMap<SignedVote> voteMap;
 
     @Inject
     public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-                               @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
+                               @VoteDomain CwebMap<SignedVote> voteMap) {
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.voteMap = checkNotNull(voteMap);
     }
@@ -31,7 +32,8 @@ class CwebVoteServiceImpl implements CwebVoteService {
         try {
             return voteMap.all(objectHash).get().stream()
                     .filter(signatureValidationService::validateVote)
-                    .map(validatedVote -> validatedVote.getVote()).collect(Collectors.toList());
+                    .map(SignedVote::getVote)
+                    .collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -47,5 +49,10 @@ class CwebVoteServiceImpl implements CwebVoteService {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Future<Void> shutdown() {
+        return voteMap.shutdown();
     }
 }

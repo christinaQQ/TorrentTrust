@@ -1,12 +1,11 @@
 package moe.cdn.cweb;
 
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 import java.util.Arrays;
 import java.util.Random;
 
 import com.google.inject.AbstractModule;
 
-import moe.cdn.cweb.dht.DhtModule;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.security.SecurityModule;
 import moe.cdn.cweb.trust.TrustNetworkModule;
@@ -31,7 +30,6 @@ public class CwebModule extends AbstractModule {
         bind(PeerEnvironment.class).toInstance(GlobalEnvironment.newBuilderFromArgs(args)
                 .setPort(1717).setId(new CwebId(new Random())).build());
 
-        install(new DhtModule());
         install(new SecurityModule());
         install(new VoteModule());
         install(new TrustNetworkModule());

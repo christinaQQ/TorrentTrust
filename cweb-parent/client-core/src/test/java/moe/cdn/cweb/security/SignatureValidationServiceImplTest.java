@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import moe.cdn.cweb.dht.security.KeyLookupService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

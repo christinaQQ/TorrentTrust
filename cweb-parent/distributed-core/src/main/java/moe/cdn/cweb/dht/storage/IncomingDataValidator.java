@@ -5,7 +5,7 @@ import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
-import moe.cdn.cweb.security.CwebSignatureValidationService;
+import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 import org.apache.logging.log4j.LogManager;

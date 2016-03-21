@@ -5,6 +5,7 @@ import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 
 /**
@@ -37,4 +38,6 @@ public interface CwebApi {
      * @return
      */
     List<Vote> getVotes(Hash objectHash);
+
+    Future<Void> shutdown();
 }

@@ -10,10 +10,9 @@ import java.util.*;
  * @author eyeung
  */
 
-public class TrustGeneratorImpl implements TrustGenerator {
+class TrustGeneratorImpl implements TrustGenerator {
 
     private final CwebApi api;
-
 
     @Inject
     public TrustGeneratorImpl(CwebApi api) {

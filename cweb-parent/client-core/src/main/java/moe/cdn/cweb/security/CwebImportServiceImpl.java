@@ -1,7 +1,6 @@
 package moe.cdn.cweb.security;
 
 import com.google.inject.Inject;
-import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
@@ -20,13 +19,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CwebImportServiceImpl implements CwebImportService {
 
     private final KeyPair userKeyPair;
-    private final CwebMap<Hash, SignedUser> userMap;
-    private final CwebMap<Hash, SignedVote> voteMap;
+    private final CwebMap<SignedUser> userMap;
+    private final CwebMap<SignedVote> voteMap;
 
     @Inject
     public CwebImportServiceImpl(KeyPair userKeyPair,
-                                 @UserDomain CwebMap<Hash, SignedUser> userMap,
-                                 @VoteDomain CwebMap<Hash, SignedVote> voteMap) {
+                                 @UserDomain CwebMap<SignedUser> userMap,
+                                 @VoteDomain CwebMap<SignedVote> voteMap) {
         this.userKeyPair = checkNotNull(userKeyPair);
         this.userMap = checkNotNull(userMap);
         this.voteMap = checkNotNull(voteMap);

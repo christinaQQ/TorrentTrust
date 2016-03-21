@@ -37,9 +37,9 @@ public class CwebImportServiceImplTest {
     private static final Signature VOTE_1_SIGNATURE = SignatureUtils.signMessage(KEY_PAIR, VOTE_1);
 
     @Mock
-    private CwebMap<Hash, TorrentTrustProtos.SignedUser> userMap;
+    private CwebMap<SignedUser> userMap;
     @Mock
-    private CwebMap<Hash, SignedVote> voteMap;
+    private CwebMap<SignedVote> voteMap;
 
     private CwebImportServiceImpl cwebImportServiceImpl;
 
