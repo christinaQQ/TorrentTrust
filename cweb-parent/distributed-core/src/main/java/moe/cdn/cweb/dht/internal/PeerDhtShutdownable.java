@@ -18,6 +18,7 @@ public class PeerDhtShutdownable implements Shutdownable {
         return peerDht;
     }
 
+    @Override
     public Future<Void> shutdown() {
         return new BaseFutureAsListenableFuture<Void, BaseFuture>(peerDht.shutdown()) {
             @Override
