@@ -1,19 +1,20 @@
 package moe.cdn.cweb.dht;
 
+import java.util.Collection;
+import java.util.concurrent.Future;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
+
 import moe.cdn.cweb.dht.internal.CwebGetResults;
 import moe.cdn.cweb.dht.internal.CwebNode;
 import moe.cdn.cweb.dht.internal.CwebPutResults;
-import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.peers.Number160;
-
+import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
 import moe.cdn.cweb.security.CwebId;
-import java.util.Collection;
-import java.util.concurrent.Future;
+import net.tomp2p.peers.Number160;
 
 /**
  * @author davix
@@ -21,8 +22,9 @@ import java.util.concurrent.Future;
 class CwebDhtNodeFactory implements DhtNodeFactory {
 
     @Override
-    public <T extends Message> DhtNode<T> create(PeerDHT self, String domainKey,
-                                                 Parser<T> messageParser) {
+    public <T extends Message> DhtNode<T> create(PeerDhtShutdownable self,
+            String domainKey,
+            Parser<T> messageParser) {
         return new AsCwebDhtNode<>(
                 new CwebNode<>(self, Number160.createHash(domainKey), messageParser));
     }
@@ -49,8 +51,7 @@ class CwebDhtNodeFactory implements DhtNodeFactory {
         @Override
         public ListenableFuture<Collection<T>> getAll(CwebId key) {
             return Futures.transform(cwebNode.all(key),
-                    (Function<? super CwebGetResults<T>, ? extends Collection<T>>)
-                            CwebGetResults::all);
+                    (Function<? super CwebGetResults<T>, ? extends Collection<T>>) CwebGetResults::all);
         }
 
         @Override

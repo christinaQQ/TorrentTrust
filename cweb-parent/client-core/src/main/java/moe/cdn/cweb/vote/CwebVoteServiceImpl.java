@@ -1,29 +1,33 @@
 package moe.cdn.cweb.vote;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import moe.cdn.cweb.security.CwebImportService;
 
 class CwebVoteServiceImpl implements CwebVoteService {
 
     private final CwebSignatureValidationService signatureValidationService;
+    private final CwebImportService importService;
     private final CwebMap<SignedVote> voteMap;
 
     @Inject
     public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-                               @VoteDomain CwebMap<SignedVote> voteMap) {
+            CwebImportService importService,
+            @VoteDomain CwebMap<SignedVote> voteMap) {
         this.signatureValidationService = checkNotNull(signatureValidationService);
+        this.importService = checkNotNull(importService);
         this.voteMap = checkNotNull(voteMap);
     }
 
@@ -31,8 +35,7 @@ class CwebVoteServiceImpl implements CwebVoteService {
     public List<Vote> getAllVotes(Hash objectHash) {
         try {
             return voteMap.all(objectHash).get().stream()
-                    .filter(signatureValidationService::validateVote)
-                    .map(SignedVote::getVote)
+                    .filter(signatureValidationService::validateVote).map(SignedVote::getVote)
                     .collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
@@ -40,19 +43,8 @@ class CwebVoteServiceImpl implements CwebVoteService {
     }
 
     @Override
-    public boolean castVote(SignedVote vote) {
-        if (!signatureValidationService.validateVote(vote)) {
-            return false;
-        }
-        try {
-            return voteMap.put(vote.getVote().getContentHash(), vote).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+    public boolean castVote(Vote vote) {
+        return importService.importVote(vote);
     }
 
-    @Override
-    public Future<Void> shutdown() {
-        return voteMap.shutdown();
-    }
 }

@@ -9,8 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 public final class HashUtils {
     // Please don't instantiate this class
-    private HashUtils() {
-    }
+    private HashUtils() {}
 
     public static byte[] sha1(byte[] bytes) {
         try {

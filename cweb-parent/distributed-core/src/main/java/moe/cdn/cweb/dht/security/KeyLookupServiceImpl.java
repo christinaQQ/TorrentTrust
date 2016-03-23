@@ -1,24 +1,23 @@
 package moe.cdn.cweb.dht.security;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import javax.inject.Provider;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.annotations.KeyLookup;
-
-import javax.inject.Provider;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 class KeyLookupServiceImpl implements KeyLookupService {
 
@@ -67,11 +66,6 @@ class KeyLookupServiceImpl implements KeyLookupService {
         } catch (ExecutionException e) {
             throw new KeyLookupServiceException(e);
         }
-    }
-
-    @Override
-    public Future<Void> shutdown() {
-        return keyServiceCwebMapProvider.get().shutdown();
     }
 
 }

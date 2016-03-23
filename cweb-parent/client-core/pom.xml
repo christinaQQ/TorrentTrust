@@ -44,6 +44,11 @@
             <version>LATEST</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+        	<groupId>org.ini4j</groupId>
+        	<artifactId>ini4j</artifactId>
+        	<version>LATEST</version>
+        </dependency>
     </dependencies>
 
 </project>

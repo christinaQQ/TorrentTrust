@@ -2,33 +2,43 @@ package moe.cdn.cweb;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import moe.cdn.cweb.security.CwebId;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+
 import com.google.common.net.HostAndPort;
 
+import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.security.CwebId;
+import moe.cdn.cweb.security.KeyEnviroment;
 
 /**
  * @author davix
  */
-public class GlobalEnvironment implements PeerEnvironment {
+public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
     private static final int DEFAULT_PORT = 1717;
 
     private final Collection<IdAndAddress> idAndAddresses;
     private final int tcpPort;
     private final int udpPort;
     private final CwebId myId;
+    private final KeyPair keyPair;
 
     private GlobalEnvironment(Collection<IdAndAddress> idAndAddresses,
             int tcpPort,
             int udpPort,
-            CwebId myId) {
+            CwebId myId,
+            KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.myId = checkNotNull(myId);
+        this.keyPair = checkNotNull(keyPair);
     }
 
     @Override
@@ -51,10 +61,21 @@ public class GlobalEnvironment implements PeerEnvironment {
         return myId;
     }
 
+    @Override
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
+    /**
+     * Builder for {@link GlobalEnviroment}
+     * 
+     * @author jim
+     */
     public static class Builder {
         private int tcpPort;
         private int udpPort;
         private CwebId myId;
+        private KeyPair keyPair;
         private final ArrayList<IdAndAddress> idAndAddresses;
 
         public Builder() {
@@ -92,8 +113,13 @@ public class GlobalEnvironment implements PeerEnvironment {
             return this;
         }
 
-        public PeerEnvironment build() {
-            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId);
+        public Builder setKeyPair(KeyPair keyPair) {
+            this.keyPair = checkNotNull(keyPair);
+            return this;
+        }
+
+        public GlobalEnvironment build() {
+            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyPair);
         }
     }
 
@@ -119,5 +145,18 @@ public class GlobalEnvironment implements PeerEnvironment {
                     "Expected an even number of arguments consisting of pairs of ID and host/port");
         }
         return builder;
+    }
+
+    public static Builder newBuilderFromConfigFile(File configFile) {
+        try {
+            Ini config = new Ini(configFile);
+            // TODO actually read the config
+            Builder builder = newBuilder();
+            return builder;
+        } catch (InvalidFileFormatException e) {
+            throw new IllegalArgumentException("Provided file failed to parse", e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

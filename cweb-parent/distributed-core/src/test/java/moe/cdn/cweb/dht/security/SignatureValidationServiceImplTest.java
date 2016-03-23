@@ -1,8 +1,7 @@
-package moe.cdn.cweb.security;
+package moe.cdn.cweb.dht.security;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -17,6 +16,7 @@ import com.google.common.util.concurrent.Futures;
 
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
@@ -27,6 +27,8 @@ public class SignatureValidationServiceImplTest {
     private static final KeyPair KEY_PAIR_ALT = KeyUtils.generateKeyPair();
     private static final User USER =
             User.newBuilder().setPublicKey(KEY_PAIR.getPublicKey()).setHandle("User A").build();
+    private static final SignedUser SIGNED_USER = SignedUser.newBuilder().setUser(USER)
+            .setSignature(SignatureUtils.signMessage(KEY_PAIR, USER)).build();
     private static final Hash SAMPLE_MESSAGE = HashUtils.hashOf("Hello World");
 
     @Mock
@@ -67,12 +69,18 @@ public class SignatureValidationServiceImplTest {
     @Test
     public void testValidateAndCheckSignatureKeyInNetworkSignatureByteArray() {
         when(keyLookupService.findOwner(KEY_PAIR.getPublicKey()))
-                .thenReturn(Futures.immediateFuture(Optional.empty()));
+                .thenReturn(Futures.immediateFuture(Optional.of(SIGNED_USER)));
+        assertTrue(signatureValidationService.validateAndCheckSignatureKeyInNetwork(
+                SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE), SAMPLE_MESSAGE));
     }
 
     @Test
     public void testValidateAndCheckSignatureKeyInNetworkSignatureMessage() {
-        fail("Not yet implemented");
+        when(keyLookupService.findOwner(KEY_PAIR.getPublicKey()))
+                .thenReturn(Futures.immediateFuture(Optional.of(SIGNED_USER)));
+        assertTrue(signatureValidationService.validateAndCheckSignatureKeyInNetwork(
+                SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE),
+                SAMPLE_MESSAGE.toByteArray()));
     }
 
 }

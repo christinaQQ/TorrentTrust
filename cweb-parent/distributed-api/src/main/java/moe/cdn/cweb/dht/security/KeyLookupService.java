@@ -1,12 +1,12 @@
 package moe.cdn.cweb.dht.security;
 
+import java.util.Optional;
+
 import com.google.common.util.concurrent.ListenableFuture;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-
-import java.util.Optional;
-import java.util.concurrent.Future;
 
 public interface KeyLookupService {
     /**
@@ -24,6 +24,4 @@ public interface KeyLookupService {
      * @return a public key or nothing
      */
     Optional<Key> findKey(Hash keyHash);
-
-    Future<Void> shutdown();
 }

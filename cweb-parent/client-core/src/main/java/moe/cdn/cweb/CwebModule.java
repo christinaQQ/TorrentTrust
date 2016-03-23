@@ -1,34 +1,35 @@
 package moe.cdn.cweb;
 
-import moe.cdn.cweb.security.CwebId;
 import java.util.Arrays;
 import java.util.Random;
 
 import com.google.inject.AbstractModule;
 
 import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.security.CwebId;
+import moe.cdn.cweb.security.KeyEnviroment;
 import moe.cdn.cweb.security.SecurityModule;
+import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.trust.TrustNetworkModule;
 import moe.cdn.cweb.vote.VoteModule;
 
 public class CwebModule extends AbstractModule {
 
-    private final Iterable<String> args;
+    private final GlobalEnvironment environment;
 
     public CwebModule(String... args) {
-        this.args = Arrays.asList(args);
+        this(Arrays.asList(args));
     }
 
     public CwebModule(Iterable<String> args) {
-        this.args = args;
+        environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(1717)
+                .setId(new CwebId(new Random())).setKeyPair(KeyUtils.generateKeyPair()).build();
     }
 
     @Override
     protected void configure() {
-        // TODO: allow configuring ports
-        // TODO: allow setting the local node id
-        bind(PeerEnvironment.class).toInstance(GlobalEnvironment.newBuilderFromArgs(args)
-                .setPort(1717).setId(new CwebId(new Random())).build());
+        bind(PeerEnvironment.class).toInstance(environment);
+        bind(KeyEnviroment.class).toInstance(environment);
 
         install(new SecurityModule());
         install(new VoteModule());

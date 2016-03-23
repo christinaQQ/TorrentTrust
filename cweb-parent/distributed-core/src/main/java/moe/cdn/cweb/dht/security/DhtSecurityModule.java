@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 /**
  * @author davix
  */
-public class SecurityModule extends AbstractModule {
+public class DhtSecurityModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(KeyLookupService.class).to(KeyLookupServiceImpl.class).in(Singleton.class);

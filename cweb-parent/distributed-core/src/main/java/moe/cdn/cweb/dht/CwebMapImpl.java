@@ -1,17 +1,18 @@
 package moe.cdn.cweb.dht;
 
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+
+import javax.inject.Inject;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.security.CwebId;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.concurrent.Future;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
 
 class CwebMapImpl<V extends Message> implements CwebMap<V> {
 
@@ -71,10 +72,5 @@ class CwebMapImpl<V extends Message> implements CwebMap<V> {
     @Override
     public ListenableFuture<Boolean> add(CwebId key, V value) {
         return collection.add(key, value);
-    }
-
-    @Override
-    public Future<Void> shutdown() {
-        return collection.shutdown();
     }
 }

@@ -4,13 +4,20 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
 
+import moe.cdn.cweb.security.utils.HashUtils;
+
+/**
+ * Class containing identifiers user by Cweb. Identifiers are byte arrays of
+ * length 20 or less.
+ * 
+ * @author jim
+ */
 public class CwebId {
     public static final int MAX_NUM_BYTES = 20;
-
     private final byte[] bytes;
 
-    public CwebId(int numBytes, Random random) {
-        this(new byte[numBytes]);
+    public CwebId(int length, Random random) {
+        this(new byte[length]);
         random.nextBytes(bytes);
     }
 
@@ -24,10 +31,6 @@ public class CwebId {
                     "Expected array length at most " + MAX_NUM_BYTES + ", but got " + bytes.length);
         }
         this.bytes = bytes;
-    }
-
-    public static CwebId fromBase64(String s) {
-        return new CwebId(Base64.getDecoder().decode(s));
     }
 
     public static CwebId fromInt(int i) {
@@ -50,5 +53,13 @@ public class CwebId {
     @Override
     public String toString() {
         return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    public static CwebId fromBase64(String s) {
+        return new CwebId(Base64.getDecoder().decode(s));
+    }
+
+    public static CwebId fromSha1(byte[] bytes) {
+        return new CwebId(HashUtils.sha1(bytes));
     }
 }

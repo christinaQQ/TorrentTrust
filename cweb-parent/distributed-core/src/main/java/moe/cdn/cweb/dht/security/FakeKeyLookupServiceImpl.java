@@ -1,18 +1,17 @@
 package moe.cdn.cweb.dht.security;
 
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.TorrentTrustProtos;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.dht.security.KeyLookupService;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.Future;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 
 class FakeKeyLookupServiceImpl implements KeyLookupService {
 
@@ -41,11 +40,6 @@ class FakeKeyLookupServiceImpl implements KeyLookupService {
         } else {
             return Optional.of(keyserver.get(keyHash).getUser().getPublicKey());
         }
-    }
-
-    @Override
-    public Future<Void> shutdown() {
-        return Futures.immediateFuture(null);
     }
 
 }
