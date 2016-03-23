@@ -1,28 +1,17 @@
 package moe.cdn.cweb.examples;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import moe.cdn.cweb.dht.DhtModule;
+import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.dht.annotations.UserDomain;
+import moe.cdn.cweb.dht.annotations.VoteDomain;
+import moe.cdn.cweb.security.CwebId;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
-
-import javax.inject.Singleton;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-
-import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.CwebMapFactory;
-import moe.cdn.cweb.dht.DhtModule;
-import moe.cdn.cweb.dht.DhtNode;
-import moe.cdn.cweb.dht.DhtNodeFactory;
-import moe.cdn.cweb.dht.PeerEnvironment;
-import moe.cdn.cweb.dht.annotations.KeyLookup;
-import moe.cdn.cweb.dht.annotations.UserDomain;
-import moe.cdn.cweb.dht.annotations.VoteDomain;
-import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
-import moe.cdn.cweb.security.CwebId;
-import moe.cdn.cweb.security.CwebMisc;
 
 /**
  * @author davix
@@ -43,23 +32,6 @@ public class ExampleModule extends AbstractModule {
     public ExampleModule(int port, PeerEnvironment.IdAndAddress... idAndAddresses) {
         this.port = port;
         this.idAndAddresses = Arrays.asList(idAndAddresses);
-    }
-
-    @Provides
-    @KeyLookup
-    static CwebMap<SignedUser> provideSignedUserCwebMap(CwebMapFactory<SignedUser> cwebMapFactory,
-            @KeyLookup DhtNode<SignedUser> dhtNode) {
-        return cwebMapFactory.create(dhtNode, CwebMisc.BIG_INTEGER_REDUCER,
-                CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
-    }
-
-    @Provides
-    @Singleton
-    @KeyLookup
-    static DhtNode<SignedUser> provideSignedUserDhtNode(DhtNodeFactory factory,
-            PeerDhtShutdownable self,
-            @UserDomain String domainKey) {
-        return factory.create(self, domainKey, SignedUser.PARSER);
     }
 
     @Provides

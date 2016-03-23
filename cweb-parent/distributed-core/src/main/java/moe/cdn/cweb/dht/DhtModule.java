@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
+import moe.cdn.cweb.dht.annotations.KeyLookup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +21,6 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.annotations.DhtShutdownable;
-import moe.cdn.cweb.dht.annotations.KeyLookup;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
@@ -43,12 +43,6 @@ public class DhtModule extends AbstractModule {
     private static final Function<Hash, CwebId> BIG_INTEGER_REDUCER =
             hash -> new CwebId(HashUtils.sha1(hash.toByteArray()));
 
-    private static final BiPredicate<Hash, SignedUser> HASH_SIGNED_USER_BI_PREDICATE =
-            (hash, signedUser) -> signedUser.getUser().getPublicKey().getHash().equals(hash);
-
-    private static final BiPredicate<Hash, SignedVote> HASH_SIGNED_VOTE_BI_PREDICATE =
-            (hash, signedVote) -> signedVote.getVote().getContentHash().equals(hash);
-
     @Provides
     @Singleton
     @UserDomain
@@ -66,54 +60,58 @@ public class DhtModule extends AbstractModule {
     @Provides
     @Singleton
     static DhtNode<SignedUser> provideSignedUserDhtNode(DhtNodeFactory factory,
-            PeerDhtShutdownable self,
-            @UserDomain String domainKey) {
+                                                        PeerDhtShutdownable self,
+                                                        @UserDomain String domainKey) {
         return factory.create(self, domainKey, SignedUser.PARSER);
     }
 
     @Provides
     @Singleton
     static DhtNode<SignedVote> provideSignedVoteDhtNode(DhtNodeFactory factory,
-            PeerDhtShutdownable self,
-            @VoteDomain String domainKey) {
+                                                        PeerDhtShutdownable self,
+                                                        @VoteDomain String domainKey) {
         return factory.create(self, domainKey, SignedVote.PARSER);
     }
 
+    // FIXME: Should CwebMaps be injected at a different level?
     @Provides
-    @KeyLookup
-    static CwebMap<SignedUser> provideKeyLookupCwebMap(CwebMapFactory<SignedUser> cwebMapFactory,
-            DhtNode<SignedUser> dhtNodeUser) {
-        return cwebMapFactory.create(dhtNodeUser, BIG_INTEGER_REDUCER,
-                HASH_SIGNED_USER_BI_PREDICATE);
-    }
-
-    // FIXME this should be injected at a different level (Is this still true?)
-    @Provides
+    @Singleton
     @UserDomain
     static CwebMap<SignedUser> provideHashSignedUserCwebMap(
             CwebMapFactory<SignedUser> cwebMapFactory, DhtNode<SignedUser> dhtNodeUser) {
         return cwebMapFactory.create(dhtNodeUser, BIG_INTEGER_REDUCER,
-                HASH_SIGNED_USER_BI_PREDICATE);
+                CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
     }
 
     @Provides
+    @Singleton
     @VoteDomain
     static CwebMap<SignedVote> provideHashSignedVoteCwebMap(
             CwebMapFactory<SignedVote> cwebMapFactory, DhtNode<SignedVote> dhtNodeVote) {
         return cwebMapFactory.create(dhtNodeVote, BIG_INTEGER_REDUCER,
-                HASH_SIGNED_VOTE_BI_PREDICATE);
+                CwebMisc.HASH_SIGNED_VOTE_BI_PREDICATE);
+    }
+
+    @Provides
+    @Singleton
+    @KeyLookup
+    static CwebMap<SignedUser> provideKeyLookupCwebMap(CwebMapFactory<SignedUser> cwebMapFactory,
+                                                       DhtNode<SignedUser> dhtNodeUser) {
+        return cwebMapFactory.create(dhtNodeUser, CwebMisc.BIG_INTEGER_REDUCER,
+                CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
     }
 
     @Provides
     @Singleton
     public static PeerDhtShutdownable providePeerDHT(Storage storage,
-            PeerEnvironment peerEnvironment) throws IOException {
+                                                     PeerEnvironment peerEnvironment) throws
+            IOException {
         // FIXME: Do not initialize a local DHT node in a Guice module
         Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
                 .tcpPort(peerEnvironment.getLocalTcpPort())
                 .udpPort(peerEnvironment.getLocalUdpPort()).start();
         PeerDHT peerDHT = new PeerBuilderDHT(peer).storage(storage).start();
-        logger.info("Listening on {} (id = {})", peerDHT.peerAddress().peerSocketAddress(),
+        logger.info("Listening on {} (id: {})", peerDHT.peerAddress().peerSocketAddress(),
                 peerEnvironment.getMyId());
 
         List<PeerAddress> peerAddresses =
@@ -121,7 +119,7 @@ public class DhtModule extends AbstractModule {
                         .map(idAndAddress -> new PeerAddress(Number160s.fromCwebId(idAndAddress.id),
                                 new InetSocketAddress(idAndAddress.hostAndPort.getHostText(),
                                         idAndAddress.hostAndPort.getPort())))
-                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
         logger.debug("Bootstrapping to {}", peerAddresses);
         peerDHT.peer().bootstrap().bootstrapTo(peerAddresses).start()

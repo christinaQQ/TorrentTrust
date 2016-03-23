@@ -10,8 +10,10 @@ import com.google.inject.grapher.graphviz.GraphvizModule;
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.dht.CwebMap;
+import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
+import net.tomp2p.p2p.Peer;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
 
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class WorkingExampleHashMap17 {
@@ -35,11 +38,11 @@ public class WorkingExampleHashMap17 {
     private static final TorrentTrustProtos.SignedUser USER19 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "19");
 
-    static PeerDHT[] createPeers(Injector[] injectors) throws IOException {
-        PeerDHT[] peers = new PeerDHT[injectors.length];
+    static PeerDhtShutdownable[] createPeers(Injector[] injectors) throws IOException {
+        PeerDhtShutdownable[] peers = new PeerDhtShutdownable[injectors.length];
         for (int i = 0; i < injectors.length; i++) {
-            peers[i] = injectors[i].getInstance(PeerDHT.class);
-            new IndirectReplication(peers[i]).replicationFactor(5).start();
+            peers[i] = injectors[i].getInstance(PeerDhtShutdownable.class);
+            new IndirectReplication(peers[i].getDhtInstance()).replicationFactor(5).start();
         }
         return peers;
         // Originally, peer[0] was the master peer and all others connected to it
@@ -53,14 +56,16 @@ public class WorkingExampleHashMap17 {
      *
      * @param peers The peers that should be bootstrapped
      */
-    static void bootstrap(PeerDHT[] peers) {
+    static void bootstrap(PeerDhtShutdownable[] peers) {
         // tell all peers about each other starting from master at 0
         // TODO replace
-        Collection<PeerAddress> all =
-                Arrays.stream(peers).map(PeerDHT::peerAddress).collect(Collectors.toList());
-        List<FutureBootstrap> allFutures =
-                Arrays.stream(peers).map(p -> p.peer().bootstrap().bootstrapTo(all).start())
-                        .collect(Collectors.toList());
+        Collection<PeerAddress> all = Arrays.stream(peers)
+                .map(PeerDhtShutdownable::getDhtInstance)
+                .map(PeerDHT::peerAddress)
+                .collect(Collectors.toList());
+        List<FutureBootstrap> allFutures = Arrays.stream(peers)
+                .map(p -> p.getDhtInstance().peer().bootstrap().bootstrapTo(all).start())
+                .collect(Collectors.toList());
         net.tomp2p.futures.Futures.whenAll(allFutures).awaitUninterruptibly();
     }
 
@@ -81,7 +86,7 @@ public class WorkingExampleHashMap17 {
 
 //        PeerDHT master = null;
         try {
-            PeerDHT[] peers = createPeers(injectors);
+            PeerDhtShutdownable[] peers = createPeers(injectors);
 //            master = peers[0];
 
             bootstrap(peers);
@@ -100,11 +105,22 @@ public class WorkingExampleHashMap17 {
                     new TypeLiteral<CwebMap<SignedUser>>() {
                     }));
 
+
+            boolean r1 = map1.put(USER17.getUser().getPublicKey().getHash(), USER17).get();
+            boolean r2 = map2.put(USER18.getUser().getPublicKey().getHash(), USER18).get();
+            boolean r3 = map3.put(USER19.getUser().getPublicKey().getHash(), USER19).get();
+
+
             // insert some data and wait
-            Futures.successfulAsList(
+            List<Boolean> putResults = Futures.allAsList(
                     map1.put(USER17.getUser().getPublicKey().getHash(), USER17),
                     map2.put(USER18.getUser().getPublicKey().getHash(), USER18),
-                    map3.put(USER19.getUser().getPublicKey().getHash(), USER19));
+                    map3.put(USER19.getUser().getPublicKey().getHash(), USER19)).get();
+            if (putResults.stream().allMatch(Boolean::booleanValue)) {
+                System.out.println("Seeded.");
+            } else {
+                System.out.println("Failed to seed.");
+            }
 
             Future<SignedUser> one = map3.get(USER18.getUser().getPublicKey().getHash());
             System.out.println("getOne() ==> " + one.get());
@@ -113,7 +129,12 @@ public class WorkingExampleHashMap17 {
                     map3.all(USER18.getUser().getPublicKey().getHash());
             System.out.println("getAll() ==> " + all.get());
 
+            System.out.println("Shutting down...");
+            Futures.allAsList(Arrays.stream(peers)
+                    .map(PeerDhtShutdownable::shutdown)
+                    .collect(Collectors.toList())).get();
             System.out.println("Done.");
+
         } finally {
 //            if (master != null) {
 //                master.shutdown();

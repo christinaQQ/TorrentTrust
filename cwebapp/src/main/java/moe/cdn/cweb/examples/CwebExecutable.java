@@ -1,8 +1,12 @@
-package moe.cdn.cweb;
+package moe.cdn.cweb.examples;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import moe.cdn.cweb.CwebApi;
+import moe.cdn.cweb.CwebModule;
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.TorrentTrustProtos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

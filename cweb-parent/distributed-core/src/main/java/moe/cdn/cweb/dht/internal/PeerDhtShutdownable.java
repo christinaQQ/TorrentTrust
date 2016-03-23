@@ -1,7 +1,6 @@
 package moe.cdn.cweb.dht.internal;
 
-import java.util.concurrent.Future;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import moe.cdn.cweb.dht.Shutdownable;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.BaseFutureAsListenableFuture;
 import net.tomp2p.dht.PeerDHT;
@@ -19,7 +18,7 @@ public class PeerDhtShutdownable implements Shutdownable {
     }
 
     @Override
-    public Future<Void> shutdown() {
+    public ListenableFuture<Void> shutdown() {
         return new BaseFutureAsListenableFuture<Void, BaseFuture>(peerDht.shutdown()) {
             @Override
             protected Void toValueAfterGet() {

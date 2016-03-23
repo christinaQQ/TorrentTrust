@@ -19,5 +19,4 @@ import com.google.inject.BindingAnnotation;
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
 public @interface DhtShutdownable {
-
 }
