@@ -9,6 +9,7 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.dht.security.KeyLookupService;
 import org.junit.Test;
 
 import java.security.*;

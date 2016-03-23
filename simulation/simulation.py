@@ -1,6 +1,6 @@
 import random
 import json
-
+import numpy as np
 # Some designations
 GOOD, EVIL = "GOOD", "EVIL"
 
@@ -131,11 +131,20 @@ def generateClique(cliqueSize, designation = 'GOOD', namePrefix = 'Group1'):
         user.addTrusted(friend)
   return users
 
-def generateFromFile(fileName, clusterSize, designation = 'GOOD', namePrefix = 'Group1'):
-  users = []
-  for name in nameGenerator(namePrefix, clusterSize):
-    users.append(User(name, designation))
+def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1', designationRatios = {'GOOD': .8, 'EVIL': .2},
+    malConnectivity = .1):
   with open(fileName, 'r') as f:
+    f.readline()
+    # first get the number of people in the cluster
+    goodClusterSize = 0
+    while (f.readline().strip() != "</PEOPLE>"):
+      goodClusterSize +=1
+    clusterSize = int(goodClusterSize / designationRatios['GOOD'])
+    
+    users = []
+    for name in nameGenerator(namePrefix, goodClusterSize):
+      users.append(User(name, 'GOOD'))
+    #now read in friend connections
     while (f.readline().strip() != "<FRIENDS>"):
       continue
     for line in f:
@@ -147,8 +156,19 @@ def generateFromFile(fileName, clusterSize, designation = 'GOOD', namePrefix = '
       users[user].addTrusted(users[friend])
       # look into this: the data is undirected
       users[friend].addTrusted(users[user])
+  # generate bad users
+  bad_users = []
+  numConnect = np.random.normal(malConnectivity * goodClusterSize,3,clusterSize - goodClusterSize)
+  for i, name in enumerate(nameGenerator('Group2', clusterSize - goodClusterSize)):
+    badUser = User(name, 'BAD')
+    print 
+    for goodUser in random.sample(users, int(round(numConnect[i]))):
+      badUser.addTrusted(goodUser)
+      goodUser.addTrusted(badUser)
+    bad_users.append(badUser)
 
-  return users
+
+  return users + bad_users
 
 
 def assignEvilTargets(evilUsers, targets, targetsPerUser = 3):

@@ -3,31 +3,33 @@ package moe.cdn.cweb.dht;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.security.CwebId;
 
 import javax.inject.Inject;
-import moe.cdn.cweb.security.utils.CwebId;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.Future;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-public class CwebMapImpl<K extends Message, V extends Message> implements CwebMap<K, V> {
+class CwebMapImpl<V extends Message> implements CwebMap<V> {
 
     private final DhtNode<V> collection;
-    private final Function<K, CwebId> keyReducer;
-    private final BiPredicate<K, V> notCollision; // FIXME: collisions?
+    private final Function<Hash, CwebId> keyReducer;
+    private final BiPredicate<Hash, V> notCollision; // FIXME: collisions?
 
     @Inject
     public CwebMapImpl(DhtNode<V> collection,
-            Function<K, CwebId> keyReducer,
-            BiPredicate<K, V> notCollision) {
+                       Function<Hash, CwebId> keyReducer,
+                       BiPredicate<Hash, V> notCollision) {
         this.collection = collection;
         this.keyReducer = keyReducer;
         this.notCollision = notCollision;
     }
 
     @Override
-    public ListenableFuture<V> get(K key) {
+    public ListenableFuture<V> get(Hash key) {
         return get(keyReducer.apply(key));
     }
 
@@ -42,17 +44,17 @@ public class CwebMapImpl<K extends Message, V extends Message> implements CwebMa
     }
 
     @Override
-    public ListenableFuture<Collection<V>> all(K key) {
+    public ListenableFuture<Collection<V>> all(Hash key) {
         return collection.getAll(keyReducer.apply(key));
     }
 
     @Override
-    public ListenableFuture<Boolean> contains(K key) {
+    public ListenableFuture<Boolean> contains(Hash key) {
         return Futures.transform(get(key), Objects::nonNull);
     }
 
     @Override
-    public ListenableFuture<Boolean> put(K key, V value) {
+    public ListenableFuture<Boolean> put(Hash key, V value) {
         return collection.put(keyReducer.apply(key), value);
     }
 
@@ -62,12 +64,17 @@ public class CwebMapImpl<K extends Message, V extends Message> implements CwebMa
     }
 
     @Override
-    public ListenableFuture<Boolean> add(K key, V value) {
+    public ListenableFuture<Boolean> add(Hash key, V value) {
         return collection.add(keyReducer.apply(key), value);
     }
 
     @Override
     public ListenableFuture<Boolean> add(CwebId key, V value) {
         return collection.add(key, value);
+    }
+
+    @Override
+    public Future<Void> shutdown() {
+        return collection.shutdown();
     }
 }

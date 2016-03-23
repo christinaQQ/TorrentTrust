@@ -1,36 +1,33 @@
 package moe.cdn.cweb.examples;
 
-import java.io.IOException;
-import moe.cdn.cweb.security.utils.CwebId;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Future;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.google.common.util.concurrent.Futures;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.grapher.graphviz.GraphvizGrapher;
+import com.google.inject.grapher.graphviz.GraphvizModule;
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.dht.CwebDhtNodeFactory;
 import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.CwebMapImpl;
-import moe.cdn.cweb.dht.DhtNode;
-import moe.cdn.cweb.dht.DhtNodeFactory;
-import moe.cdn.cweb.dht.util.Number160s;
-import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
-import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
 public class WorkingExampleHashMap17 {
-    static final CwebId RND = new CwebId(160, new Random(17));
+    // TODO: http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
+    private static final int PORT = 1717;
     private static final TorrentTrustProtos.SignedUser USER17 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "17");
     private static final TorrentTrustProtos.SignedUser USER18 =
@@ -38,29 +35,18 @@ public class WorkingExampleHashMap17 {
     private static final TorrentTrustProtos.SignedUser USER19 =
             SignatureUtils.buildSignedUserRecord(SignatureUtils.generateKeypair(), "19");
 
-    private static final Function<Hash, CwebId> KEY_REDUCER =
-            h -> new CwebId(SignatureUtils.sha1(h.getHashValue().toByteArray()));
-    private static final BiPredicate<Hash, TorrentTrustProtos.SignedUser> KEY_FILTER =
-            (h, u) -> u.getUser().getPublicKey().getHash().equals(h);
-    private static DhtNodeFactory DHT_REQUEST_FACTORY = new CwebDhtNodeFactory();
-
-    static PeerDHT[] createAndAttachPeersDHT(int nr, int port) throws IOException {
-        // TODO replace
-        // this is an array where [0] is the master
-        PeerDHT[] peers = new PeerDHT[nr];
-        for (int i = 0; i < nr; i++) {
-            if (i == 0) {
-                peers[0] = new PeerBuilderDHT(
-                        new PeerBuilder(Number160s.fromCwebId(RND)).ports(port).start())
-                                .start();
-            } else {
-                peers[i] = new PeerBuilderDHT(new PeerBuilder(Number160s.fromCwebId(RND))
-                        .masterPeer(peers[0].peer()).start()).start();
-            }
+    static PeerDHT[] createPeers(Injector[] injectors) throws IOException {
+        PeerDHT[] peers = new PeerDHT[injectors.length];
+        for (int i = 0; i < injectors.length; i++) {
+            peers[i] = injectors[i].getInstance(PeerDHT.class);
             new IndirectReplication(peers[i]).replicationFactor(5).start();
         }
         return peers;
+        // Originally, peer[0] was the master peer and all others connected to it
+        //    peers[i] = new PeerBuilderDHT(new PeerBuilder(Number160s.fromCwebId(RND))
+        //            .masterPeer(peers[0].peer()).start()).start();
     }
+
 
     /**
      * Bootstraps peers to the first peer in the array.
@@ -79,30 +65,44 @@ public class WorkingExampleHashMap17 {
     }
 
     public static void main(String[] args) throws Exception {
-        // TODO: http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
-        PeerDHT master = null;
+        Injector[] injectors = new Injector[100];
+        for (int i = 0; i < injectors.length; i++) {
+            injectors[i] = Guice.createInjector(new ExampleModule(PORT));
+        }
+
+        try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(Paths.get("out.dot")))) {
+            Injector injector = Guice.createInjector(new GraphvizModule());
+            GraphvizGrapher grapher = injector.getInstance(GraphvizGrapher.class);
+            grapher.setOut(out);
+            grapher.setRankdir("TB");
+            grapher.graph(injectors[0]);
+        }
+
+
+//        PeerDHT master = null;
         try {
-            PeerDHT[] peers = createAndAttachPeersDHT(100, 4001);
-            master = peers[0];
+            PeerDHT[] peers = createPeers(injectors);
+//            master = peers[0];
 
             bootstrap(peers);
 
-            DhtNode<TorrentTrustProtos.SignedUser> sender1 =
-                    DHT_REQUEST_FACTORY.create(peers[0], "domain", SignedUser.PARSER);
-            DhtNode<SignedUser> sender2 =
-                    DHT_REQUEST_FACTORY.create(peers[17], "domain", SignedUser.PARSER);
+            Injector injector1 = injectors[0];
+            Injector injector2 = injectors[17];
+            Injector injector3 = injectors[23];
 
-            DhtNode<TorrentTrustProtos.SignedUser> receiver = DHT_REQUEST_FACTORY.create(peers[23],
-                    "domain", TorrentTrustProtos.SignedUser.PARSER);
-
-            CwebMap<Hash, SignedUser> map1 = new CwebMapImpl<>(sender1, KEY_REDUCER, KEY_FILTER);
-            CwebMap<Hash, TorrentTrustProtos.SignedUser> map2 =
-                    new CwebMapImpl<>(sender2, KEY_REDUCER, KEY_FILTER);
-
-            CwebMap<Hash, SignedUser> map3 = new CwebMapImpl<>(receiver, KEY_REDUCER, KEY_FILTER);
+            CwebMap<SignedUser> map1 = injector1.getInstance(Key.get(
+                    new TypeLiteral<CwebMap<SignedUser>>() {
+                    }));
+            CwebMap<SignedUser> map2 = injector2.getInstance(Key.get(
+                    new TypeLiteral<CwebMap<SignedUser>>() {
+                    }));
+            CwebMap<SignedUser> map3 = injector3.getInstance(Key.get(
+                    new TypeLiteral<CwebMap<SignedUser>>() {
+                    }));
 
             // insert some data and wait
-            Futures.successfulAsList(map1.put(USER17.getUser().getPublicKey().getHash(), USER17),
+            Futures.successfulAsList(
+                    map1.put(USER17.getUser().getPublicKey().getHash(), USER17),
                     map2.put(USER18.getUser().getPublicKey().getHash(), USER18),
                     map3.put(USER19.getUser().getPublicKey().getHash(), USER19));
 
@@ -115,9 +115,9 @@ public class WorkingExampleHashMap17 {
 
             System.out.println("Done.");
         } finally {
-            if (master != null) {
-                master.shutdown();
-            }
+//            if (master != null) {
+//                master.shutdown();
+//            }
         }
     }
 

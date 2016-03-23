@@ -5,7 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.dht.DhtNode;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.KeyLookupService;
 import org.apache.logging.log4j.LogManager;
@@ -25,12 +25,12 @@ public class CwebExecutable {
      * Usage: java moe.cdn.cweb.CwebExecutable [[id host_and_port] ...]
      */
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        Injector injector = Guice.createInjector(new CwebModule(args));
+        Injector injector = Guice.createInjector(new DhtModule(), new CwebModule(args));
 
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
 
-        DhtNode<TorrentTrustProtos.SignedVote> signedVoteDhtNode =
-                injector.getInstance(new Key<DhtNode<TorrentTrustProtos.SignedVote>>() {});
+        CwebMap<SignedVote> signedVoteDhtNode = injector.getInstance(
+                Key.get(new TypeLiteral<CwebMap<SignedVote>>(){}, VoteDomain.class));
         CwebImportService cwebImportService = injector.getInstance(CwebImportService.class);
 
         TorrentTrustProtos.User user = TorrentTrustProtos.User.newBuilder().setHandle("name")

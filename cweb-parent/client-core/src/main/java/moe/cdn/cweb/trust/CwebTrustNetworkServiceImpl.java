@@ -7,8 +7,8 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.User.TrustAssertion;
-import moe.cdn.cweb.security.CwebSignatureValidationService;
-import moe.cdn.cweb.security.KeyLookupService;
+import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
+import moe.cdn.cweb.dht.security.KeyLookupService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -17,7 +17,7 @@ import moe.cdn.cweb.dht.internal.tomp2pcompat.FuturePutWrapper;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.GetResponse;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.PutResponse;
 import moe.cdn.cweb.dht.util.Number160s;
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerDHT;
@@ -26,7 +26,7 @@ import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
 /**
- * Entry point for DHT operations.
+ * Entry point for DHT operations. This is a wrapper around a {@link PeerDHT}.
  *
  * @author davix
  */
@@ -40,7 +40,6 @@ public class CwebNode<T extends Message> {
     // TODO: Examine protection
     // http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
 
-    @Inject
     public CwebNode(PeerDHT self, Number160 domainKey, Parser<T> messageParser) {
         this.self = self;
         this.domainKey = domainKey;

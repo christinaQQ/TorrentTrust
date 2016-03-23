@@ -7,15 +7,10 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.CwebMap;
-import moe.cdn.cweb.dht.CwebMapImpl;
-import moe.cdn.cweb.dht.DhtNode;
-import moe.cdn.cweb.dht.annotations.UserDomain;
-import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
 
 import javax.inject.Singleton;
-import moe.cdn.cweb.security.utils.CwebId;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
@@ -30,16 +25,17 @@ public class SecurityModule extends AbstractModule {
     private static final BiPredicate<Hash, SignedVote> HASH_SIGNED_VOTE_BI_PREDICATE =
             (hash, signedVote) -> signedVote.getVote().getContentHash().equals(hash);
 
+    // FIXME this should be injected at a different level
     @Provides
-    @UserDomain
-    static CwebMap<Hash, SignedUser> provideHashSignedUserCwebMap(DhtNode<SignedUser> dhtNode) {
-        return new CwebMapImpl<>(dhtNode, BIG_INTEGER_REDUCER, HASH_SIGNED_USER_BI_PREDICATE);
+    static CwebMap<SignedUser> provideHashSignedUserCwebMap(
+            CwebMapFactory<SignedUser> cwebMapFactory) {
+        return cwebMapFactory.create(BIG_INTEGER_REDUCER, HASH_SIGNED_USER_BI_PREDICATE);
     }
 
     @Provides
-    @VoteDomain
-    static CwebMap<Hash, SignedVote> provideHashSignedVoteCwebMap(DhtNode<SignedVote> dhtNode) {
-        return new CwebMapImpl<>(dhtNode, BIG_INTEGER_REDUCER, HASH_SIGNED_VOTE_BI_PREDICATE);
+    static CwebMap<SignedVote> provideHashSignedVoteCwebMap(
+            CwebMapFactory<SignedVote> cwebMapFactory) {
+        return cwebMapFactory.create(BIG_INTEGER_REDUCER, HASH_SIGNED_VOTE_BI_PREDICATE);
     }
 
     @Provides
@@ -51,11 +47,6 @@ public class SecurityModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(KeyLookupService.class).to(KeyLookupServiceImpl.class).in(Singleton.class);
-        bind(SignatureValidationService.class).to(SignatureValidationServiceImpl.class)
-                .in(Singleton.class);
-        bind(CwebSignatureValidationService.class).to(CwebValidationServiceImpl.class)
-                .in(Singleton.class);
         bind(CwebImportService.class).to(CwebImportServiceImpl.class).in(Singleton.class);
     }
 

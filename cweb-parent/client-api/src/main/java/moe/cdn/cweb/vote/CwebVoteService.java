@@ -5,6 +5,7 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 public interface CwebVoteService {
     /**
@@ -23,4 +24,6 @@ public interface CwebVoteService {
      * cast
      */
     boolean castVote(SignedVote vote);
+
+    Future<Void> shutdown();
 }

@@ -1,4 +1,4 @@
-package moe.cdn.cweb.security;
+package moe.cdn.cweb.dht.security;
 
 
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;

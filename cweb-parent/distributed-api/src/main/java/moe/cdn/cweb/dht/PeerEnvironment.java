@@ -4,13 +4,12 @@ import java.util.Collection;
 
 import com.google.common.net.HostAndPort;
 
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 
 /**
  * @author davix
  */
 public interface PeerEnvironment {
-
 
     Collection<IdAndAddress> getPeerAddresses();
 

@@ -1,4 +1,4 @@
-package moe.cdn.cweb.security;
+package moe.cdn.cweb.dht.security;
 
 import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.Signature;

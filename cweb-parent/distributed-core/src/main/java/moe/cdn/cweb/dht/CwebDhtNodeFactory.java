@@ -11,14 +11,15 @@ import moe.cdn.cweb.dht.internal.CwebPutResults;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 import java.util.Collection;
 import java.util.concurrent.Future;
 
 /**
  * @author davix
  */
-public class CwebDhtNodeFactory implements DhtNodeFactory {
+class CwebDhtNodeFactory implements DhtNodeFactory {
+
     @Override
     public <T extends Message> DhtNode<T> create(PeerDHT self, String domainKey,
                                                  Parser<T> messageParser) {

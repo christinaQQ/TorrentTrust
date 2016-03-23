@@ -1,6 +1,6 @@
 package moe.cdn.cweb.dht.util;
 
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 import net.tomp2p.peers.Number160;
 
 public final class Number160s {

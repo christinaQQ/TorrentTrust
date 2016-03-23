@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * @author eyeung
  */
-public class CwebApiFakeImpl implements CwebApi {
+class CwebApiFakeImpl implements CwebApi {
     Map<User, List<Vote>> userVotes;
     Map<User, List<User>> trustedGraph;
     Map<String, List<Vote>> userObjVotes;

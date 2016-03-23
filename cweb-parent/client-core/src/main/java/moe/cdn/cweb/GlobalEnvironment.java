@@ -2,7 +2,7 @@ package moe.cdn.cweb;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import moe.cdn.cweb.security.utils.CwebId;
+import moe.cdn.cweb.security.CwebId;
 import java.util.ArrayList;
 import java.util.Collection;
 
