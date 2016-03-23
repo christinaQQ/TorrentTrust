@@ -13,7 +13,9 @@ public interface KeyLookupService {
      * Find the owner of a certain key
      *
      * @param publicKey
-     * @return a user record or nothing
+     * @return future producing either a user record or nothing
+     * @throws KeyLookupServiceException if there are multiple users found for
+     *         one key or if the operation was interrupted.
      */
     ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey);
 
@@ -21,7 +23,9 @@ public interface KeyLookupService {
      * Find all keys that hash to the provided hash
      *
      * @param keyHash hash of the public key
-     * @return a public key or nothing
+     * @return future producing either a public key or nothing
+     * @throws KeyLookupServiceException if there are multiple keys for the hash
+     *         or if the operation was interrupted.
      */
-    Optional<Key> findKey(Hash keyHash);
+    ListenableFuture<Optional<Key>> findKey(Hash keyHash);
 }

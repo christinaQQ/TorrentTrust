@@ -1,8 +1,9 @@
 package moe.cdn.cweb.dht.security;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import javax.inject.Provider;
@@ -24,48 +25,44 @@ class KeyLookupServiceImpl implements KeyLookupService {
     private final Provider<CwebMap<SignedUser>> keyServiceCwebMapProvider;
 
     @Inject
-    public KeyLookupServiceImpl(@KeyLookup Provider<CwebMap<SignedUser>> keyServiceCwebMapProvider) {
-        this.keyServiceCwebMapProvider = keyServiceCwebMapProvider;
+    public KeyLookupServiceImpl(
+            @KeyLookup Provider<CwebMap<SignedUser>> keyServiceCwebMapProvider) {
+        this.keyServiceCwebMapProvider = checkNotNull(keyServiceCwebMapProvider);
     }
 
     @Override
     public ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey) {
         return Futures.transform(keyServiceCwebMapProvider.get().all(publicKey.getHash()),
-                (Function<Collection<SignedUser>, Optional<SignedUser>>)
-                        signedUsers -> {
-                            Collection<SignedUser> records = signedUsers.stream().filter(u -> u
-                                    .getUser()
-                                    .getPublicKey()
-                                    .equals(publicKey))
-                                    .collect(Collectors.toList());
-                            if (records.isEmpty()) {
-                                return Optional.empty();
-                            } else if (records.size() > 1) {
-                                throw new KeyLookupServiceException(
-                                        "Inconsistent security state. Multiple users with the "
-                                                + "same public key.");
-                            } else {
-                                return Optional.of(Iterables.getOnlyElement(records));
-                            }
-                        });
+                (Function<Collection<SignedUser>, Optional<SignedUser>>) signedUsers -> {
+                    Collection<SignedUser> records = signedUsers.stream()
+                            .filter(u -> u.getUser().getPublicKey().equals(publicKey))
+                            .collect(Collectors.toList());
+                    if (records.isEmpty()) {
+                        return Optional.empty();
+                    } else if (records.size() > 1) {
+                        throw new KeyLookupServiceException(
+                                "Inconsistent security state. Multiple users with the "
+                                        + "same public key.");
+                    } else {
+                        return Optional.of(Iterables.getOnlyElement(records));
+                    }
+                });
     }
 
     @Override
-    public Optional<Key> findKey(Hash keyHash) {
-        try {
-            Collection<SignedUser> records = keyServiceCwebMapProvider.get().all(keyHash).get();
-            if (records.isEmpty()) {
-                return Optional.empty();
-            } else if (records.size() > 1) {
-                throw new KeyLookupServiceException("Multiple users under this hash.");
-            } else {
-                return Optional.of(Iterables.getOnlyElement(records).getUser().getPublicKey());
-            }
-        } catch (InterruptedException e) {
-            throw new KeyLookupServiceException("Lookup was interrupted.");
-        } catch (ExecutionException e) {
-            throw new KeyLookupServiceException(e);
-        }
+    public ListenableFuture<Optional<Key>> findKey(Hash keyHash) {
+        return Futures.transform(keyServiceCwebMapProvider.get().all(keyHash),
+                (Function<Collection<SignedUser>, Optional<Key>>) signedUsers -> {
+                    if (signedUsers.isEmpty()) {
+                        return Optional.empty();
+                    } else if (signedUsers.size() > 1) {
+                        throw new KeyLookupServiceException(
+                                "Inconsistent security state. Multiple keys with the same hash.");
+                    } else {
+                        return Optional
+                                .of(Iterables.getOnlyElement(signedUsers).getUser().getPublicKey());
+                    }
+                });
     }
 
 }

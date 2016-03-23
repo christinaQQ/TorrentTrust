@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -15,6 +18,7 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 
 class FakeKeyLookupServiceImpl implements KeyLookupService {
 
+    private static final Logger logger = LogManager.getLogger();
     private final Map<Hash, SignedUser> keyserver;
 
     public FakeKeyLookupServiceImpl() {
@@ -28,17 +32,24 @@ class FakeKeyLookupServiceImpl implements KeyLookupService {
         }
     }
 
+    private void warnDeprecation() {
+        logger.warn("Deprecated: FakeKeyLookupService is deprecated.");
+    }
+
     @Override
     public ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey) {
+        warnDeprecation();
         return Futures.immediateFuture(Optional.ofNullable(keyserver.get(publicKey.getHash())));
     }
 
     @Override
-    public Optional<Key> findKey(Hash keyHash) {
+    public ListenableFuture<Optional<Key>> findKey(Hash keyHash) {
+        warnDeprecation();
         if (!keyserver.containsKey(keyHash)) {
-            return Optional.empty();
+            return Futures.immediateFuture(Optional.empty());
         } else {
-            return Optional.of(keyserver.get(keyHash).getUser().getPublicKey());
+            return Futures
+                    .immediateFuture(Optional.of(keyserver.get(keyHash).getUser().getPublicKey()));
         }
     }
 
