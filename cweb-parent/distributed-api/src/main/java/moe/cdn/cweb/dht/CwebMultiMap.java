@@ -9,9 +9,11 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.security.CwebId;
 
 /**
+ * An {@link AsyncMultiMap} for proto types.
+ *
  * @author davix
  */
-public interface CwebMap<V extends Message> extends AsyncMap<Hash, V> {
+public interface CwebMultiMap<V extends Message> extends AsyncMultiMap<Hash, V> {
     ListenableFuture<V> get(CwebId key);
 
     ListenableFuture<Collection<V>> all(CwebId key);

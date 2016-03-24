@@ -21,7 +21,7 @@ import com.google.inject.grapher.graphviz.GraphvizModule;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.dht.CwebMap;
+import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.SignatureUtils;
@@ -109,12 +109,12 @@ public class WorkingExampleHashMap17 {
             Injector injector2 = injectors[17];
             Injector injector3 = injectors[23];
 
-            CwebMap<SignedUser> map1 =
-                    injector1.getInstance(Key.get(new TypeLiteral<CwebMap<SignedUser>>() {}));
-            CwebMap<SignedUser> map2 =
-                    injector2.getInstance(Key.get(new TypeLiteral<CwebMap<SignedUser>>() {}));
-            CwebMap<SignedUser> map3 =
-                    injector3.getInstance(Key.get(new TypeLiteral<CwebMap<SignedUser>>() {}));
+            CwebMultiMap<SignedUser> map1 =
+                    injector1.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+            CwebMultiMap<SignedUser> map2 =
+                    injector2.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+            CwebMultiMap<SignedUser> map3 =
+                    injector3.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
 
 
             boolean r1 = map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED).get();

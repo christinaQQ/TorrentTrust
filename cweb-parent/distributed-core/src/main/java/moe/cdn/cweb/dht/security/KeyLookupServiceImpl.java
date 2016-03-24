@@ -17,16 +17,16 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.dht.CwebMap;
+import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.annotations.KeyLookup;
 
 class KeyLookupServiceImpl implements KeyLookupService {
 
-    private final Provider<CwebMap<SignedUser>> keyServiceCwebMapProvider;
+    private final Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider;
 
     @Inject
     public KeyLookupServiceImpl(
-            @KeyLookup Provider<CwebMap<SignedUser>> keyServiceCwebMapProvider) {
+            @KeyLookup Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider) {
         this.keyServiceCwebMapProvider = checkNotNull(keyServiceCwebMapProvider);
     }
 

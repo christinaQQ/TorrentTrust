@@ -14,16 +14,16 @@ import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.security.CwebId;
 
-class CwebMapImpl<V extends Message> implements CwebMap<V> {
+class CwebMultiMapImpl<V extends Message> implements CwebMultiMap<V> {
 
-    private final DhtNode<V> collection;
+    private final ManagedDhtNode<V> collection;
     private final Function<Hash, CwebId> keyReducer;
     private final BiPredicate<Hash, V> notCollision; // FIXME: collisions?
 
     @Inject
-    public CwebMapImpl(DhtNode<V> collection,
-                       Function<Hash, CwebId> keyReducer,
-                       BiPredicate<Hash, V> notCollision) {
+    public CwebMultiMapImpl(ManagedDhtNode<V> collection,
+                            Function<Hash, CwebId> keyReducer,
+                            BiPredicate<Hash, V> notCollision) {
         this.collection = collection;
         this.keyReducer = keyReducer;
         this.notCollision = notCollision;
@@ -50,7 +50,7 @@ class CwebMapImpl<V extends Message> implements CwebMap<V> {
     }
 
     @Override
-    public ListenableFuture<Boolean> contains(Hash key) {
+    public ListenableFuture<Boolean> containsKey(Hash key) {
         return Futures.transform(get(key), Objects::nonNull);
     }
 

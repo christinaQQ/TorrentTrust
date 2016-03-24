@@ -59,17 +59,17 @@ public class DhtModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static DhtNode<SignedUser> provideSignedUserDhtNode(DhtNodeFactory factory,
-                                                        PeerDhtShutdownable self,
-                                                        @UserDomain String domainKey) {
+    static ManagedDhtNode<SignedUser> provideSignedUserDhtNode(DhtNodeFactory factory,
+                                                               PeerDhtShutdownable self,
+                                                               @UserDomain String domainKey) {
         return factory.create(self, domainKey, SignedUser.PARSER);
     }
 
     @Provides
     @Singleton
-    static DhtNode<SignedVote> provideSignedVoteDhtNode(DhtNodeFactory factory,
-                                                        PeerDhtShutdownable self,
-                                                        @VoteDomain String domainKey) {
+    static ManagedDhtNode<SignedVote> provideSignedVoteDhtNode(DhtNodeFactory factory,
+                                                               PeerDhtShutdownable self,
+                                                               @VoteDomain String domainKey) {
         return factory.create(self, domainKey, SignedVote.PARSER);
     }
 
@@ -77,8 +77,8 @@ public class DhtModule extends AbstractModule {
     @Provides
     @Singleton
     @UserDomain
-    static CwebMap<SignedUser> provideHashSignedUserCwebMap(
-            CwebMapFactory<SignedUser> cwebMapFactory, DhtNode<SignedUser> dhtNodeUser) {
+    static CwebMultiMap<SignedUser> provideHashSignedUserCwebMap(
+            CwebMapFactory<SignedUser> cwebMapFactory, ManagedDhtNode<SignedUser> dhtNodeUser) {
         return cwebMapFactory.create(dhtNodeUser, BIG_INTEGER_REDUCER,
                 CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
     }
@@ -86,8 +86,8 @@ public class DhtModule extends AbstractModule {
     @Provides
     @Singleton
     @VoteDomain
-    static CwebMap<SignedVote> provideHashSignedVoteCwebMap(
-            CwebMapFactory<SignedVote> cwebMapFactory, DhtNode<SignedVote> dhtNodeVote) {
+    static CwebMultiMap<SignedVote> provideHashSignedVoteCwebMap(
+            CwebMapFactory<SignedVote> cwebMapFactory, ManagedDhtNode<SignedVote> dhtNodeVote) {
         return cwebMapFactory.create(dhtNodeVote, BIG_INTEGER_REDUCER,
                 CwebMisc.HASH_SIGNED_VOTE_BI_PREDICATE);
     }
@@ -95,8 +95,8 @@ public class DhtModule extends AbstractModule {
     @Provides
     @Singleton
     @KeyLookup
-    static CwebMap<SignedUser> provideKeyLookupCwebMap(CwebMapFactory<SignedUser> cwebMapFactory,
-                                                       DhtNode<SignedUser> dhtNodeUser) {
+    static CwebMultiMap<SignedUser> provideKeyLookupCwebMap(CwebMapFactory<SignedUser> cwebMapFactory,
+                                                            ManagedDhtNode<SignedUser> dhtNodeUser) {
         return cwebMapFactory.create(dhtNodeUser, CwebMisc.BIG_INTEGER_REDUCER,
                 CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
     }
@@ -145,11 +145,11 @@ public class DhtModule extends AbstractModule {
         bind(new TypeLiteral<CwebMapFactory<SignedVote>>() {})
                 .to(new TypeLiteral<CwebMapFactoryImpl<SignedVote>>() {});
 
-        // Register all protobuf types for CwebMap
-        bind(new TypeLiteral<CwebMap<SignedUser>>() {})
-                .to(new TypeLiteral<CwebMapImpl<SignedUser>>() {});
-        bind(new TypeLiteral<CwebMap<SignedVote>>() {})
-                .to(new TypeLiteral<CwebMapImpl<SignedVote>>() {});
+        // Register all protobuf types for CwebMultiMap
+        bind(new TypeLiteral<CwebMultiMap<SignedUser>>() {})
+                .to(new TypeLiteral<CwebMultiMapImpl<SignedUser>>() {});
+        bind(new TypeLiteral<CwebMultiMap<SignedVote>>() {})
+                .to(new TypeLiteral<CwebMultiMapImpl<SignedVote>>() {});
 
         bind(new TypeLiteral<Function<Hash, CwebId>>() {}).toInstance(CwebMisc.BIG_INTEGER_REDUCER);
 

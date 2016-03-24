@@ -22,17 +22,17 @@ import net.tomp2p.peers.Number160;
 class CwebDhtNodeFactory implements DhtNodeFactory {
 
     @Override
-    public <T extends Message> DhtNode<T> create(PeerDhtShutdownable self,
-            String domainKey,
-            Parser<T> messageParser) {
-        return new AsCwebDhtNode<>(
+    public <T extends Message> ManagedDhtNode<T> create(PeerDhtShutdownable self,
+                                                        String domainKey,
+                                                        Parser<T> messageParser) {
+        return new AsCwebManagedDhtNode<>(
                 new CwebNode<>(self, Number160.createHash(domainKey), messageParser));
     }
 
-    private static class AsCwebDhtNode<T extends Message> implements DhtNode<T> {
+    private static class AsCwebManagedDhtNode<T extends Message> implements ManagedDhtNode<T> {
         private final CwebNode<T> cwebNode;
 
-        public AsCwebDhtNode(CwebNode<T> cwebNode) {
+        public AsCwebManagedDhtNode(CwebNode<T> cwebNode) {
             this.cwebNode = cwebNode;
         }
 

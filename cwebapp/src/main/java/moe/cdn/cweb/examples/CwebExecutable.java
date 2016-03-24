@@ -7,6 +7,7 @@ import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.CwebModule;
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.dht.CwebMultiMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,6 @@ import com.google.inject.TypeLiteral;
 
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
-import moe.cdn.cweb.dht.CwebMap;
 import moe.cdn.cweb.dht.DhtModule;
 import moe.cdn.cweb.dht.Shutdownable;
 import moe.cdn.cweb.dht.annotations.DhtShutdownable;
@@ -41,8 +41,8 @@ public class CwebExecutable {
 
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
 
-        CwebMap<SignedVote> signedVoteDhtNode = injector
-                .getInstance(Key.get(new TypeLiteral<CwebMap<SignedVote>>() {}, VoteDomain.class));
+        CwebMultiMap<SignedVote> signedVoteDhtNode = injector
+                .getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedVote>>() {}, VoteDomain.class));
         CwebImportService cwebImportService = injector.getInstance(CwebImportService.class);
 
         TorrentTrustProtos.User user = TorrentTrustProtos.User.newBuilder().setHandle("name")

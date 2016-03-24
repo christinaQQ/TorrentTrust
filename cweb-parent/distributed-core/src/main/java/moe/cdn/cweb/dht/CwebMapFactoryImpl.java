@@ -12,9 +12,9 @@ import java.util.function.Function;
  */
 class CwebMapFactoryImpl<V extends Message> implements CwebMapFactory<V> {
     @Override
-    public CwebMap<V> create(DhtNode<V> dhtNode,
-                             Function<SecurityProtos.Hash, CwebId> keyReducer,
-                             BiPredicate<SecurityProtos.Hash, V> notCollision) {
-        return new CwebMapImpl<>(dhtNode, keyReducer, notCollision);
+    public CwebMultiMap<V> create(ManagedDhtNode<V> dhtNode,
+                                  Function<SecurityProtos.Hash, CwebId> keyReducer,
+                                  BiPredicate<SecurityProtos.Hash, V> notCollision) {
+        return new CwebMultiMapImpl<>(dhtNode, keyReducer, notCollision);
     }
 }

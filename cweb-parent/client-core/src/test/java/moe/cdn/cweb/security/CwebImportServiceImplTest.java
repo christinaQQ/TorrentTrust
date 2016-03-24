@@ -10,7 +10,7 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
-import moe.cdn.cweb.dht.CwebMap;
+import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.SignatureUtils;
@@ -37,9 +37,9 @@ public class CwebImportServiceImplTest {
     private static final Signature VOTE_1_SIGNATURE = SignatureUtils.signMessage(KEY_PAIR, VOTE_1);
 
     @Mock
-    private CwebMap<SignedUser> userMap;
+    private CwebMultiMap<SignedUser> userMap;
     @Mock
-    private CwebMap<SignedVote> voteMap;
+    private CwebMultiMap<SignedVote> voteMap;
 
     private CwebImportServiceImpl cwebImportServiceImpl;
 
