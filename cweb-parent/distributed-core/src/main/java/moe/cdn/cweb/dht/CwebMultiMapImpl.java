@@ -22,8 +22,8 @@ class CwebMultiMapImpl<V extends Message> implements CwebMultiMap<V> {
 
     @Inject
     public CwebMultiMapImpl(ManagedDhtNode<V> collection,
-                            Function<Hash, CwebId> keyReducer,
-                            BiPredicate<Hash, V> notCollision) {
+            Function<Hash, CwebId> keyReducer,
+            BiPredicate<Hash, V> notCollision) {
         this.collection = collection;
         this.keyReducer = keyReducer;
         this.notCollision = notCollision;

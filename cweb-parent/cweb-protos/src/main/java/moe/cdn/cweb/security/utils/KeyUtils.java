@@ -3,6 +3,7 @@ package moe.cdn.cweb.security.utils;
 import com.google.protobuf.ByteString;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.Key.KeyType;
+import moe.cdn.cweb.security.exceptions.MalformedKeyException;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 
 import java.security.*;
@@ -99,7 +100,7 @@ public final class KeyUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Could not access RSA algorithm", e);
         } catch (InvalidKeySpecException e) {
-            throw new IllegalArgumentException("Key did not follow X509 spec", e);
+            throw new MalformedKeyException("X509", publicKey, e);
         }
     }
 
@@ -124,7 +125,7 @@ public final class KeyUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Could not access RSA algorithm", e);
         } catch (InvalidKeySpecException e) {
-            throw new IllegalArgumentException("Key did not follow PKCS8 spec", e);
+            throw new MalformedKeyException("PKCS8", privateKey, e);
         }
     }
 

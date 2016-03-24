@@ -12,7 +12,7 @@ import com.google.protobuf.Parser;
 import moe.cdn.cweb.dht.internal.CwebGetResults;
 import moe.cdn.cweb.dht.internal.CwebNode;
 import moe.cdn.cweb.dht.internal.CwebPutResults;
-import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
+import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.security.CwebId;
 import net.tomp2p.peers.Number160;
 
@@ -22,14 +22,15 @@ import net.tomp2p.peers.Number160;
 class CwebDhtNodeFactory implements DhtNodeFactory {
 
     @Override
-    public <T extends Message> ManagedDhtNode<T> create(PeerDhtShutdownable self,
-                                                        String domainKey,
-                                                        Parser<T> messageParser) {
+    public <T extends Message> ManagedDhtNode<T> create(ManagedPeerDhtPeer self,
+            String domainKey,
+            Parser<T> messageParser) {
         return new AsCwebManagedDhtNode<>(
                 new CwebNode<>(self, Number160.createHash(domainKey), messageParser));
     }
 
     private static class AsCwebManagedDhtNode<T extends Message> implements ManagedDhtNode<T> {
+
         private final CwebNode<T> cwebNode;
 
         public AsCwebManagedDhtNode(CwebNode<T> cwebNode) {

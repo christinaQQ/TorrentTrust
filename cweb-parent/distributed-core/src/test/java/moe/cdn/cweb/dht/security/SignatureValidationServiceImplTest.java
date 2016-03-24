@@ -43,11 +43,6 @@ public class SignatureValidationServiceImplTest {
     }
 
     @Test
-    public void testSignatureValidationServiceImpl() {
-
-    }
-
-    @Test
     public void testValidateSelfSignedSignatureUserMessageValid() {
         assertTrue(signatureValidationService.validateSelfSigned(
                 SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE), USER, SAMPLE_MESSAGE));

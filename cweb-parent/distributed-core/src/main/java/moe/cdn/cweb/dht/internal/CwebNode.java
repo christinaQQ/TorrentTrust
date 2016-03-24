@@ -31,14 +31,14 @@ import net.tomp2p.storage.Data;
 public class CwebNode<T extends Message> implements Shutdownable {
     // FIXME tomp2p workaround
     private static final Executor EXECUTOR = ForkJoinPool.commonPool();
-    private final PeerDhtShutdownable self;
+    private final ManagedPeerDhtPeer self;
     private final Number160 domainKey;
     private final Parser<T> messageParser;
 
     // TODO: Examine protection
     // http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
 
-    public CwebNode(PeerDhtShutdownable self, Number160 domainKey, Parser<T> messageParser) {
+    public CwebNode(ManagedPeerDhtPeer self, Number160 domainKey, Parser<T> messageParser) {
         this.self = self;
         this.domainKey = domainKey;
         this.messageParser = messageParser;
@@ -87,7 +87,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startAllData(Number160 locationKey) {
-        return self.getDhtInstance().get(locationKey).domainKey(domainKey).all().start();
+        return self.getUnmanged().get(locationKey).domainKey(domainKey).all().start();
     }
 
     /**
@@ -96,7 +96,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startGetData(Number160 locationKey, Number160 contentKey) {
-        return self.getDhtInstance().get(locationKey).domainKey(domainKey).contentKey(contentKey)
+        return self.getUnmanged().get(locationKey).domainKey(domainKey).contentKey(contentKey)
                 .start();
     }
 
@@ -106,7 +106,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startGetData(Number160 locationKey) {
-        return self.getDhtInstance().get(locationKey).domainKey(domainKey).start();
+        return self.getUnmanged().get(locationKey).domainKey(domainKey).start();
     }
 
     /**
@@ -116,7 +116,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FuturePut} computation
      */
     protected FuturePut startAddData(Number160 locationKey, T t) {
-        return self.getDhtInstance().add(locationKey).domainKey(domainKey)
+        return self.getUnmanged().add(locationKey).domainKey(domainKey)
                 .data(new Data(t.toByteArray())).start();
     }
 
@@ -127,7 +127,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FuturePut} computation
      */
     protected FuturePut startPutData(Number160 locationKey, T t) {
-        return self.getDhtInstance().put(locationKey).domainKey(domainKey)
+        return self.getUnmanged().put(locationKey).domainKey(domainKey)
                 .data(new Data(t.toByteArray())).start();
     }
 

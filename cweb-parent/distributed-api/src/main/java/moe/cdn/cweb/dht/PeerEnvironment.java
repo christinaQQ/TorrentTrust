@@ -2,8 +2,6 @@ package moe.cdn.cweb.dht;
 
 import java.util.Collection;
 
-import com.google.common.net.HostAndPort;
-
 import moe.cdn.cweb.security.CwebId;
 
 /**
@@ -14,12 +12,12 @@ import moe.cdn.cweb.security.CwebId;
 public interface PeerEnvironment {
 
     /**
-     * Returns a collection of {@link IdAndAddress} objects that represnt peers
+     * Returns a collection of {@link DhtPeerAddress} objects that represnt peers
      * used for bootstrapping.
      * 
      * @return collection of id and address objects
      */
-    Collection<IdAndAddress> getPeerAddresses();
+    Collection<DhtPeerAddress> getPeerAddresses();
 
     /**
      * Returns an integer specifying the incoming port used for TCP connections
@@ -45,19 +43,4 @@ public interface PeerEnvironment {
      * @return
      */
     CwebId getMyId();
-
-    /**
-     * Object to store both node identities and addresses.
-     * 
-     * @author davix, jim
-     */
-    class IdAndAddress {
-        final CwebId id;
-        final HostAndPort hostAndPort;
-
-        public IdAndAddress(CwebId id, HostAndPort hostAndPort) {
-            this.id = id;
-            this.hostAndPort = hostAndPort;
-        }
-    }
 }

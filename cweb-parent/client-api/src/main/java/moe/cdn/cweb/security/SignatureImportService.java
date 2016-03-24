@@ -1,6 +1,7 @@
 package moe.cdn.cweb.security;
 
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 
@@ -11,7 +12,7 @@ public interface SignatureImportService {
      * @param data
      * @param privatekey
      */
-    Signature sign(byte[] data, KeyPair keypair);
+    Signature sign(KeyPair keypair, byte[] data);
 
     /**
      * Imports the signature into the network

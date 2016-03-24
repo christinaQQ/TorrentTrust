@@ -13,6 +13,7 @@ import org.ini4j.InvalidFileFormatException;
 import com.google.common.net.HostAndPort;
 
 import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.KeyEnviroment;
@@ -23,13 +24,13 @@ import moe.cdn.cweb.security.KeyEnviroment;
 public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
     private static final int DEFAULT_PORT = 1717;
 
-    private final Collection<IdAndAddress> idAndAddresses;
+    private final Collection<DhtPeerAddress> idAndAddresses;
     private final int tcpPort;
     private final int udpPort;
     private final CwebId myId;
     private final KeyPair keyPair;
 
-    private GlobalEnvironment(Collection<IdAndAddress> idAndAddresses,
+    private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
             int tcpPort,
             int udpPort,
             CwebId myId,
@@ -42,7 +43,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
     }
 
     @Override
-    public Collection<IdAndAddress> getPeerAddresses() {
+    public Collection<DhtPeerAddress> getPeerAddresses() {
         return idAndAddresses;
     }
 
@@ -76,7 +77,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
         private int udpPort;
         private CwebId myId;
         private KeyPair keyPair;
-        private final ArrayList<IdAndAddress> idAndAddresses;
+        private final ArrayList<DhtPeerAddress> idAndAddresses;
 
         public Builder() {
             idAndAddresses = new ArrayList<>();
@@ -99,11 +100,11 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
         }
 
         public Builder addIdAndAddress(CwebId id, HostAndPort hostAndPort) {
-            idAndAddresses.add(new IdAndAddress(id, hostAndPort));
+            idAndAddresses.add(new DhtPeerAddress(id, hostAndPort));
             return this;
         }
 
-        public Builder addAllIdAndAddresses(Collection<IdAndAddress> idAndAddresses) {
+        public Builder addAllIdAndAddresses(Collection<DhtPeerAddress> idAndAddresses) {
             this.idAndAddresses.addAll(idAndAddresses);
             return this;
         }

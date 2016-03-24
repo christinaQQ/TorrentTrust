@@ -12,6 +12,6 @@ import java.util.function.Function;
  */
 public interface CwebMapFactory<V extends Message> {
     CwebMultiMap<V> create(ManagedDhtNode<V> dhtNode,
-                           Function<SecurityProtos.Hash, CwebId> keyReducer,
-                           BiPredicate<SecurityProtos.Hash, V> notCollision);
+            Function<SecurityProtos.Hash, CwebId> keyReducer,
+            BiPredicate<SecurityProtos.Hash, V> notCollision);
 }

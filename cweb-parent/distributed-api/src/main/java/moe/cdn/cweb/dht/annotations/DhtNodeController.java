@@ -11,12 +11,12 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Indicates an injection of a shutdownable item that shuts down the DHT
+ * Indicates an injection of a controller on a DHT node
  * 
  * @author jim
  */
 @BindingAnnotation
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
-public @interface DhtShutdownable {
+public @interface DhtNodeController {
 }

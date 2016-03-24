@@ -3,6 +3,7 @@ package moe.cdn.cweb.examples;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import moe.cdn.cweb.dht.DhtModule;
+import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
@@ -18,18 +19,18 @@ import java.util.Random;
  */
 public class ExampleModule extends AbstractModule {
     private final int port;
-    private final Collection<PeerEnvironment.IdAndAddress> idAndAddresses;
+    private final Collection<DhtPeerAddress> idAndAddresses;
 
     public ExampleModule(int port) {
         this(port, Collections.emptyList());
     }
 
-    public ExampleModule(int port, Collection<PeerEnvironment.IdAndAddress> idAndAddresses) {
+    public ExampleModule(int port, Collection<DhtPeerAddress> idAndAddresses) {
         this.port = port;
         this.idAndAddresses = idAndAddresses;
     }
 
-    public ExampleModule(int port, PeerEnvironment.IdAndAddress... idAndAddresses) {
+    public ExampleModule(int port, DhtPeerAddress... idAndAddresses) {
         this.port = port;
         this.idAndAddresses = Arrays.asList(idAndAddresses);
     }
@@ -38,7 +39,7 @@ public class ExampleModule extends AbstractModule {
     PeerEnvironment providePeerEnvironment() {
         return new PeerEnvironment() {
             @Override
-            public Collection<IdAndAddress> getPeerAddresses() {
+            public Collection<DhtPeerAddress> getPeerAddresses() {
                 return Collections.emptyList();
             }
 

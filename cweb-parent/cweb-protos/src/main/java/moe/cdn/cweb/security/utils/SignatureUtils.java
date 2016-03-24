@@ -11,7 +11,7 @@ import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
-import moe.cdn.cweb.security.UnsupportedAlgorithmException;
+import moe.cdn.cweb.security.exceptions.UnsupportedAlgorithmException;
 
 /**
  * Utilities for signing and verification of signatures
@@ -30,6 +30,14 @@ public final class SignatureUtils {
      * @return boolean indicator of verification success
      */
     public static boolean validateMessage(Signature signature, byte[] message) {
+        if (!signature.hasPublicKey()) {
+            throw new IllegalArgumentException("Malformed signature: "
+                    + Representations.asString(signature) + ". No public key.");
+        }
+        if (!Signature.SignatureAlgorithm.SHA256withRSA.equals(signature.getAlgorithm())) {
+            throw new IllegalArgumentException(
+                    "Signature algorithm " + signature.getAlgorithmValue() + " not recognized.");
+        }
         try {
             java.security.Signature verifier = java.security.Signature.getInstance("SHA256withRSA");
 
@@ -71,9 +79,9 @@ public final class SignatureUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedAlgorithmException();
         } catch (InvalidKeyException e) {
-            throw new RuntimeException("Key decoding failed.", e);
+            throw new RuntimeException("Key decoding failed", e);
         } catch (SignatureException e) {
-            throw new RuntimeException("Lol What's a SignatureException", e);
+            throw new RuntimeException("LOL: What's a SignatureException", e);
         }
     }
 

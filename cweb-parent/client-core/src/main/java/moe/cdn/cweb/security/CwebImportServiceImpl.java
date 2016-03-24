@@ -14,9 +14,13 @@ import moe.cdn.cweb.security.utils.SignatureUtils;
 
 import java.util.concurrent.ExecutionException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CwebImportServiceImpl implements CwebImportService {
+    private static final Logger logger = LogManager.getLogger();
 
     private final KeyPair userKeyPair;
     private final CwebMultiMap<SignedUser> userMap;
@@ -24,15 +28,16 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Inject
     public CwebImportServiceImpl(KeyPair userKeyPair,
-                                 @UserDomain CwebMultiMap<SignedUser> userMap,
-                                 @VoteDomain CwebMultiMap<SignedVote> voteMap) {
+            @UserDomain CwebMultiMap<SignedUser> userMap,
+            @VoteDomain CwebMultiMap<SignedVote> voteMap) {
+
         this.userKeyPair = checkNotNull(userKeyPair);
         this.userMap = checkNotNull(userMap);
         this.voteMap = checkNotNull(voteMap);
     }
 
     @Override
-    public Signature sign(byte[] data, KeyPair keypair) {
+    public Signature sign(KeyPair keypair, byte[] data) {
         return SignatureUtils.signMessage(keypair, data);
     }
 
@@ -40,11 +45,11 @@ public class CwebImportServiceImpl implements CwebImportService {
     public boolean importSignature(User user, Signature signature) {
         SignedUser signedUser =
                 SignedUser.newBuilder().setSignature(signature).setUser(user).build();
+        logger.info("Importing user {} (signature: {})", user, signature);
         try {
-            return userMap
-                    .put(signedUser.getUser().getPublicKey().getHash(), signedUser)
-                    .get();
+            return userMap.put(signedUser.getUser().getPublicKey().getHash(), signedUser).get();
         } catch (InterruptedException | ExecutionException e) {
+            logger.warn("Signature import failed or was interrupted.", e);
             return false;
         }
     }
@@ -53,21 +58,23 @@ public class CwebImportServiceImpl implements CwebImportService {
     public boolean importSignature(Vote vote, Signature signature) {
         SignedVote signedVote =
                 SignedVote.newBuilder().setSignature(signature).setVote(vote).build();
+        logger.info("Importing vote {} (signature: {})", vote, signature);
         try {
-            return voteMap.put(signedVote.getVote().getContentHash(), signedVote).get();
+            return voteMap.add(signedVote.getVote().getContentHash(), signedVote).get();
         } catch (InterruptedException | ExecutionException e) {
+            logger.warn("Signature import failed or was interrupted.", e);
             return false;
         }
     }
 
     @Override
     public boolean importVote(Vote vote) {
-        return importSignature(vote, SignatureUtils.signMessage(userKeyPair, vote.toByteArray()));
+        return importSignature(vote, sign(userKeyPair, vote.toByteArray()));
     }
 
     @Override
     public boolean importUser(User user) {
-        return importSignature(user, SignatureUtils.signMessage(userKeyPair, user.toByteArray()));
+        return importSignature(user, sign(userKeyPair, user.toByteArray()));
     }
 
 }

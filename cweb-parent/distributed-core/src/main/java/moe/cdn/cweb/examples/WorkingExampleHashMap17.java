@@ -7,10 +7,16 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -22,17 +28,19 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.internal.PeerDhtShutdownable;
+import moe.cdn.cweb.dht.DhtPeerAddress;
+import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
-import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.futures.FutureBootstrap;
-import net.tomp2p.peers.PeerAddress;
-import net.tomp2p.replication.IndirectReplication;
 
 public class WorkingExampleHashMap17 {
     // TODO: http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
+    private static final Logger logger = LogManager.getLogger();
+
     private static final int PORT = 1717;
+    // Values > 38 seem to exhaust resources
+    private static final int NUM_PEERS = 30;
 
     private static final KeyPair USER17_KEYS = KeyUtils.generateKeyPair();
     private static final KeyPair USER18_KEYS = KeyUtils.generateKeyPair();
@@ -52,18 +60,14 @@ public class WorkingExampleHashMap17 {
     private static final SignedUser USER19_SIGNED = SignedUser.newBuilder()
             .setSignature(SignatureUtils.signMessage(USER19_KEYS, USER19)).setUser(USER19).build();
 
-    static PeerDhtShutdownable[] createPeers(Injector[] injectors) throws IOException {
-        PeerDhtShutdownable[] peers = new PeerDhtShutdownable[injectors.length];
+    static ManagedPeerDhtPeer[] createPeers(Injector[] injectors) throws IOException {
+        ManagedPeerDhtPeer[] peers = new ManagedPeerDhtPeer[injectors.length];
         for (int i = 0; i < injectors.length; i++) {
-            peers[i] = injectors[i].getInstance(PeerDhtShutdownable.class);
-            new IndirectReplication(peers[i].getDhtInstance()).replicationFactor(5).start();
+            logger.debug("Creating peer " + i);
+            peers[i] = injectors[i].getInstance(ManagedPeerDhtPeer.class);
+            peers[i].setReplication(5);
         }
         return peers;
-        // Originally, peer[0] was the master peer and all others connected to
-        // it
-        // peers[i] = new PeerBuilderDHT(new
-        // PeerBuilder(Number160s.fromCwebId(RND))
-        // .masterPeer(peers[0].peer()).start()).start();
     }
 
 
@@ -71,76 +75,110 @@ public class WorkingExampleHashMap17 {
      * Bootstraps peers to the first peer in the array.
      *
      * @param peers The peers that should be bootstrapped
+     * @throws ExecutionException
+     * @throws InterruptedException
      */
-    static void bootstrap(PeerDhtShutdownable[] peers) {
-        // tell all peers about each other starting from master at 0
-        // TODO replace
-        Collection<PeerAddress> all = Arrays.stream(peers).map(PeerDhtShutdownable::getDhtInstance)
-                .map(PeerDHT::peerAddress).collect(Collectors.toList());
-        List<FutureBootstrap> allFutures = Arrays.stream(peers)
-                .map(p -> p.getDhtInstance().peer().bootstrap().bootstrapTo(all).start())
+    static void bootstrap(ManagedPeerDhtPeer[] peers)
+            throws InterruptedException, ExecutionException {
+        logger.info("Bootstrapping nodes...");
+        Collection<DhtPeerAddress> all = Arrays.stream(peers).map(ManagedPeerDhtPeer::getAddress)
                 .collect(Collectors.toList());
-        net.tomp2p.futures.Futures.whenAll(allFutures).awaitUninterruptibly();
+        // FIXME: Can't do an async bootstrap. Causes a netty error.
+        Arrays.stream(peers).forEach(peer -> peer.bootstrapToSync(all));
+        logger.debug("All peers {}", all);
     }
 
-    public static void main(String[] args) throws Exception {
-        Injector[] injectors = new Injector[50];
-        for (int i = 0; i < injectors.length; i++) {
-            injectors[i] = Guice.createInjector(new ExampleModule(PORT));
-        }
+    static void debugUserObjects() {
+        logger.debug("User 17: {}", Representations.asString(USER17_SIGNED));
+        logger.debug("User 18: {}", Representations.asString(USER18_SIGNED));
+        logger.debug("User 19: {}", Representations.asString(USER19_SIGNED));
+    }
 
+    static void visualize(Injector injected) {
         try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(Paths.get("out.dot")))) {
             Injector injector = Guice.createInjector(new GraphvizModule());
             GraphvizGrapher grapher = injector.getInstance(GraphvizGrapher.class);
             grapher.setOut(out);
             grapher.setRankdir("TB");
-            grapher.graph(injectors[0]);
-        }
-
-
-        // PeerDHT master = null;
-        PeerDhtShutdownable[] peers = null;
-        try {
-            peers = createPeers(injectors);
-            // master = peers[0];
-
-            bootstrap(peers);
-
-            Injector injector1 = injectors[0];
-            Injector injector2 = injectors[17];
-            Injector injector3 = injectors[23];
-
-            CwebMultiMap<SignedUser> map1 =
-                    injector1.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
-            CwebMultiMap<SignedUser> map2 =
-                    injector2.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
-            CwebMultiMap<SignedUser> map3 =
-                    injector3.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
-
-            List<Boolean> putResults =
-                    Futures.allAsList(map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED),
-                            map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED),
-                            map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED)).get();
-            if (putResults.stream().allMatch(Boolean::booleanValue)) {
-                System.out.println("Seeded.");
-            } else {
-                System.out.println("Failed to seed.");
-            }
-
-            Future<SignedUser> one = map3.get(USER18_KEYS.getPublicKey().getHash());
-            System.out.println("getOne() ==> " + one.get());
-
-            Future<Collection<SignedUser>> all = map3.all(USER18_KEYS.getPublicKey().getHash());
-            System.out.println("getAll() ==> " + all.get());
-        } finally {
-            if (peers != null) {
-                System.out.println("Shutting down...");
-                Futures.allAsList(Arrays.stream(peers).map(PeerDhtShutdownable::shutdown)
-                        .collect(Collectors.toList())).get();
-                System.out.println("Done.");
-            }
+            grapher.graph(injected);
+        } catch (IOException e) {
+            logger.catching(e);
         }
     }
 
+    public static void main(String[] args) throws Exception {
+        Injector[] injectors = new Injector[NUM_PEERS];
+        for (int i = 0; i < injectors.length; i++) {
+            injectors[i] = Guice.createInjector(new ExampleModule(PORT + i));
+        }
 
+        // Visualize deps
+        visualize(injectors[0]);
+
+        // Create peers
+        ManagedPeerDhtPeer[] peers = createPeers(injectors);
+
+        // Bootstrap peers
+        bootstrap(peers);
+
+        Injector injector1 = injectors[0];
+        Injector injector2 = injectors[17];
+        Injector injector3 = injectors[23];
+
+        CwebMultiMap<SignedUser> map1 =
+                injector1.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+        CwebMultiMap<SignedUser> map2 =
+                injector2.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+        CwebMultiMap<SignedUser> map3 =
+                injector3.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+
+        debugUserObjects();
+
+        boolean r1 = map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED).get();
+        boolean r2 = map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED).get();
+        boolean r3 = map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED).get();
+        logger.debug("Put results " + r1 + "," + r2 + "," + r3);
+
+        // insert some data and wait
+        @SuppressWarnings("unchecked")
+        List<Boolean> putResults =
+                Futures.allAsList(map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED),
+                        map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED),
+                        map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED)).get();
+        if (putResults.stream().allMatch(Boolean::booleanValue)) {
+            logger.info("Seeded. M1:17, M2:18, M3:19");
+        } else {
+            logger.error("Failed to seed.");
+        }
+
+        // Test that getting from own map is done
+        waitAndPrint("M1 getOne(17) ==> %s",
+                toStringFuture(map1.get(USER17_KEYS.getPublicKey().getHash())));
+        waitAndPrint("M2 getOne(18) ==> %s",
+                toStringFuture(map2.get(USER18_KEYS.getPublicKey().getHash())));
+        waitAndPrint("M3 getOne(19) ==> %s",
+                toStringFuture(map3.get(USER19_KEYS.getPublicKey().getHash())));
+
+        // Test that we can get items that are interspersed
+        waitAndPrint("M3 getOne(18) ==> %s",
+                toStringFuture(map3.get(USER18_KEYS.getPublicKey().getHash())));
+        waitAndPrint("M3 getAll(18) ==> %s", map3.all(USER18_KEYS.getPublicKey().getHash()));
+
+        logger.info("Shutting down...");
+        Futures.allAsList(
+                Arrays.stream(peers).map(ManagedPeerDhtPeer::shutdown).collect(Collectors.toList()))
+                .get();
+        logger.info("Done.");
+    }
+
+    private static Future<String> toStringFuture(ListenableFuture<SignedUser> futureItem)
+            throws InterruptedException, ExecutionException {
+        return Futures.lazyTransform(futureItem, (Function<SignedUser, String>) u -> u == null
+                ? "null" : Representations.asString(u));
+    }
+
+    private static void waitAndPrint(String format, Future<?> futureItem)
+            throws InterruptedException, ExecutionException {
+        System.out.println(String.format(format, futureItem.get()));
+    }
 }
