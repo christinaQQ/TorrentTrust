@@ -3,7 +3,6 @@ package moe.cdn.cweb.dht;
 import java.util.Collection;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.protobuf.Message;
 
 /**
  * A multimap that backed by asynchronous operations.

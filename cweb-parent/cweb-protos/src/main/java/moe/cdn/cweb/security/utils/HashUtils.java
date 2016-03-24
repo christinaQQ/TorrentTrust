@@ -11,6 +11,13 @@ public final class HashUtils {
     // Please don't instantiate this class
     private HashUtils() {}
 
+    /**
+     * Calculates the SHA1 hash of a given byte array.
+     * 
+     * @param bytes input byte array
+     * @return sha1 value of the input bytes array. Length is always 20 (160
+     *         bits)
+     */
     public static byte[] sha1(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -20,6 +27,13 @@ public final class HashUtils {
         }
     }
 
+    /**
+     * Calculates the {@link Hash} of a given byte array. Hashes are backed with
+     * SHA256.
+     * 
+     * @param bytes input byte array
+     * @return sha256 value of the input bytes array packaged as such.
+     */
     public static Hash hashOf(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -30,7 +44,13 @@ public final class HashUtils {
         }
     }
 
-    public static Hash hashOf(String bytes) {
-        return hashOf(bytes.getBytes());
+    /**
+     * Calculates the {@link Hash} of a string.
+     * 
+     * @param str string to hash
+     * @return sha256 hash value of the input bytes.
+     */
+    public static Hash hashOf(String str) {
+        return hashOf(str.getBytes());
     }
 }

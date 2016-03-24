@@ -22,3 +22,6 @@ target/
 
 # Logs
 logs/
+
+# Generated .dot files
+*.dot
