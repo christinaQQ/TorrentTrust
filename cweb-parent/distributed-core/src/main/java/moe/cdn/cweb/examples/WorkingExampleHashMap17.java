@@ -99,8 +99,9 @@ public class WorkingExampleHashMap17 {
 
 
         // PeerDHT master = null;
+        PeerDhtShutdownable[] peers = null;
         try {
-            PeerDhtShutdownable[] peers = createPeers(injectors);
+            peers = createPeers(injectors);
             // master = peers[0];
 
             bootstrap(peers);
@@ -116,15 +117,6 @@ public class WorkingExampleHashMap17 {
             CwebMultiMap<SignedUser> map3 =
                     injector3.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
 
-
-            boolean r1 = map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED).get();
-            boolean r2 = map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED).get();
-            boolean r3 = map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED).get();
-            System.out.println("Put results " + r1 + "," + r2 + "," + r3);
-
-
-            // insert some data and wait
-            @SuppressWarnings("unchecked")
             List<Boolean> putResults =
                     Futures.allAsList(map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED),
                             map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED),
@@ -140,13 +132,13 @@ public class WorkingExampleHashMap17 {
 
             Future<Collection<SignedUser>> all = map3.all(USER18_KEYS.getPublicKey().getHash());
             System.out.println("getAll() ==> " + all.get());
-
-            System.out.println("Shutting down...");
-            Futures.allAsList(Arrays.stream(peers).map(PeerDhtShutdownable::shutdown)
-                    .collect(Collectors.toList())).get();
-            System.out.println("Done.");
-
         } finally {
+            if (peers != null) {
+                System.out.println("Shutting down...");
+                Futures.allAsList(Arrays.stream(peers).map(PeerDhtShutdownable::shutdown)
+                        .collect(Collectors.toList())).get();
+                System.out.println("Done.");
+            }
         }
     }
 
