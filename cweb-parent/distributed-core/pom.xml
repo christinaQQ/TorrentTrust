@@ -35,6 +35,11 @@
             <version>LATEST</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency><!-- for tomp2p -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>LATEST</version>
+        </dependency>
         <dependency>
             <groupId>net.tomp2p</groupId>
             <artifactId>tomp2p-dht</artifactId>
@@ -71,15 +76,16 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>LATEST</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>moe.cdn.cweb</groupId>
             <artifactId>distributed-api</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.mockito</groupId>
-        	<artifactId>mockito-core</artifactId>
-        	<version>LATEST</version>
-        	<scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -3,8 +3,6 @@ package moe.cdn.cweb.examples;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by David on 3/23/2016.
  */

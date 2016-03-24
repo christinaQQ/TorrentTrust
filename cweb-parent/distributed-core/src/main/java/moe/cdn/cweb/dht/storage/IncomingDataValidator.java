@@ -1,6 +1,7 @@
 package moe.cdn.cweb.dht.storage;
 
-import com.google.protobuf.InvalidProtocolBufferException;
+import javax.inject.Inject;
+
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -8,10 +9,11 @@ import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.inject.Inject;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 class IncomingDataValidator {
     private static final Logger logger = LogManager.getLogger();
@@ -31,7 +33,7 @@ class IncomingDataValidator {
 
 
     public boolean validate(Number160 domainKey, Data data) {
-        logger.trace("domain = {}, data = {}", domainKey, data);
+    	// TODO: What is a sane way to log validation actions?
         if (voteDomainKey.equals(domainKey)) {
             return validateVoteRawData(data);
         }

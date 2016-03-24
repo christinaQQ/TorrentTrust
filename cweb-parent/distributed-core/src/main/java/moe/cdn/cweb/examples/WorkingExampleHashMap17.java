@@ -84,7 +84,7 @@ public class WorkingExampleHashMap17 {
     }
 
     public static void main(String[] args) throws Exception {
-        Injector[] injectors = new Injector[100];
+        Injector[] injectors = new Injector[50];
         for (int i = 0; i < injectors.length; i++) {
             injectors[i] = Guice.createInjector(new ExampleModule(PORT));
         }

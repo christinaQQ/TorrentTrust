@@ -1,6 +1,5 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;
 import net.tomp2p.dht.FutureGet;
@@ -11,10 +10,6 @@ import net.tomp2p.rpc.DigestResult;
 import net.tomp2p.storage.Data;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * @author davix
