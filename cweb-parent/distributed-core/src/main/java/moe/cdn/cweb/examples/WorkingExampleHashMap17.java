@@ -41,9 +41,9 @@ public class WorkingExampleHashMap17 {
     private static final User USER17 =
             User.newBuilder().setPublicKey(USER17_KEYS.getPublicKey()).setHandle("User 17").build();
     private static final User USER18 =
-            User.newBuilder().setPublicKey(USER18_KEYS.getPublicKey()).setHandle("User 17").build();
+            User.newBuilder().setPublicKey(USER18_KEYS.getPublicKey()).setHandle("User 18").build();
     private static final User USER19 =
-            User.newBuilder().setPublicKey(USER19_KEYS.getPublicKey()).setHandle("User 17").build();
+            User.newBuilder().setPublicKey(USER19_KEYS.getPublicKey()).setHandle("User 19").build();
 
     private static final SignedUser USER17_SIGNED = SignedUser.newBuilder()
             .setSignature(SignatureUtils.signMessage(USER17_KEYS, USER17)).setUser(USER17).build();
