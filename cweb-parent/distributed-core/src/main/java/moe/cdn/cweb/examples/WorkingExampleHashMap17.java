@@ -164,11 +164,40 @@ public class WorkingExampleHashMap17 {
                 toStringFuture(map3.get(USER18_KEYS.getPublicKey().getHash())));
         waitAndPrint("M3 getAll(18) ==> %s", map3.all(USER18_KEYS.getPublicKey().getHash()));
 
+        // Test that we can read from every single node
+        for (Injector i : injectors) {
+            CwebMultiMap<SignedUser> userMap =
+                    i.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+            assertEquals(USER17_SIGNED, userMap.get(USER17.getPublicKey().getHash()).get());
+            assertEquals(USER18_SIGNED, userMap.get(USER18.getPublicKey().getHash()).get());
+            assertEquals(USER19_SIGNED, userMap.get(USER19.getPublicKey().getHash()).get());
+        }
+
         logger.info("Shutting down...");
         Futures.allAsList(
                 Arrays.stream(peers).map(ManagedPeerDhtPeer::shutdown).collect(Collectors.toList()))
                 .get();
         logger.info("Done.");
+    }
+
+    private static void assertEquals(SignedUser a, SignedUser b) {
+        if (a == null) {
+            if (b == null) {
+                logger.error("false that {} = {}", Representations.asString(a),
+                        Representations.asString(b));
+            } else {
+                logger.info("true that {} = {}", Representations.asString(a),
+                        Representations.asString(b));
+            }
+        } else {
+            if (a.equals(b)) {
+                logger.info("true that {} = {}", Representations.asString(a),
+                        Representations.asString(b));
+            } else {
+                logger.error("false that {} = {}", Representations.asString(a),
+                        Representations.asString(b));
+            }
+        }
     }
 
     private static Future<String> toStringFuture(ListenableFuture<SignedUser> futureItem)

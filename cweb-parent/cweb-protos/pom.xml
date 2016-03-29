@@ -48,5 +48,11 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.0.0-alpha-3.1</version>
         </dependency>
+        <dependency>
+        	<groupId>junit</groupId>
+        	<artifactId>junit</artifactId>
+        	<version>LATEST</version>
+        	<scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

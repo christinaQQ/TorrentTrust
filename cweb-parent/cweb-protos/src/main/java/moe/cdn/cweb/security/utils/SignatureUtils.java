@@ -11,6 +11,7 @@ import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
+import moe.cdn.cweb.security.exceptions.MalformedSignatureException;
 import moe.cdn.cweb.security.exceptions.UnsupportedAlgorithmException;
 
 /**
@@ -28,11 +29,14 @@ public final class SignatureUtils {
      * @param signature signature proto
      * @param message message byte array to verify
      * @return boolean indicator of verification success
+     * @throws MalformedSignatureException if the signature does not contain a
+     *         public key
+     * @throws IllegalArgumentException if the signature is not signed with
+     *         SHA256withRSA
      */
     public static boolean validateMessage(Signature signature, byte[] message) {
         if (!signature.hasPublicKey()) {
-            throw new IllegalArgumentException("Malformed signature: "
-                    + Representations.asString(signature) + ". No public key.");
+            throw new MalformedSignatureException(signature);
         }
         if (!Signature.SignatureAlgorithm.SHA256withRSA.equals(signature.getAlgorithm())) {
             throw new IllegalArgumentException(

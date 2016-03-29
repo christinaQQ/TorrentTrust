@@ -52,7 +52,7 @@ public final class Representations {
     }
 
     public static String asString(Vote vote) {
-        return String.format("Vote(hash='%s', owner=%s, assertions=[:%d])",
+        return String.format("Vote(hash=%s, owner=%s, assertions=[:%d])",
                 asString(vote.getContentHash()), asString(vote.getOwnerPublicKey()),
                 vote.getAssertionCount());
     }

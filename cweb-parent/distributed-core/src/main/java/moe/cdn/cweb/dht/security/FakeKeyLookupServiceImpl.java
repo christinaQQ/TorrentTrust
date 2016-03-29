@@ -32,7 +32,7 @@ class FakeKeyLookupServiceImpl implements KeyLookupService {
         }
     }
 
-    private void warnDeprecation() {
+    private static void warnDeprecation() {
         logger.warn("Deprecated: FakeKeyLookupService is deprecated.");
     }
 

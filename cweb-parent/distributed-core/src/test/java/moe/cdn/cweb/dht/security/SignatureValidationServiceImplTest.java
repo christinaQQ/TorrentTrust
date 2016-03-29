@@ -77,5 +77,4 @@ public class SignatureValidationServiceImplTest {
                 SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE),
                 SAMPLE_MESSAGE.toByteArray()));
     }
-
 }
