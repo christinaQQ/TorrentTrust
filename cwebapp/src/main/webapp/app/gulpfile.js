@@ -11,7 +11,7 @@ const path = require('path');
 const sass = require('gulp-sass');
 const clean = require('gulp-clean');
 
-const SASS_FILES = './sass/**/*.scss'
+const SASS_FILES = './sass/**/*.scss';
 const JS_FILES = [
   './gulpfile.js'
 ];
@@ -29,7 +29,7 @@ const notifyLiveReload = (event) => {
       files: [path.relative(__dirname, event.path)]
     }
   });
-}
+};
 
 // browserify bundler/watcher, for use in tasks
 const bundler = browserify({
@@ -62,7 +62,7 @@ gulp.task('sass', () => {
   return gulp.src('./sass/*.scss')
   .pipe(sass({
     outputStyle: 'expanded',
-    includePaths: [path.join(BOOTSTRAP_DIR, 'assets/stylesheets')],
+    includePaths: [path.join(BOOTSTRAP_DIR, 'assets/stylesheets')]
   })
   .on('error', sass.logError))
   .pipe(gulp.dest('./build/css'));
