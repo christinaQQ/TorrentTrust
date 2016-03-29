@@ -1,0 +1,41 @@
+{
+  "name": "react-examples",
+  "version": "1.0.0",
+  "description": "The example app should be ready to go. You'll need to have [`http-server`](https://github.com/indexzero/http-server) installed. Once you have this, just run",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cis197/react-examples.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cis197/react-examples/issues"
+  },
+  "homepage": "https://github.com/cis197/react-examples#readme",
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "browserify-resolutions": "^1.0.6",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-zip": "^3.2.0",
+    "path": "^0.12.7",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "bootstrap-sass": "^3.3.6",
+    "gulp-clean": "^0.3.2",
+    "gulp-sass": "^2.2.0",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-redux": "^4.4.1",
+    "reactify": "^1.1.1",
+    "redux": "^3.3.1",
+    "tiny-lr": "^0.2.1"
+  }
+}
