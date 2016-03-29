@@ -2,10 +2,13 @@ package moe.cdn.cweb.vote;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 import moe.cdn.cweb.SecurityProtos.Hash;
@@ -32,19 +35,17 @@ class CwebVoteServiceImpl implements CwebVoteService {
     }
 
     @Override
-    public List<Vote> getAllVotes(Hash objectHash) {
-        try {
-            return voteMap.all(objectHash).get().stream()
-                    .filter(signatureValidationService::validateVote).map(SignedVote::getVote)
-                    .collect(Collectors.toList());
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+    public ListenableFuture<Collection<Vote>> getAllVotes(Hash objectHash) {
+        return Futures.transform(voteMap.all(objectHash),
+                (Function<Collection<SignedVote>, List<Vote>>) signedVotes -> signedVotes.stream()
+                        .filter(signatureValidationService::validateVote).map(SignedVote::getVote)
+                        .collect(Collectors.toList()));
     }
 
     @Override
-    public boolean castVote(Vote vote) {
-        return importService.importVote(vote);
+    public ListenableFuture<Boolean> castVote(Vote vote) {
+        // TODO: Propagate Futures to make this actually async
+        return Futures.immediateFuture(importService.importVote(vote));
     }
 
 }

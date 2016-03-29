@@ -13,6 +13,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 
 import moe.cdn.cweb.CwebApi;
+import moe.cdn.cweb.CwebApiException;
 import moe.cdn.cweb.CwebModule;
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
@@ -37,8 +38,9 @@ public class CwebExecutable {
 
     /**
      * Usage: java moe.cdn.cweb.CwebExecutable [[id host_and_port] ...]
+     * @throws CwebApiException 
      */
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException, CwebApiException {
         Injector injector = Guice.createInjector(new DhtModule(), new CwebModule(args));
 
         CwebApi cwebApi = injector.getInstance(CwebApi.class);

@@ -38,11 +38,17 @@ class TrustGeneratorImpl implements TrustGenerator {
         Set<VoteWrapperObject> B_votes = new HashSet<>();
         HashMap<VoteWrapperObject, VoteWrapperObject> overlappingVotes = new HashMap<>();
 
-        for (Vote v : api.getVotesForUser(a)) {
-            A_votes.add(new VoteWrapperObject(v));
-        }
-        for (Vote v : api.getVotesForUser(b)) {
-            B_votes.add(new VoteWrapperObject(v));
+        try {
+            for (Vote v : api.getVotesForUser(a)) {
+                A_votes.add(new VoteWrapperObject(v));
+            }
+            for (Vote v : api.getVotesForUser(b)) {
+                B_votes.add(new VoteWrapperObject(v));
+            }
+        } catch (CwebApiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return 0;
         }
 
         Set<VoteWrapperObject> overlapping_content = new HashSet<>(A_votes);
@@ -51,7 +57,7 @@ class TrustGeneratorImpl implements TrustGenerator {
             overlappingVotes.put(v, null);
         }
 
-        //FIXME
+        // FIXME
         for (VoteWrapperObject v : B_votes) {
             if (overlappingVotes.containsKey(v)) {
                 overlappingVotes.put(v, v);
@@ -76,7 +82,7 @@ class TrustGeneratorImpl implements TrustGenerator {
             }
         }
 
-        //calculate positive b
+        // calculate positive b
         for (VoteWrapperObject v : B_votes) {
             for (Vote.Assertion assertion : v.vote.getAssertionList()) {
                 if (assertion.getRating() == Vote.Assertion.Rating.GOOD) {
@@ -86,14 +92,17 @@ class TrustGeneratorImpl implements TrustGenerator {
             }
         }
 
-        //calculate positive both
+        // calculate positive both
         for (VoteWrapperObject v : overlappingVotes.keySet()) {
             List<Vote.Assertion> A_assertions = v.vote.getAssertionList();
             List<Vote.Assertion> B_assertions = overlappingVotes.get(v).vote.getAssertionList();
-            // okay screw sets, let's do it with lists for something working and make efficient
+            // okay screw sets, let's do it with lists for something working and
+            // make efficient
             // later
-//            Set<Vote.Assertion> A_assertions = new HashSet<>(A_vote.vote.getAssertionList());
-//            Set<Vote.Assertion> B_assertions = new HashSet<>(B_vote.vote.getAssertionList());
+            // Set<Vote.Assertion> A_assertions = new
+            // HashSet<>(A_vote.vote.getAssertionList());
+            // Set<Vote.Assertion> B_assertions = new
+            // HashSet<>(B_vote.vote.getAssertionList());
 
             for (Vote.Assertion a_assertion : A_assertions) {
                 for (Vote.Assertion b_assertion : B_assertions) {
@@ -121,8 +130,15 @@ class TrustGeneratorImpl implements TrustGenerator {
     // first iteration: Trust only users connected to A.
     @Override
     public double trustCoefficientDirect(User a, User b) {
-        List<User> trustedUsers = api.getTrustedUsersForUser(a);
-        return trustedUsers.contains(b) ? 1 : 0;
+        List<User> trustedUsers;
+        try {
+            trustedUsers = api.getTrustedUsersForUser(a);
+            return trustedUsers.contains(b) ? 1 : 0;
+        } catch (CwebApiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     // second iteration: Trust any user in A's connected component
@@ -156,8 +172,13 @@ class TrustGeneratorImpl implements TrustGenerator {
             if (u == b) {
                 return level;
             }
-            for (User n : api.getTrustedUsersForUser(u)) {
-                q.offer(n);
+            try {
+                for (User n : api.getTrustedUsersForUser(u)) {
+                    q.offer(n);
+                }
+            } catch (CwebApiException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         return 0;

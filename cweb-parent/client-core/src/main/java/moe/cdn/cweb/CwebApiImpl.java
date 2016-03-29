@@ -1,6 +1,7 @@
 package moe.cdn.cweb;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
@@ -28,13 +29,26 @@ class CwebApiImpl implements CwebApi {
     }
 
     @Override
-    public List<User> getTrustedUsersForUser(User user) {
-        return trustNetworkService.getLocalTrustNetwork(user).stream().collect(Collectors.toList());
+    public List<User> getTrustedUsersForUser(User user) throws CwebApiException {
+        try {
+            return trustNetworkService.getLocalTrustNetwork(user).get().stream()
+                    .collect(Collectors.toList());
+        } catch (InterruptedException e) {
+            throw new CwebApiException(e);
+        } catch (ExecutionException e) {
+            throw new CwebApiException(e);
+        }
     }
 
     @Override
-    public List<Vote> getVotes(Hash objectHash) {
-        return voteService.getAllVotes(objectHash).stream().collect(Collectors.toList());
+    public List<Vote> getVotes(Hash objectHash) throws CwebApiException {
+        try {
+            return voteService.getAllVotes(objectHash).get().stream().collect(Collectors.toList());
+        } catch (InterruptedException e) {
+            throw new CwebApiException(e);
+        } catch (ExecutionException e) {
+            throw new CwebApiException(e);
+        }
     }
 
 }

@@ -20,7 +20,7 @@ public interface CwebApi {
      * @param user
      * @return
      */
-    List<Vote> getVotesForUser(User user);
+    List<Vote> getVotesForUser(User user) throws CwebApiException;
 
     /**
      * Gets the users in a user's local trust neighborhood
@@ -28,7 +28,7 @@ public interface CwebApi {
      * @param user
      * @return
      */
-    List<User> getTrustedUsersForUser(User user);
+    List<User> getTrustedUsersForUser(User user) throws CwebApiException;
 
     /**
      * Gets all votes for an object
@@ -36,5 +36,5 @@ public interface CwebApi {
      * @param objectHash
      * @return
      */
-    List<Vote> getVotes(Hash objectHash);
+    List<Vote> getVotes(Hash objectHash) throws CwebApiException;
 }

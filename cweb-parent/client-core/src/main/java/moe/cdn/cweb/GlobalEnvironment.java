@@ -19,7 +19,9 @@ import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.KeyEnviroment;
 
 /**
- * @author davix
+ * Environment that stores configuration for the application.
+ * 
+ * @author davix, jim
  */
 public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
     private static final int DEFAULT_PORT = 1717;
