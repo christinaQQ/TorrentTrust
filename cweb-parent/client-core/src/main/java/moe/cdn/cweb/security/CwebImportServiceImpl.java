@@ -10,6 +10,7 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
+import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
 
 import java.util.concurrent.ExecutionException;
@@ -45,7 +46,8 @@ public class CwebImportServiceImpl implements CwebImportService {
     public boolean importSignature(User user, Signature signature) {
         SignedUser signedUser =
                 SignedUser.newBuilder().setSignature(signature).setUser(user).build();
-        logger.info("Importing user {} (signature: {})", user, signature);
+        logger.info("Importing user {} (signature: {})", Representations.asString(user),
+                Representations.asString(signature));
         try {
             return userMap.put(signedUser.getUser().getPublicKey().getHash(), signedUser).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -58,7 +60,8 @@ public class CwebImportServiceImpl implements CwebImportService {
     public boolean importSignature(Vote vote, Signature signature) {
         SignedVote signedVote =
                 SignedVote.newBuilder().setSignature(signature).setVote(vote).build();
-        logger.info("Importing vote {} (signature: {})", vote, signature);
+        logger.info("Importing vote {} (signature: {})", Representations.asString(vote),
+                Representations.asString(signature));
         try {
             return voteMap.add(signedVote.getVote().getContentHash(), signedVote).get();
         } catch (InterruptedException | ExecutionException e) {

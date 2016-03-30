@@ -59,7 +59,7 @@ public class CwebImportServiceImplTest {
 
     @Test
     public void testImportVote() {
-        when(voteMap.put(CONTENT_HASH,
+        when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                 .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.importVote(VOTE_1));
@@ -75,7 +75,7 @@ public class CwebImportServiceImplTest {
 
     @Test
     public void testImportSignatureVote() {
-        when(voteMap.put(CONTENT_HASH,
+        when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                 .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.importSignature(VOTE_1, VOTE_1_SIGNATURE));
