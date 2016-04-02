@@ -87,7 +87,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startAllData(Number160 locationKey) {
-        return self.getUnmanged().get(locationKey).domainKey(domainKey).all().start();
+        return self.getUnmanaged().get(locationKey).domainKey(domainKey).all().start();
     }
 
     /**
@@ -96,7 +96,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startGetData(Number160 locationKey, Number160 contentKey) {
-        return self.getUnmanged().get(locationKey).domainKey(domainKey).contentKey(contentKey)
+        return self.getUnmanaged().get(locationKey).domainKey(domainKey).contentKey(contentKey)
                 .start();
     }
 
@@ -106,7 +106,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FutureGet} computation
      */
     protected FutureGet startGetData(Number160 locationKey) {
-        return self.getUnmanged().get(locationKey).domainKey(domainKey).start();
+        return self.getUnmanaged().get(locationKey).domainKey(domainKey).start();
     }
 
     /**
@@ -116,7 +116,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FuturePut} computation
      */
     protected FuturePut startAddData(Number160 locationKey, T t) {
-        return self.getUnmanged().add(locationKey).domainKey(domainKey)
+        return self.getUnmanaged().add(locationKey).domainKey(domainKey)
                 .data(new Data(t.toByteArray())).start();
     }
 
@@ -127,10 +127,11 @@ public class CwebNode<T extends Message> implements Shutdownable {
      * @return a {@link FuturePut} computation
      */
     protected FuturePut startPutData(Number160 locationKey, T t) {
-        return self.getUnmanged().put(locationKey).domainKey(domainKey)
+        return self.getUnmanaged().put(locationKey).domainKey(domainKey)
                 .data(new Data(t.toByteArray())).start();
     }
 
+    @Override
     public Future<Void> shutdown() {
         return self.shutdown();
     }

@@ -46,7 +46,7 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
         this.replication = Optional.empty();
     }
 
-    public PeerDHT getUnmanged() {
+    public PeerDHT getUnmanaged() {
         return peerDht;
     }
 
