@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.ini4j.Ini;
@@ -16,14 +17,14 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.security.CwebId;
-import moe.cdn.cweb.security.KeyEnviroment;
+import moe.cdn.cweb.security.KeyEnvironment;
 
 /**
  * Environment that stores configuration for the application.
  * 
  * @author davix, jim
  */
-public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
+public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private static final int DEFAULT_PORT = 1717;
 
     private final Collection<DhtPeerAddress> idAndAddresses;
@@ -70,7 +71,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
     }
 
     /**
-     * Builder for {@link GlobalEnviroment}
+     * Builder for {@link GlobalEnvironment}.
      * 
      * @author jim
      */
@@ -130,7 +131,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnviroment {
         return new Builder();
     }
 
-    public static Builder newBuilderFromArgs(Iterable<String> args) {
+    public static Builder newBuilderFromArgs(String... args) {
         Builder builder = newBuilder();
         CwebId id = null;
         HostAndPort hostAndPort;

@@ -7,10 +7,11 @@ import java.util.function.Function;
 
 import javax.inject.Singleton;
 
+import com.google.inject.Key;
+import moe.cdn.cweb.dht.spi.DhtModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -29,7 +30,7 @@ import moe.cdn.cweb.security.CwebMisc;
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number160;
 
-public class DhtModule extends AbstractModule {
+public class DhtModuleImpl extends DhtModule {
     private static final Logger logger = LogManager.getLogger();
 
     @Provides
@@ -84,7 +85,8 @@ public class DhtModule extends AbstractModule {
     @Provides
     @Singleton
     @KeyLookup
-    static CwebMultiMap<SignedUser> provideKeyLookupCwebMap(CwebMapFactory<SignedUser> cwebMapFactory,
+    static CwebMultiMap<SignedUser> provideKeyLookupCwebMap(
+            CwebMapFactory<SignedUser> cwebMapFactory,
             ManagedDhtNode<SignedUser> dhtNodeUser) {
         return cwebMapFactory.create(dhtNodeUser, CwebMisc.CWEB_ID_REDUCER,
                 CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
@@ -92,8 +94,9 @@ public class DhtModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public static ManagedPeerDhtPeer providePeerDHT(Storage storage,
-            PeerEnvironment peerEnvironment) throws IOException {
+    public static ManagedPeerDhtPeer provideManagedPeerDhtPeer(Storage storage,
+                                                               PeerEnvironment peerEnvironment)
+            throws IOException {
         // FIXME: Do not initialize a local DHT node in a Guice module
 
         ManagedPeerDhtPeer peerDhtPeer =
@@ -114,6 +117,9 @@ public class DhtModule extends AbstractModule {
     @Override
     protected void configure() {
         // ThrowingProviderBinder.forModule(this);
+        requireBinding(Key.get(String.class, UserDomain.class));
+        requireBinding(Key.get(String.class, VoteDomain.class));
+        requireBinding(PeerEnvironment.class);
 
         install(new DhtSecurityModule());
         install(new StorageModule());
@@ -141,8 +147,5 @@ public class DhtModule extends AbstractModule {
 
         bind(new TypeLiteral<BiPredicate<Hash, SignedVote>>() {})
                 .toInstance(CwebMisc.HASH_SIGNED_VOTE_BI_PREDICATE);
-
-        bind(String.class).annotatedWith(UserDomain.class).toInstance("user");
-        bind(String.class).annotatedWith(VoteDomain.class).toInstance("vote");
     }
 }

@@ -11,6 +11,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import moe.cdn.cweb.dht.DhtModuleService;
+import moe.cdn.cweb.dht.ManagedPeer;
+import moe.cdn.cweb.dht.annotations.DhtNodeController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +32,6 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.DhtPeerAddress;
-import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
@@ -60,11 +62,11 @@ public class WorkingExampleHashMap17 {
     private static final SignedUser USER19_SIGNED = SignedUser.newBuilder()
             .setSignature(SignatureUtils.signMessage(USER19_KEYS, USER19)).setUser(USER19).build();
 
-    static ManagedPeerDhtPeer[] createPeers(Injector[] injectors) throws IOException {
-        ManagedPeerDhtPeer[] peers = new ManagedPeerDhtPeer[injectors.length];
+    static ManagedPeer[] createPeers(Injector[] injectors) throws IOException {
+        ManagedPeer[] peers = new ManagedPeer[injectors.length];
         for (int i = 0; i < injectors.length; i++) {
             logger.debug("Creating peer " + i);
-            peers[i] = injectors[i].getInstance(ManagedPeerDhtPeer.class);
+            peers[i] = injectors[i].getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
             peers[i].setReplication(5);
         }
         return peers;
@@ -78,10 +80,9 @@ public class WorkingExampleHashMap17 {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    static void bootstrap(ManagedPeerDhtPeer[] peers)
-            throws InterruptedException, ExecutionException {
+    static void bootstrap(ManagedPeer[] peers) throws InterruptedException, ExecutionException {
         logger.info("Bootstrapping nodes...");
-        Collection<DhtPeerAddress> all = Arrays.stream(peers).map(ManagedPeerDhtPeer::getAddress)
+        Collection<DhtPeerAddress> all = Arrays.stream(peers).map(ManagedPeer::getAddress)
                 .collect(Collectors.toList());
         // FIXME: Can't do an async bootstrap. Causes a netty error.
         Arrays.stream(peers).forEach(peer -> peer.bootstrapToSync(all));
@@ -109,75 +110,77 @@ public class WorkingExampleHashMap17 {
     public static void main(String[] args) throws Exception {
         Injector[] injectors = new Injector[NUM_PEERS];
         for (int i = 0; i < injectors.length; i++) {
-            injectors[i] = Guice.createInjector(new ExampleModule(PORT + i));
+            injectors[i] = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
+                    new ExampleModule(args));
         }
 
         // Visualize deps
         visualize(injectors[0]);
 
         // Create peers
-        ManagedPeerDhtPeer[] peers = createPeers(injectors);
+        ManagedPeer[] peers = createPeers(injectors);
 
-        // Bootstrap peers
-        bootstrap(peers);
+        try {
+            // Bootstrap peers
+            bootstrap(peers);
 
-        Injector injector1 = injectors[0];
-        Injector injector2 = injectors[17];
-        Injector injector3 = injectors[23];
+            Injector injector1 = injectors[0];
+            Injector injector2 = injectors[17];
+            Injector injector3 = injectors[23];
 
-        CwebMultiMap<SignedUser> map1 =
-                injector1.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
-        CwebMultiMap<SignedUser> map2 =
-                injector2.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
-        CwebMultiMap<SignedUser> map3 =
-                injector3.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+            CwebMultiMap<SignedUser> map1 =
+                    injector1.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+            CwebMultiMap<SignedUser> map2 =
+                    injector2.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+            CwebMultiMap<SignedUser> map3 =
+                    injector3.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
 
-        debugUserObjects();
+            debugUserObjects();
 
-        boolean r1 = map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED).get();
-        boolean r2 = map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED).get();
-        boolean r3 = map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED).get();
-        logger.debug("Put results " + r1 + "," + r2 + "," + r3);
+            boolean r1 = map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED).get();
+            boolean r2 = map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED).get();
+            boolean r3 = map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED).get();
+            logger.debug("Put results " + r1 + "," + r2 + "," + r3);
 
-        // insert some data and wait
-        @SuppressWarnings("unchecked")
-        List<Boolean> putResults =
-                Futures.allAsList(map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED),
-                        map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED),
-                        map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED)).get();
-        if (putResults.stream().allMatch(Boolean::booleanValue)) {
-            logger.info("Seeded. M1:17, M2:18, M3:19");
-        } else {
-            logger.error("Failed to seed.");
+            // insert some data and wait
+            @SuppressWarnings("unchecked")
+            List<Boolean> putResults =
+                    Futures.allAsList(map1.put(USER17_KEYS.getPublicKey().getHash(), USER17_SIGNED),
+                            map2.put(USER18_KEYS.getPublicKey().getHash(), USER18_SIGNED),
+                            map3.put(USER19_KEYS.getPublicKey().getHash(), USER19_SIGNED)).get();
+            if (putResults.stream().allMatch(Boolean::booleanValue)) {
+                logger.info("Seeded. M1:17, M2:18, M3:19");
+            } else {
+                logger.error("Failed to seed.");
+            }
+
+            // Test that getting from own map is done
+            waitAndPrint("M1 getOne(17) ==> %s",
+                    toStringFuture(map1.get(USER17_KEYS.getPublicKey().getHash())));
+            waitAndPrint("M2 getOne(18) ==> %s",
+                    toStringFuture(map2.get(USER18_KEYS.getPublicKey().getHash())));
+            waitAndPrint("M3 getOne(19) ==> %s",
+                    toStringFuture(map3.get(USER19_KEYS.getPublicKey().getHash())));
+
+            // Test that we can get items that are interspersed
+            waitAndPrint("M3 getOne(18) ==> %s",
+                    toStringFuture(map3.get(USER18_KEYS.getPublicKey().getHash())));
+            waitAndPrint("M3 getAll(18) ==> %s", map3.all(USER18_KEYS.getPublicKey().getHash()));
+
+            // Test that we can read from every single node
+            for (Injector i : injectors) {
+                CwebMultiMap<SignedUser> userMap =
+                        i.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
+                assertEquals(USER17_SIGNED, userMap.get(USER17.getPublicKey().getHash()).get());
+                assertEquals(USER18_SIGNED, userMap.get(USER18.getPublicKey().getHash()).get());
+                assertEquals(USER19_SIGNED, userMap.get(USER19.getPublicKey().getHash()).get());
+            }
+        } finally {
+            logger.info("Shutting down...");
+            Futures.allAsList(
+                    Arrays.stream(peers).map(ManagedPeer::shutdown).collect(Collectors.toList()))
+                    .get();
         }
-
-        // Test that getting from own map is done
-        waitAndPrint("M1 getOne(17) ==> %s",
-                toStringFuture(map1.get(USER17_KEYS.getPublicKey().getHash())));
-        waitAndPrint("M2 getOne(18) ==> %s",
-                toStringFuture(map2.get(USER18_KEYS.getPublicKey().getHash())));
-        waitAndPrint("M3 getOne(19) ==> %s",
-                toStringFuture(map3.get(USER19_KEYS.getPublicKey().getHash())));
-
-        // Test that we can get items that are interspersed
-        waitAndPrint("M3 getOne(18) ==> %s",
-                toStringFuture(map3.get(USER18_KEYS.getPublicKey().getHash())));
-        waitAndPrint("M3 getAll(18) ==> %s", map3.all(USER18_KEYS.getPublicKey().getHash()));
-
-        // Test that we can read from every single node
-        for (Injector i : injectors) {
-            CwebMultiMap<SignedUser> userMap =
-                    i.getInstance(Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {}));
-            assertEquals(USER17_SIGNED, userMap.get(USER17.getPublicKey().getHash()).get());
-            assertEquals(USER18_SIGNED, userMap.get(USER18.getPublicKey().getHash()).get());
-            assertEquals(USER19_SIGNED, userMap.get(USER19.getPublicKey().getHash()).get());
-        }
-
-        logger.info("Shutting down...");
-        Futures.allAsList(
-                Arrays.stream(peers).map(ManagedPeerDhtPeer::shutdown).collect(Collectors.toList()))
-                .get();
-        logger.info("Done.");
     }
 
     private static void assertEquals(SignedUser a, SignedUser b) {

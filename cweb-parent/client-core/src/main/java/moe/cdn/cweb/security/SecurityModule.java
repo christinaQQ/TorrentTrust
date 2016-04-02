@@ -11,7 +11,7 @@ public class SecurityModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static KeyPair provideKeyPair(KeyEnviroment enviroment) {
+    static KeyPair provideKeyPair(KeyEnvironment enviroment) {
         return enviroment.getKeyPair();
     }
 

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Indicates an injection of a controller on a DHT node
+ * Indicates an injection of a controller of a DHT node
  * 
  * @author jim
  */

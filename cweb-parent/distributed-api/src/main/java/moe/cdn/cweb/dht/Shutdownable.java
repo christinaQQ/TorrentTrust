@@ -1,5 +1,7 @@
 package moe.cdn.cweb.dht;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import java.util.concurrent.Future;
 
 /**
@@ -13,5 +15,5 @@ public interface Shutdownable {
      * 
      * @return a future that is resolved when the shutdown completes
      */
-    Future<Void> shutdown();
+    ListenableFuture<Void> shutdown();
 }

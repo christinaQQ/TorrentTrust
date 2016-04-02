@@ -132,7 +132,7 @@ public class CwebNode<T extends Message> implements Shutdownable {
     }
 
     @Override
-    public Future<Void> shutdown() {
+    public ListenableFuture<Void> shutdown() {
         return self.shutdown();
     }
 }

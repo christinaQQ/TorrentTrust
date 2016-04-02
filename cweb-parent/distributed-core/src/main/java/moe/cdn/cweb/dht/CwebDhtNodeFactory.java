@@ -66,7 +66,7 @@ class CwebDhtNodeFactory implements DhtNodeFactory {
         }
 
         @Override
-        public Future<Void> shutdown() {
+        public ListenableFuture<Void> shutdown() {
             return cwebNode.shutdown();
         }
     }

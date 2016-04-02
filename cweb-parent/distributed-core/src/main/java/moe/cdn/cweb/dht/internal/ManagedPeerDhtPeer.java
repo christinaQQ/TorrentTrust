@@ -156,7 +156,7 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
     }
 
     /**
-     * Builds a {@link ManagedDhtPeer} from the environment. Does NOT bootstrap
+     * Builds a {@link ManagedPeer} from the environment. Does NOT bootstrap
      * to peers.
      * 
      * @param peerEnvironment environment containing parameters to build to

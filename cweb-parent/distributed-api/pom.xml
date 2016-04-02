@@ -23,6 +23,7 @@
             <artifactId>guice</artifactId>
             <version>LATEST</version>
         </dependency>
+
         <dependency>
             <groupId>moe.cdn.cweb</groupId>
             <artifactId>cweb-protos</artifactId>
