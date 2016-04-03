@@ -17,7 +17,7 @@ import java.util.Random;
 public class ExampleModule extends AbstractModule {
     private final GlobalEnvironment environment;
 
-    public ExampleModule(String[] args) {
+    public ExampleModule(String... args) {
         environment = GlobalEnvironment.newBuilderFromArgs(args)
                 .setPort(1717)
                 .setId(new CwebId(new Random())).setKeyPair(KeyUtils.generateKeyPair()).build();;

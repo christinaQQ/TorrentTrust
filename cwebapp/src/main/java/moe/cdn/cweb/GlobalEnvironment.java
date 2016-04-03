@@ -21,7 +21,7 @@ import moe.cdn.cweb.security.KeyEnvironment;
 
 /**
  * Environment that stores configuration for the application.
- * 
+ *
  * @author davix, jim
  */
 public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
@@ -34,15 +34,46 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final KeyPair keyPair;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-            int tcpPort,
-            int udpPort,
-            CwebId myId,
-            KeyPair keyPair) {
+                              int tcpPort,
+                              int udpPort,
+                              CwebId myId,
+                              KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.myId = checkNotNull(myId);
         this.keyPair = checkNotNull(keyPair);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static Builder newBuilderFromArgs(String... args) {
+        Builder builder = newBuilder();
+        CwebId id = null;
+        HostAndPort hostAndPort;
+        for (String arg : args) {
+            if (id == null) {
+                id = CwebId.fromBase64(arg);
+            } else {
+                hostAndPort = HostAndPort.fromString(arg).withDefaultPort(DEFAULT_PORT);
+                builder.addIdAndAddress(id, hostAndPort);
+                id = null;
+            }
+        }
+        if (id != null) {
+            throw new IllegalArgumentException(
+                    "Expected an even number of arguments consisting of pairs of ID and host/port");
+        }
+        return builder;
+    }
+
+    public static Builder newBuilderFromConfigFile(File configFile) throws IOException {
+        Ini config = new Ini(configFile);
+        // TODO actually read the config
+        Builder builder = newBuilder();
+        return builder;
     }
 
     @Override
@@ -72,15 +103,15 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
 
     /**
      * Builder for {@link GlobalEnvironment}.
-     * 
+     *
      * @author jim
      */
     public static class Builder {
+        private final ArrayList<DhtPeerAddress> idAndAddresses;
         private int tcpPort;
         private int udpPort;
         private CwebId myId;
         private KeyPair keyPair;
-        private final ArrayList<DhtPeerAddress> idAndAddresses;
 
         public Builder() {
             idAndAddresses = new ArrayList<>();
@@ -124,43 +155,6 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
 
         public GlobalEnvironment build() {
             return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyPair);
-        }
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public static Builder newBuilderFromArgs(String... args) {
-        Builder builder = newBuilder();
-        CwebId id = null;
-        HostAndPort hostAndPort;
-        for (String arg : args) {
-            if (id == null) {
-                id = CwebId.fromBase64(arg);
-            } else {
-                hostAndPort = HostAndPort.fromString(arg).withDefaultPort(DEFAULT_PORT);
-                builder.addIdAndAddress(id, hostAndPort);
-                id = null;
-            }
-        }
-        if (id != null) {
-            throw new IllegalArgumentException(
-                    "Expected an even number of arguments consisting of pairs of ID and host/port");
-        }
-        return builder;
-    }
-
-    public static Builder newBuilderFromConfigFile(File configFile) {
-        try {
-            Ini config = new Ini(configFile);
-            // TODO actually read the config
-            Builder builder = newBuilder();
-            return builder;
-        } catch (InvalidFileFormatException e) {
-            throw new IllegalArgumentException("Provided file failed to parse", e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
