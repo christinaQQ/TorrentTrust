@@ -56,11 +56,14 @@ public class UserDhtTest {
             User.newBuilder().setPublicKey(USER19_KEYS.getPublicKey()).setHandle("User 19").build();
 
     private static final SignedUser USER17_SIGNED = SignedUser.newBuilder()
-            .setSignature(SignatureUtils.signMessage(USER17_KEYS, USER17)).setUser(USER17).build();
+            .setSignature(SignatureUtils.signMessageUnchecked(USER17_KEYS, USER17))
+            .setUser(USER17).build();
     private static final SignedUser USER18_SIGNED = SignedUser.newBuilder()
-            .setSignature(SignatureUtils.signMessage(USER18_KEYS, USER18)).setUser(USER18).build();
+            .setSignature(SignatureUtils.signMessageUnchecked(USER18_KEYS, USER18))
+            .setUser(USER18).build();
     private static final SignedUser USER19_SIGNED = SignedUser.newBuilder()
-            .setSignature(SignatureUtils.signMessage(USER19_KEYS, USER19)).setUser(USER19).build();
+            .setSignature(SignatureUtils.signMessageUnchecked(USER19_KEYS, USER19))
+            .setUser(USER19).build();
 
     @DataPoints
     public static Injector[] injectors;
@@ -96,7 +99,7 @@ public class UserDhtTest {
         injectors = new Injector[NUM_PEERS];
         for (int i = 0; i < injectors.length; i++) {
             injectors[i] = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
-                    new ExampleModule());
+                    new ExampleModule(1700 + i));
         }
         // Create peers
         peers = createPeers(injectors);
