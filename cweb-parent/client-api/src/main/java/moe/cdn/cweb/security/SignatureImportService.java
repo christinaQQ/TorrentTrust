@@ -5,20 +5,31 @@ import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+
+/**
+ * Persistence for domain objects that need to be cryptographically signed.
+ */
 public interface SignatureImportService {
-    /**
-     * Signs bytedata and produces a signature
-     *
-     * @param data
-     * @param privatekey
-     */
-    Signature sign(KeyPair keypair, byte[] data);
 
     /**
-     * Imports the signature into the network
+     * Signs the specified data with the specified key pair.
      *
-     * @param signature
-     * @return
+     * @param keyPair the key pair
+     * @param data    the data
+     * @return the signature for the specified key pair and the specified data.
+     * @throws SignatureException
+     * @throws InvalidKeyException
+     */
+    Signature sign(KeyPair keyPair, byte[] data) throws SignatureException, InvalidKeyException;
+
+    /**
+     * Imports the specified proto using the specified signature.
+     *
+     * @param message   the proto
+     * @param signature the signature
+     * @return {@code true} if the import succeeded
      */
     boolean importSignature(Message message, Signature signature);
 }

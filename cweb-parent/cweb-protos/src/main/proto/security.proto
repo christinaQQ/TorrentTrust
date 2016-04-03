@@ -7,8 +7,8 @@ option java_outer_classname = "SecurityProtos";
 message Hash {
   // Type of hashing algorithm used
   enum HashAlgorithm {
-    SHA256 = 0; // This is guaranteed to be available
-    SHA1 = 1;
+    SHA_256 = 0; // This is guaranteed to be available
+    SHA_1 = 1;
     TORRENT = 2; // Identity of torrent (Usually SHA1 but we want futureproofness)
   }
   HashAlgorithm algorithm = 1;
@@ -18,7 +18,7 @@ message Hash {
 message Signature {
   // Type of signing algorithm used
   enum SignatureAlgorithm {
-    SHA256withRSA = 0; // This is guaranteed to be available
+    SHA_256_WITH_RSA = 0; // This is guaranteed to be available
   }
   
   SignatureAlgorithm algorithm = 1;

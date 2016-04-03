@@ -9,7 +9,6 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.dht.security.KeyLookupService;
 import org.junit.Test;
 
 import java.security.*;
@@ -57,7 +56,7 @@ public class FakeSignatureValidationServiceImplTest {
             signer.initSign(kf.generatePrivate(privateKeySpec));
             signer.update(data);
             return Signature.newBuilder().setPublicKey(keypair.getPublicKey())
-                    .setAlgorithm(SignatureAlgorithm.SHA256withRSA)
+                    .setAlgorithm(SignatureAlgorithm.SHA_256_WITH_RSA)
                     .setSignature(ByteString.copyFrom(signer.sign()))
                     .build();
         } catch (NoSuchAlgorithmException e) {
@@ -102,7 +101,7 @@ public class FakeSignatureValidationServiceImplTest {
     private static Hash hashOf(byte[] bytes) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
+            return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_256)
                     .setHashValue(ByteString.copyFrom(md.digest(bytes))).build();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm guaranteed to exist did not.", e);
@@ -125,13 +124,12 @@ public class FakeSignatureValidationServiceImplTest {
                 legitSignature.toBuilder().setPublicKey(KEY_PAIR_BOB.getPublicKey()).build();
         // Validate it
         assertFalse(validator.validateAndCheckSignatureKeyInNetwork(notSoLegitSignature, MESSAGE));
-        ;
     }
 
     @Test
     public void testCannotValidateMallorySignature() {
-        Signature nonExistantUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
-        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(nonExistantUserSignature,
+        Signature nonExistentUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
+        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(nonExistentUserSignature,
                 MESSAGE));
     }
 

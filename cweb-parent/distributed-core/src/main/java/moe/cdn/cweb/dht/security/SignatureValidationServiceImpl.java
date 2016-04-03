@@ -5,8 +5,6 @@ import com.google.inject.Inject;
 import com.google.protobuf.Message;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.dht.security.KeyLookupService;
-import moe.cdn.cweb.dht.security.SignatureValidationService;
 import moe.cdn.cweb.security.exceptions.UnsupportedAlgorithmException;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
@@ -36,22 +34,18 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
 
     @Override
     public boolean validateSelfSigned(Signature signature, User user, byte[] data) {
-        logger.debug("Attempting to validate: {} from {} against '{}'",
+        logger.debug("Validating signature {} owned by {} against <{}>...",
                 Representations.asString(signature), Representations.asString(user),
                 Representations.asString(data));
         switch (signature.getAlgorithm()) {
-            case SHA256withRSA:
+            case SHA_256_WITH_RSA:
                 // Check matching public keys
                 if (!user.getPublicKey().equals(signature.getPublicKey())) {
                     return false;
                 }
                 // Validate the signature
-                try {
-                    return SignatureUtils.validateMessage(signature, data);
-                } catch (IllegalArgumentException e) {
-                    logger.catching(e);
-                    return false;
-                }
+                return SignatureUtils.validateMessage(signature, data);
+
             case UNRECOGNIZED:
             default:
                 throw new UnsupportedAlgorithmException();
@@ -60,8 +54,6 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
 
     @Override
     public boolean validateAndCheckSignatureKeyInNetwork(Signature signature, byte[] data) {
-        logger.debug("Attempting to validate: {} against '{}'", Representations.asString(signature),
-                Representations.asString(data));
         ListenableFuture<Optional<SignedUser>> futureOwner =
                 keyLookupService.findOwner(signature.getPublicKey());
         Optional<SignedUser> owner;
@@ -72,7 +64,7 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
             return false;
         }
         if (!owner.isPresent()) {
-            logger.debug("Validation failed: Owner not found for {}.",
+            logger.debug("Validation failed. Owner not found for signature: {}",
                     Representations.asString(signature));
             return false;
         }

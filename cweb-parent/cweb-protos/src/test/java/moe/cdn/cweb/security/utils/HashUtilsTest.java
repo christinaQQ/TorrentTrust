@@ -35,7 +35,7 @@ public class HashUtilsTest {
     @Test
     public void testSha256Hash() {
         assertEquals(
-                Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
+                Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_256)
                         .setHashValue(ByteString.copyFrom(SHA256_TEST_STRING)).build(),
                 HashUtils.hashOf(TEST_STRING));
     }
@@ -43,7 +43,7 @@ public class HashUtilsTest {
     @Test
     public void testSha1Hash() {
         assertEquals(
-                Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA1)
+                Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_1)
                         .setHashValue(ByteString.copyFrom(SHA1_TEST_STRING)).build(),
                 HashUtils.sha1HashOf(TEST_STRING));
     }

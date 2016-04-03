@@ -29,12 +29,14 @@ public class CwebImportServiceImplTest {
 
     private static final User USER_1 =
             User.newBuilder().setPublicKey(KEY_PAIR.getPublicKey()).setHandle("User 1").build();
-    private static final Signature USER_1_SIGNATURE = SignatureUtils.signMessage(KEY_PAIR, USER_1);
+    private static final Signature USER_1_SIGNATURE =
+            SignatureUtils.signMessageUnchecked(KEY_PAIR, USER_1);
 
     private static final Hash CONTENT_HASH = HashUtils.hashOf("Hello World");
     private static final Vote VOTE_1 = Vote.newBuilder().setOwnerPublicKey(KEY_PAIR.getPublicKey())
             .setContentHash(CONTENT_HASH).build();
-    private static final Signature VOTE_1_SIGNATURE = SignatureUtils.signMessage(KEY_PAIR, VOTE_1);
+    private static final Signature VOTE_1_SIGNATURE =
+            SignatureUtils.signMessageUnchecked(KEY_PAIR, VOTE_1);
 
     @Mock
     private CwebMultiMap<SignedUser> userMap;
@@ -50,35 +52,35 @@ public class CwebImportServiceImplTest {
     }
 
     @Test
-    public void testImportUser() {
+    public void testImportUser() throws Exception {
         when(userMap.put(USER_1.getPublicKey().getHash(), SignedUser.newBuilder()
                 .setSignature(USER_1_SIGNATURE).setUser(USER_1).build()))
                 .thenReturn(Futures.immediateFuture(true));
-        assertTrue(cwebImportServiceImpl.importUser(USER_1));
+        assertTrue(cwebImportServiceImpl.importUser(USER_1).get());
     }
 
     @Test
-    public void testImportVote() {
+    public void testImportVote() throws Exception {
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                 .thenReturn(Futures.immediateFuture(true));
-        assertTrue(cwebImportServiceImpl.importVote(VOTE_1));
+        assertTrue(cwebImportServiceImpl.addVote(VOTE_1).get());
     }
 
     @Test
-    public void testImportSignatureUser() {
+    public void testImportSignatureUser() throws Exception {
         when(userMap.put(USER_1.getPublicKey().getHash(), TorrentTrustProtos.SignedUser.newBuilder()
                 .setSignature(USER_1_SIGNATURE).setUser(USER_1).build()))
                 .thenReturn(Futures.immediateFuture(true));
-        assertTrue(cwebImportServiceImpl.importSignature(USER_1, USER_1_SIGNATURE));
+        assertTrue(cwebImportServiceImpl.importSignature(USER_1, USER_1_SIGNATURE).get());
     }
 
     @Test
-    public void testImportSignatureVote() {
+    public void testImportSignatureVote() throws Exception {
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                 .thenReturn(Futures.immediateFuture(true));
-        assertTrue(cwebImportServiceImpl.importSignature(VOTE_1, VOTE_1_SIGNATURE));
+        assertTrue(cwebImportServiceImpl.addSignature(VOTE_1, VOTE_1_SIGNATURE).get());
     }
 
     @Test
@@ -87,11 +89,14 @@ public class CwebImportServiceImplTest {
     }
 
     @Test
-    public void testImportSignatureFail() {
-        when(userMap.put(USER_1.getPublicKey().getHash(), TorrentTrustProtos.SignedUser.newBuilder()
-                .setSignature(USER_1_SIGNATURE).setUser(USER_1).build()))
-                .thenReturn(Futures.immediateFailedFuture(new RuntimeException()));
-        assertFalse(cwebImportServiceImpl.importSignature(USER_1, USER_1_SIGNATURE));
+    public void testImportSignatureFail() throws Exception {
+        when(userMap.put(
+                USER_1.getPublicKey().getHash(),
+                TorrentTrustProtos.SignedUser.newBuilder()
+                        .setSignature(USER_1_SIGNATURE)
+                        .setUser(USER_1).build()))
+                .thenReturn(Futures.immediateFuture(false));
+        assertFalse(cwebImportServiceImpl.importSignature(USER_1, USER_1_SIGNATURE).get());
     }
 
 }

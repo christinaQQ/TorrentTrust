@@ -27,8 +27,9 @@ public class SignatureValidationServiceImplTest {
     private static final KeyPair KEY_PAIR_ALT = KeyUtils.generateKeyPair();
     private static final User USER =
             User.newBuilder().setPublicKey(KEY_PAIR.getPublicKey()).setHandle("User A").build();
-    private static final SignedUser SIGNED_USER = SignedUser.newBuilder().setUser(USER)
-            .setSignature(SignatureUtils.signMessage(KEY_PAIR, USER)).build();
+    private static final SignedUser SIGNED_USER = SignedUser.newBuilder()
+            .setUser(USER)
+            .setSignature(SignatureUtils.signMessageUnchecked(KEY_PAIR, USER)).build();
     private static final Hash SAMPLE_MESSAGE = HashUtils.hashOf("Hello World");
 
     @Mock
@@ -43,26 +44,26 @@ public class SignatureValidationServiceImplTest {
     }
 
     @Test
-    public void testValidateSelfSignedSignatureUserMessageValid() {
+    public void testValidateSelfSignedSignatureUserMessageValid() throws Exception {
         assertTrue(signatureValidationService.validateSelfSigned(
                 SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE), USER, SAMPLE_MESSAGE));
     }
 
     @Test
-    public void testValidateSelfSignedSignatureUserMessageInvalid() {
+    public void testValidateSelfSignedSignatureUserMessageInvalid() throws Exception {
         assertFalse(signatureValidationService.validateSelfSigned(
                 SignatureUtils.signMessage(KEY_PAIR_ALT, SAMPLE_MESSAGE), USER, SAMPLE_MESSAGE));
     }
 
     @Test
-    public void testValidateSelfSignedSignatureUserByteArray() {
+    public void testValidateSelfSignedSignatureUserByteArray() throws Exception {
         assertTrue(signatureValidationService.validateSelfSigned(
                 SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE), USER,
                 SAMPLE_MESSAGE.toByteArray()));
     }
 
     @Test
-    public void testValidateAndCheckSignatureKeyInNetworkSignatureByteArray() {
+    public void testValidateAndCheckSignatureKeyInNetworkSignatureByteArray() throws Exception {
         when(keyLookupService.findOwner(KEY_PAIR.getPublicKey()))
                 .thenReturn(Futures.immediateFuture(Optional.of(SIGNED_USER)));
         assertTrue(signatureValidationService.validateAndCheckSignatureKeyInNetwork(
@@ -70,7 +71,7 @@ public class SignatureValidationServiceImplTest {
     }
 
     @Test
-    public void testValidateAndCheckSignatureKeyInNetworkSignatureMessage() {
+    public void testValidateAndCheckSignatureKeyInNetworkSignatureMessage() throws Exception {
         when(keyLookupService.findOwner(KEY_PAIR.getPublicKey()))
                 .thenReturn(Futures.immediateFuture(Optional.of(SIGNED_USER)));
         assertTrue(signatureValidationService.validateAndCheckSignatureKeyInNetwork(

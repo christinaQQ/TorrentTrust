@@ -51,7 +51,7 @@ public final class HashUtils {
      * @return sha256 value of the input bytes array packaged as such.
      */
     public static Hash hashOf(byte[] bytes) {
-        return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA256)
+        return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_256)
                 .setHashValue(ByteString.copyFrom(sha256(bytes))).build();
     }
 
@@ -73,7 +73,7 @@ public final class HashUtils {
      * @return sha1 value of the input bytes array packaged as such.
      */
     public static Hash sha1HashOf(byte[] bytes) {
-        return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA1)
+        return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_1)
                 .setHashValue(ByteString.copyFrom(sha1(bytes))).build();
     }
 

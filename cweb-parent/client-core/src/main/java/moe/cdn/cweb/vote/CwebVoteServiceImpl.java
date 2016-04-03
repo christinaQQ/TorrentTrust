@@ -2,8 +2,11 @@ package moe.cdn.cweb.vote;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
@@ -27,8 +30,8 @@ class CwebVoteServiceImpl implements CwebVoteService {
 
     @Inject
     public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-            CwebImportService importService,
-            @VoteDomain CwebMultiMap<SignedVote> voteMap) {
+                               CwebImportService importService,
+                               @VoteDomain CwebMultiMap<SignedVote> voteMap) {
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
         this.voteMap = checkNotNull(voteMap);
@@ -43,9 +46,7 @@ class CwebVoteServiceImpl implements CwebVoteService {
     }
 
     @Override
-    public ListenableFuture<Boolean> castVote(Vote vote) {
-        // TODO: Propagate Futures to make this actually async
-        return Futures.immediateFuture(importService.importVote(vote));
+    public Future<Boolean> castVote(Vote vote) throws SignatureException, InvalidKeyException {
+        return importService.addVote(vote);
     }
-
 }

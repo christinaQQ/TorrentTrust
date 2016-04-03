@@ -5,27 +5,48 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.concurrent.Future;
+
 public interface CwebImportService extends SignatureImportService {
-    /**
-     * Imports a vote on an object and signs it with the current user's key
-     *
-     * @param vote
-     * @return
-     */
-    boolean importVote(Vote vote);
 
     /**
-     * Imports a new user into the trust network updating the existing record if
-     * it exists. Signs with the current user's key.
+     * Adds a {@link Vote} and signs it with the current key.
      *
-     * @param user
-     * @return
+     * @param vote the vote
+     * @return {@code true} if the import succeeded
+     * @throws SignatureException
+     * @throws InvalidKeyException
      */
-    boolean importUser(User user);
+    Future<Boolean> addVote(Vote vote) throws SignatureException, InvalidKeyException;
 
-    boolean importSignature(Vote vote, Signature signature);
+    /**
+     * Adds a {@link Vote} and signs it with the current key.
+     *
+     * @param vote the vote
+     * @return {@code true} if the import succeeded
+     */
+    Future<Boolean> addSignature(Vote vote, Signature signature);
 
-    boolean importSignature(User vote, Signature signature);
+    /**
+     * Imports a {@link User} and signs it with the current key. The existing record is updated
+     * if it exists.
+     *
+     * @param user the user
+     * @return {@code true} if the import succeeded
+     */
+    Future<Boolean> importUser(User user) throws SignatureException, InvalidKeyException;
+
+    /**
+     * Imports a {@link User} using the specified signature. The existing record is updated if it
+     * exists.
+     *
+     * @param user      the user
+     * @param signature the signature
+     * @return {@code true} if the import succeeded
+     */
+    Future<Boolean> importSignature(User user, Signature signature);
 
     @Override
     default boolean importSignature(Message message, Signature signature) {

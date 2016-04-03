@@ -1,6 +1,9 @@
 package moe.cdn.cweb.vote;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -25,5 +28,5 @@ public interface CwebVoteService {
      * @return future of boolean indicator indicating whether the vote was
      *         successfully cast
      */
-    ListenableFuture<Boolean> castVote(Vote vote);
+    Future<Boolean> castVote(Vote vote) throws SignatureException, InvalidKeyException;
 }
