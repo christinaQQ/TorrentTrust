@@ -18,15 +18,11 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="net.tomp2p" level="error">
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Logger name="io.netty" level="error">
-            <AppenderRef ref="Console"/>
-        </Logger>
         <Root level="trace">
             <AppenderRef ref="Console"/>
             <!--<AppenderRef ref="RollingFile"/>-->
         </Root>
+        <Logger name="net.tomp2p" level="warn"/>
+        <Logger name="io.netty" level="warn"/>
     </Loggers>
 </Configuration>
