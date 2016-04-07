@@ -4,6 +4,7 @@ import argparse
 
 # Trust metric stuff
 _local_neighborhood = {}
+_eigentrust_values = {}
 def _generate_local_neighborhood(u, cutoff = 2):
   # bfs on users assigning 0-1 trust  
   q, qset = [(u, 0)], set([u])
@@ -25,6 +26,23 @@ def calculateTrustMetric(u, v, cutoff = 2):
   if not u.name in _local_neighborhood:
     _generate_local_neighborhood(u, cutoff)
   return 1.0 if v in _local_neighborhood[u.name] else 0.0
+
+def calculateEigenTrustMetric(u, v, eigentrust, cutoff = .001):
+  return eigentrust[v] > cutoff
+
+
+def calculateEigentrust(users, iterations):
+  v = {user: 1.0/len(users) for user in users}
+  v_t = {user: 0.0 for user in users}
+
+  for t in xrange(iterations):
+    for user in users:
+      for neighbor in user.trusted():
+        v_t[neighbor] += v[user] / len(user.trusted())
+    v = v_t
+    v_t = {user: 0.0 for user in users}
+  return v
+
 
 # Correlation stuff
 DEFAULT_CORRELATION = 0
