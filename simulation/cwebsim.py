@@ -20,15 +20,18 @@ def _generate_local_neighborhood(u, cutoff = 2):
   _local_neighborhood[u.name] = seen
 
   
-def calculateTrustMetric(u, v, cutoff = 2):
-  if cutoff < 0:
-    return 1.0
-  if not u.name in _local_neighborhood:
-    _generate_local_neighborhood(u, cutoff)
-  return 1.0 if v in _local_neighborhood[u.name] else 0.0
+def calculateTrustMetric(u, v, trust_metric, cutoff = 2):
+  if trust_metric == 'BFS':
+    if cutoff < 0:
+      return 1.0
+    if not u.name in _local_neighborhood:
+      _generate_local_neighborhood(u, cutoff)
+    return 1.0 if v in _local_neighborhood[u.name] else 0.0
+  elif trust_metric == 'EIGENTRUST':
+    return _eigentrust_values[v]
 
-def calculateEigenTrustMetric(u, v, eigentrust, cutoff = .001):
-  return eigentrust[v] > cutoff
+def calculateEigentrustMetric(u, eigentrust, cutoff = .001):
+  return eigentrust[u] > cutoff
 
 
 def calculateEigentrust(users, iterations):
@@ -66,14 +69,14 @@ def calculateCorrelation(u, v):
   return _cache[(u.name, v.name)]
 
 # Scores 
-def getScore(user, target, trustCutoff = 2):
+def getScore(user, target, trustCutoff = 2, trust_metric='BFS'):
   total = 0.0
   totalCount = 0.0
   for vote in target.votes():
     if user == vote.user:
       # I voted for this
       return vote.score
-    trust = calculateTrustMetric(user, vote.user, trustCutoff)
+    trust = calculateTrustMetric(user, vote.user, trust_metric, trustCutoff)
     correlation = calculateCorrelation(user, vote.user)
     total += trust * correlation * vote.score
     totalCount += 1 if trust * correlation != 0 else 0
@@ -81,11 +84,14 @@ def getScore(user, target, trustCutoff = 2):
     return None;
   return total / totalCount
 
-def getAllScores(users, targets, trustCutoff = 2):
+def getAllScores(users, targets, trustCutoff = 2, trust_metric='BFS'):
+  global _eigentrust_values
   scores = {}
+  if trust_metric == 'EIGENTRUST':
+    _eigentrust_values = calculateEigentrust(users, 5) ### TRY WITH 5 ITERATIONS OF EIGENTRUST
   for user in users:
     for target in targets:
-      score = getScore(user, target, trustCutoff)
+      score = getScore(user, target, trustCutoff, trust_metric)
       print "{}\t{}\t{}\t{}\t{}".format(user.name, target.name, score, user.designation, target.designation)
   return scores
 
@@ -93,10 +99,10 @@ if __name__ == "__main__":
   import sys
 
   parser = argparse.ArgumentParser(description='Simulate Cweb with many parameters')
-  parser.add_argument('-b', '--bfsdepth', type=int, help='''-1 (always output 1),
+  parser.add_argument('-b', '--bfsdepth', type=int, default = 0, help='''-1 (always output 1),
                                                       0 (always output 0 if not self),
                                                       1 ~ any (bfs depth k)''')
-  parser.add_argument('-m', '--malclique', type=bool, help = '''malicious clique:
+  parser.add_argument('-m', '--malclique', type=bool, default = False, help = '''malicious clique:
                                                         "true" has malicious users,
                                                         "false" doesnt have any
                                                       ''')
@@ -109,13 +115,16 @@ if __name__ == "__main__":
                                                   0 - don't read from file
                                                   name of a file from which graph is created
                                                 ''')
+  parser.add_argument('-t', '--trust_metric', type=str, default='BFS', help = '''
+                                                BFS, EIGENTRUST
+                                                        ''')
 
   args = parser.parse_args()
   bfsdepth = args.bfsdepth
-  interconnect = args.bfsdepth
+  interconnect = args.interconnect
   malclique = args.malclique
   social_network_file = args.social_network_file
-
+  trust_metric = args.trust_metric
   with open('graphdump-' + "_".join(map(str, vars(args).values())).replace('/', '-') +'.json', 'w') as f:
     allItems = sim.generateContent(4000, {'GOOD': 80, 'EVIL': 20})
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
@@ -163,5 +172,5 @@ if __name__ == "__main__":
     sys.stderr.write("Wrote graph structure to file...\n")
     
     sys.stderr.write("Writing results @ trustCutoff = {}...\n".format(bfsdepth))
-    getAllScores(oneBigCluster, allItems, int(bfsdepth))
+    getAllScores(oneBigCluster, allItems, int(bfsdepth), trust_metric)
 
