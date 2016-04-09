@@ -46,7 +46,6 @@ def calculateEigentrust(users, iterations):
     v_t = {user: 0.0 for user in users}
   return v
 
-
 # Correlation stuff
 DEFAULT_CORRELATION = 0
 _cache = {}
@@ -125,6 +124,10 @@ if __name__ == "__main__":
   malclique = args.malclique
   social_network_file = args.social_network_file
   trust_metric = args.trust_metric
+  
+  if trust_metric not in ('BFS', 'EIGENTRUST'):
+    raise Exception('Trust metric {} not supported'.format(trust_metric))
+  
   with open('graphdump-' + "_".join(map(str, vars(args).values())).replace('/', '-') +'.json', 'w') as f:
     allItems = sim.generateContent(4000, {'GOOD': 80, 'EVIL': 20})
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
@@ -171,6 +174,9 @@ if __name__ == "__main__":
     f.write(sim.flattenGraph(oneBigCluster))
     sys.stderr.write("Wrote graph structure to file...\n")
     
-    sys.stderr.write("Writing results @ trustCutoff = {}...\n".format(bfsdepth))
+    if trust_metric == "EIGENTRUST": 
+      sys.stderr.write("Writing results /w BFS @ Cutoff = {}...\n".format(bfsdepth))
+    else:
+      sys.stderr.write("Writing results /w EIGENTRUST ...\n")
     getAllScores(oneBigCluster, allItems, int(bfsdepth), trust_metric)
 

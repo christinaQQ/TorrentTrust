@@ -161,7 +161,7 @@ def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1', desi
   bad_users = []
   numConnect = np.random.normal(malConnectivity * goodClusterSize,3,clusterSize - goodClusterSize)
   for i, name in enumerate(nameGenerator('Group2', clusterSize - goodClusterSize)):
-    badUser = User(name, 'BAD')
+    badUser = User(name, 'EVIL')
     for goodUser in random.sample(users, abs(int(round(numConnect[i])))):
       badUser.addTrusted(goodUser)
       goodUser.addTrusted(badUser)
