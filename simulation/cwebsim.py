@@ -105,6 +105,10 @@ if __name__ == "__main__":
                                                         "true" has malicious users,
                                                         "false" doesnt have any
                                                       ''')
+  parser.add_argument('-e', '--evil_targeting', type=bool, default = True, help = '''evil target:
+                                                        "true" has evil node voting on one evil target untruthfully,
+                                                        "false" doesnt have any, evil voters vote like non-evil ones
+                                                      ''')
   parser.add_argument('-i', '--interconnect', type=int, help = '''
                                                   0 - no connections,
                                                   non-0-# # of connections to connect between spammers and legit users
@@ -124,6 +128,7 @@ if __name__ == "__main__":
   malclique = args.malclique
   social_network_file = args.social_network_file
   trust_metric = args.trust_metric
+  assign_evil = args.evil_targeting
   
   if trust_metric not in ('BFS', 'EIGENTRUST'):
     raise Exception('Trust metric {} not supported'.format(trust_metric))
@@ -132,49 +137,57 @@ if __name__ == "__main__":
     allItems = sim.generateContent(4000, {'GOOD': 80, 'EVIL': 20})
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
     
+    # Build the graph
+    
     if social_network_file:
       oneBigCluster = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'EVIL': .2}, 
         malConnectivity = .1)
-
-    elif malclique == "true":
-      badCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")
-      sys.stderr.write("Created {} spammers...\n".format(len(badCluster)))
+      sys.stderr.write("Loaded {} users from {}...\n".format(len(oneBigCluster), social_network_file))
+    elif malclique == true:
+      evilCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")
+      sys.stderr.write("Created {} spammers...\n".format(len(evilCluster)))
   
       goodCluster = sim.generateRandomizedCluster(1000, designationRatios ={'GOOD': 1}, namePrefix= "Legit:")
       sys.stderr.write("Created {} legit users...\n".format(len(goodCluster)))
       
       if int(interconnect) > 0:
         sys.stderr.write("Joining good/bad clusters with {} edges...\n".format(int(interconnect)))
-        sim.randomJoinTrust(goodCluster, badCluster, int(interconnect))
+        sim.randomJoinTrust(goodCluster, evilCluster, int(interconnect))
       else:
         sys.stderr.write("No edges between good & bad ... \n")
       
-      oneBigCluster = goodCluster + badCluster
+      oneBigCluster = goodCluster + evilCluster
+    else:
+      oneBigCluster = sim.generateRandomizedCluster(2000, designationRatios ={'GOOD': 1}, namePrefix= "AllGood:")
+    # oneBigCluster must be produced at this point
       
+    if assign_evil:
       # Pick one evil item
       evilItem = [i for i in allItems if i.designation == 'EVIL'][0]
       evilItem.owner = "EvilVirusSomething"
-      for u in badCluster:
+      evilCluster = [u for u in oneBigCluster if u.designation == 'EVIL']
+      for u in evilCluster:
         u.group = evilItem.owner
-      sys.stderr.write("Evil target assigned owners...\n")
+      sys.stderr.write("Evil target assigned to EVIL users...\n")
       
       # Assign evil targets
-      # sim.assignEvilTargets([u for u in oneBigCluster if u.designation == 'EVIL'], [i for i in allItems if i.designation == 'EVIL']) 
+      #s im.assignEvilTargets([u for u in oneBigCluster if u.designation == 'EVIL'], [i for i in allItems if i.designation == 'EVIL']) 
       # sys.stderr.write("Evil targets assigned some owners...\n")
-    else:
-      oneBigCluster = sim.generateRandomizedCluster(2000, designationRatios ={'GOOD': 1}, namePrefix= "AllGood:")
 
+
+    # Cast votes
     sys.stderr.write("Simulating casting of votes...\n")
     sim.castVotes(oneBigCluster, allItems, 25)
     
+    # Guarantee EVIL users cast on their owned items
     sim.guaranteedCasting(oneBigCluster, allItems)
     sys.stderr.write("Guarantee that votes are indeed cast for evil users on their own content...\n")
     
-    
+    # Write graph 
     f.write(sim.flattenGraph(oneBigCluster))
     sys.stderr.write("Wrote graph structure to file...\n")
     
-    if trust_metric == "EIGENTRUST": 
+    if trust_metric != "EIGENTRUST": 
       sys.stderr.write("Writing results /w BFS @ Cutoff = {}...\n".format(bfsdepth))
     else:
       sys.stderr.write("Writing results /w EIGENTRUST ...\n")

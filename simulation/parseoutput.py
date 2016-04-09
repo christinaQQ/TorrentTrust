@@ -1,5 +1,8 @@
 import sys
 
+if len(sys.argv) < 2:
+  raise Exception("Need to provide the file to analyze as the single argument")
+
 cutoff = 0 if len(sys.argv) < 3 else float(sys.argv[2])
 
 with open(sys.argv[1]) as f:
