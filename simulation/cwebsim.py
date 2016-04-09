@@ -133,7 +133,7 @@ if __name__ == "__main__":
     sys.stderr.write("Created {} objects...\n".format(len(allItems)))
     
     if social_network_file:
-      oneBigCluster = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'BAD': .2}, 
+      oneBigCluster = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'EVIL': .2}, 
         malConnectivity = .1)
 
     elif malclique == "true":

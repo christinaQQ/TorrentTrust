@@ -27,7 +27,7 @@ if __name__ == "__main__":
                                                 ''', required=True)
   args = parser.parse_args()
   social_network_file = args.social_network_file
-  graph = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'BAD': .2}, malConnectivity = .1)
+  graph = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'EVIL': .2}, malConnectivity = .1)
   
   benchmarkConnectivity(graph)
   benchmarkDesignation(graph)
