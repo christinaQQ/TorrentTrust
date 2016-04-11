@@ -18,7 +18,8 @@ class User (object):
   '''
     A user being simulated
   '''
-  
+
+
   def __init__(self, name, designation = 'GOOD', votingFunction = None):
     self._trusted = []
     self.votes = []
@@ -61,9 +62,9 @@ class User (object):
   
   def __str__(self):
     return "User: {} ({}), {}, {} trusted peers".format(self.name, self.group, self.designation, len(self._trusted))
-  
-  def __repr__(self):
-    return "User(name={}, designation={}, votingFuntion={}, trusted={}, _votes={}, _votedTargets={})".format(repr(self.name), repr(self.designation), repr(self.votingFunction), repr(self._trusted), repr(self.votes), repr(self.votedTargets))
+  #
+  # def __repr__(self):
+  #   return "User(name={}, designation={}, votingFuntion={}, trusted={}, _votes={}, _votedTargets={})".format(repr(self.name), repr(self.designation), repr(self.votingFunction), repr(self._trusted), repr(self.votes), repr(self.votedTargets))
 
 class Target (object):
   '''
@@ -160,11 +161,11 @@ def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1', desi
   bad_users = []
   numConnect = np.random.normal(malConnectivity * goodClusterSize,3,clusterSize - goodClusterSize)
   for i, name in enumerate(nameGenerator('Group2', clusterSize - goodClusterSize)):
-    badUser = User(name, 'BAD')
-    print 
-    for goodUser in random.sample(users, int(round(numConnect[i]))):
+    badUser = User(name, 'EVIL')
+    for goodUser in random.sample(users, abs(int(round(numConnect[i])))):
       badUser.addTrusted(goodUser)
       goodUser.addTrusted(badUser)
+
     bad_users.append(badUser)
 
 
