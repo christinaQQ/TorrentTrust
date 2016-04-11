@@ -11,20 +11,33 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException  {
-		StringBuilder document = new StringBuilder();
-		document.append("<html><head><title>Create Account</title></head><body>");
-		if(req.getParameter("message") != null) {
-			document.append("<h4>" + req.getParameter("message") + "</h4>");
-		}
-		document.append("<h3>Create Account</h3>");
-		document.append("<form method=\"POST\">");
-		document.append("<input name=\"username\" type=\"text\" placeholder=\"Username\"><br>");
-		document.append("<input name=\"password\" type=\"password\" placeholder=\"Password\"><br>");
-		document.append("<input type=\"submit\" value=\"submit\">");
-		document.append("</form></body></head>");
 		res.setContentType("text/html");
 		PrintWriter writer = res.getWriter();
-		writer.print(document.toString());
+		String linkTemplate = "<link rel=\"stylesheet\" href=\"%s\"></link>";
+		String scriptTemplate = "<script type=\"text/javascript\" src=\"%s\"></script>";
+		String[] stylesheets = {
+			"/app/build/css/main.css"
+		};
+		String[] scripts = {
+			"/app/build/js/libs.js",
+			"/app/build/js/main.js"
+		};
+		writer.print("<html><head><title>TorrentTrust</title>");
+		// load typekit for fonts
+		writer.print("<script src=\"https://use.typekit.net/eqe7tlh.js\"></script>" +
+						"<script>try{Typekit.load({ async: true });}catch(e){}</script>");
+		for (String href: stylesheets) {
+			writer.print(String.format(linkTemplate, href));
+		}
+		// livereload snippet - for development only
+		writer.print("</head>");
+		writer.print("<body><div id=\"app-container\"></div>");
+		writer.print("<script>document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')</script>");
+		for (String script : scripts) {
+			writer.print(String.format(scriptTemplate, script));
+		}
+		writer.print("</body>");
+		writer.print("</html>");
 		writer.flush();
 	}
 }

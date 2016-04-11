@@ -1,0 +1,128 @@
+@import "config/variables";
+@import "bootstrap";
+@import "bootstrap/theme";
+
+body {
+  padding-bottom: 20px;
+}
+
+.download-page {
+  padding-top: 20px;
+  .torrenttrust-logo {
+    font-family: "Serifa", "Impact", sans-serif;
+    font-weight: bold;
+    font-size: 60pt;
+    line-height: 1.1em;
+  }
+
+  .torrenttrust-subtitle {
+    font-family: "Serifa", "Impact", sans-serif;
+    font-weight: normal;
+    font-size: 36pt;
+    line-height: 1.1em;
+  }
+
+  .download-button {
+    font-size: 30pt;
+    padding-top: 8pt;
+    width: 350px;
+    margin-top: 3.5rem;
+  }
+
+  .blurbs {
+    margin-top: 4.5rem;
+  }
+
+  .col-header {
+    font-weight: bold;
+    font-family: "Utopia Std", sans-serif;
+    font-size: 30pt;
+  }
+
+  .col-text {
+    font-family: "Minion Pro", sans-serif;
+    font-size: 16pt;
+    margin-top: 2rem;
+  }
+}
+
+nav.navbar.navbar-default {
+  .navbar-brand {
+    font-family: "Serifa", "Impact", sans-serif;
+    font-weight: bold;
+    color: black;
+    font-size: 28px;
+  }
+
+  .navbar-nav li a, .navbar-nav li span {
+    color: #ed1c24;
+
+    &:hover {
+      color: darken(#ed1c24, 6%);
+    }
+  }
+
+  .navbar-nav .dropdown-menu li {
+    a, span {
+      color: #555;
+    }
+  }
+
+  .navbar-nav li.active a {
+    color: lighten(#ed1c24, 5%);
+    &:hover {
+      color: darken(#ed1c24, 2%);
+    }
+  }
+}
+
+h1 {
+  font-family: "Serifa", "Impact", sans-serif;
+  font-weight: bold;
+  font-size: 48px;
+}
+
+h2 {
+  font-family: "Utopia Std", sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+p {
+  font-family: "Minion Pro", sans-serif;
+  font-size: 16px;
+}
+
+button, button.btn {
+  background-color: rgb(237, 33, 39);
+  color: rgb(243, 243, 243);
+  border-radius: 1000px;
+  font-family: "Utopia Std", sans-serif;
+  &:hover, &:focus {
+    background-color: darken(rgb(237, 33, 39), 5%);
+    color: darken(rgb(243, 243, 243), 2%);
+  }
+}
+
+.trust-management {
+  button.delete-button {
+    font-size: 14px;
+    line-height: 14px;
+    margin-bottom: 4px;
+    padding: 3px 20px 1px;
+  }
+
+  textarea {
+    resize: none;
+    border-color: rgb(237, 33, 39);
+    min-width: 340px;
+    min-height: 85px;
+    font-size: 12px;
+    padding: 5px 8px;
+    font-weight: 200;
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 4px rgb(237, 33, 39);
+    }
+  }
+}

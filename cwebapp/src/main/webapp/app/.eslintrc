@@ -32,7 +32,12 @@
     "space-before-blocks": 2,
     "space-before-function-paren": [2, {"anonymous": "always", "named": "never"}],
     "space-infix-ops": 2,
-    "strict": 0
+    "strict": 0,
+    "prefer-arrow-callback": 2,
+    "arrow-spacing": 2,
+    "arrow-body-style": ["error", "as-needed"],
+    "arrow-parens": ["error", "as-needed"],
+    "no-confusing-arrow": 2
   },
   "extends": "eslint:recommended"
 }
