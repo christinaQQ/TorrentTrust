@@ -1,12 +1,13 @@
 package moe.cdn.cweb.security;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.concurrent.Future;
+
 import com.google.protobuf.Message;
 
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
 
 /**
  * Persistence for domain objects that need to be cryptographically signed.
@@ -31,5 +32,5 @@ public interface SignatureImportService {
      * @param signature the signature
      * @return {@code true} if the import succeeded
      */
-    boolean importSignature(Message message, Signature signature);
+    Future<Boolean> importSignature(Message message, Signature signature);
 }

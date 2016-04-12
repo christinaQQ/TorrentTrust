@@ -46,3 +46,13 @@ message SignedVote {
   Vote vote = 1;
   Signature signature = 2;
 }
+
+message VoteHistory {
+  Key owner_public_key = 1;
+  repeated Hash content_hash = 2;
+}
+
+message SignedVoteHistory {
+  VoteHistory history = 1;
+  Signature signature = 2;
+}
