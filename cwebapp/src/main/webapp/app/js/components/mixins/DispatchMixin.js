@@ -1,4 +1,4 @@
-const store = require('../redux/store.js');
+const store = require('../../redux/store.js');
 
 module.exports = {
   dispatchAction(action) {

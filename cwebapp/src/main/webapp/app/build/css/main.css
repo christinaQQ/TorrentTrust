@@ -8376,14 +8376,14 @@ p {
 
 button, button.btn {
   background-color: #ed2127;
-  color: #f3f3f3;
+  color: #fafafa;
   border-radius: 1000px;
   font-family: "Utopia Std", sans-serif;
 }
 
 button:hover, button:focus, button.btn:hover, button.btn:focus {
   background-color: #e21218;
-  color: #eeeeee;
+  color: whitesmoke;
 }
 
 .trust-management button.delete-button {
@@ -8406,4 +8406,8 @@ button:hover, button:focus, button.btn:hover, button.btn:focus {
 .trust-management textarea:focus {
   outline: none;
   box-shadow: 0 0 4px #ed2127;
+}
+
+.settings-form input[type="radio"] {
+  margin-right: 1em;
 }

@@ -1,16 +1,38 @@
 const React = require('React');
+const TrustedIdentityButton = require('./includes/TrustedIdentityButton.jsx');
+const SubscribeToStateChangesMixin = require('./mixins/SubscribeToStateChangesMixin.js');
+const DispatchMixin = require('./mixins/DispatchMixin.js');
+const actions = require('../redux/actions/index.js');
 
 module.exports = React.createClass({
+  mixins: [SubscribeToStateChangesMixin, DispatchMixin],
+  addTrustedKey() {
+    const hash = this._textarea.value;
+    const name = window.prompt('What nickname should we use for this key?');
+    this.dispatchAction(actions.addTrustedKey({name ,hash}));
+  },
+  onTextAreaKeyUp(e) {
+    if (e.which === 13) {
+      e.preventDefault();
+      this.addTrustedKey();
+      this._textarea.value = '';
+    }
+  },
   render() {
+    const buttons = this.state.trusted_identities.map(({name, hash}) =>
+      <TrustedIdentityButton name={name} hash={hash} key={hash}/>
+    );
     return (
       <div className="row trust-management">
         <div className="col-xs-12">
           <h2>Add Trusted Key</h2>
-          <textarea placeholder="Enter a key to trust the associated identity. Other identities belonging to the same user will not be trusted."></textarea>
+          <textarea
+            ref={c => this._textarea = c}
+            onKeyPress={this.onTextAreaKeyUp}
+            placeholder="Enter a key to trust the associated identity. Other identities belonging to the same user will not be trusted.">
+          </textarea>
           <h2>Trusted Identities</h2>
-          <p>John Cena (60b725f1...) <button className="btn delete-button">Delete</button></p>
-          <p>Arnold Shwarzenegger (3b5d5c37...) <button className="btn delete-button">Delete</button></p>
-          <p>Mickey Mouse (2cd6ee2c...) <button className="btn delete-button">Delete</button></p>
+          {buttons.length ? buttons : "Looks like you don't trust anyone."}
         </div>
       </div>
     );

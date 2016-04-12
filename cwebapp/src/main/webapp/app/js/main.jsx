@@ -6,6 +6,7 @@ const App = require('./components/App.jsx');
 const IndexPage = require('./components/IndexPage.jsx');
 const MockDownloadPage = require('./components/MockDownloadPage.jsx');
 const TrustManagement = require('./components/TrustManagement.jsx');
+const SettingsPage = require('./components/SettingsPage.jsx');
 const NotFoundPage = require('./components/NotFoundPage.jsx');
 
 ReactDOM.render((
@@ -14,6 +15,7 @@ ReactDOM.render((
       <IndexRoute component={IndexPage}/>
       <Route path="/mock-download-page" component={MockDownloadPage}/>
       <Route path="/trust-management" component={TrustManagement}/>
+      <Route path="/settings" component={SettingsPage}/>
       <Route path="*" component={NotFoundPage}/>
     </Route>
   </Router>

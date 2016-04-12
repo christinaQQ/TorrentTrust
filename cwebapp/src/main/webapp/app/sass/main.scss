@@ -95,12 +95,12 @@ p {
 
 button, button.btn {
   background-color: rgb(237, 33, 39);
-  color: rgb(243, 243, 243);
+  color: rgb(250, 250, 250);
   border-radius: 1000px;
   font-family: "Utopia Std", sans-serif;
   &:hover, &:focus {
     background-color: darken(rgb(237, 33, 39), 5%);
-    color: darken(rgb(243, 243, 243), 2%);
+    color: darken(rgb(250, 250, 250), 2%);
   }
 }
 
@@ -124,5 +124,11 @@ button, button.btn {
       outline: none;
       box-shadow: 0 0 4px rgb(237, 33, 39);
     }
+  }
+}
+
+.settings-form {
+  input[type="radio"] {
+    margin-right: 1em;
   }
 }
