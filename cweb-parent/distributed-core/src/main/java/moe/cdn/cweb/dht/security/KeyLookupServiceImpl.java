@@ -26,9 +26,9 @@ import moe.cdn.cweb.security.utils.Representations;
 
 class KeyLookupServiceImpl implements KeyLookupService {
     private static final Logger logger = LogManager.getLogger();
-    
+
     private final Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider;
-    
+
     @Inject
     public KeyLookupServiceImpl(
             @KeyLookup Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider) {

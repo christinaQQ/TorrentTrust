@@ -1,13 +1,14 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import net.tomp2p.futures.BaseFuture;
-import net.tomp2p.futures.BaseFutureListener;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import com.google.common.util.concurrent.ListenableFuture;
+
+import net.tomp2p.futures.BaseFuture;
+import net.tomp2p.futures.BaseFutureListener;
 
 /**
  * Wraps a {@link BaseFuture TomP2P future} as a {@link ListenableFuture}.
@@ -78,8 +79,8 @@ public abstract class BaseFutureAsListenableFuture<V, F extends BaseFuture>
     }
 
     @Override
-    public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
-            TimeoutException {
+    public V get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
         boolean ok = baseFuture.await(unit.toMillis(timeout));
         if (!ok) {
             throw new TimeoutException();

@@ -2,8 +2,6 @@ package moe.cdn.cweb.dht;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.util.concurrent.Future;
-
 /**
  * Indicates that something can be shutdown
  * 

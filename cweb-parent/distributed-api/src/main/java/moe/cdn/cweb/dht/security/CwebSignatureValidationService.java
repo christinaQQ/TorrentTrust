@@ -21,10 +21,11 @@ public interface CwebSignatureValidationService extends SignatureValidationServi
      * @return indicator boolean of whether the user is authentic
      */
     boolean validateUser(SignedUser signedUser);
-    
-    
+
+
     /**
      * Validates a signed vote history to make sure it's authentic
+     * 
      * @param signedVoteHistory
      * @return indicator boolean of whether the vote history object is authentic
      */

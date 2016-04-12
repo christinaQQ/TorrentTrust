@@ -1,11 +1,11 @@
 package moe.cdn.cweb;
 
+import java.util.List;
+import java.util.Map;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author eyeung
@@ -16,8 +16,8 @@ class CwebApiFakeImpl implements CwebApi {
     Map<String, List<Vote>> userObjVotes;
 
     public CwebApiFakeImpl(Map<User, List<Vote>> userVotes,
-                           Map<User, List<User>> trustedGraph,
-                           Map<String, List<Vote>> userObjVotes) {
+            Map<User, List<User>> trustedGraph,
+            Map<String, List<Vote>> userObjVotes) {
         this.userVotes = userVotes;
         this.trustedGraph = trustedGraph;
         this.userObjVotes = userObjVotes;

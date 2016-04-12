@@ -5,11 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
 
 import com.google.common.net.HostAndPort;
 
@@ -34,10 +32,10 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final KeyPair keyPair;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-                              int tcpPort,
-                              int udpPort,
-                              CwebId myId,
-                              KeyPair keyPair) {
+            int tcpPort,
+            int udpPort,
+            CwebId myId,
+            KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;

@@ -43,12 +43,10 @@ public class CwebExecutable {
      *
      * @throws CwebApiException
      */
-    public static void main(String[] args)
-            throws ExecutionException, InterruptedException, CwebApiException,
-            SignatureException, InvalidKeyException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException,
+            CwebApiException, SignatureException, InvalidKeyException {
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
-                CwebModuleService.getInstance().getCwebModule(),
-                new ExampleModule(1717, args));
+                CwebModuleService.getInstance().getCwebModule(), new ExampleModule(1717, args));
 
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
 

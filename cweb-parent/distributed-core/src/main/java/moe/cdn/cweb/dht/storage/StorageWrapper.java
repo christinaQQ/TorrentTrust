@@ -1,15 +1,15 @@
 package moe.cdn.cweb.dht.storage;
 
+import java.security.PublicKey;
+import java.util.Collection;
+import java.util.NavigableMap;
+
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.Number320;
 import net.tomp2p.peers.Number480;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.storage.Data;
-
-import java.security.PublicKey;
-import java.util.Collection;
-import java.util.NavigableMap;
 
 /**
  * Delegates all calls to the underlying {@link Storage} object.
@@ -54,8 +54,10 @@ class StorageWrapper implements Storage {
     }
 
     @Override
-    public NavigableMap<Number640, Data> subMap(Number640 from, Number640 to, int limit, boolean
-            ascending) {
+    public NavigableMap<Number640, Data> subMap(Number640 from,
+            Number640 to,
+            int limit,
+            boolean ascending) {
         return storage.subMap(from, to, limit, ascending);
     }
 

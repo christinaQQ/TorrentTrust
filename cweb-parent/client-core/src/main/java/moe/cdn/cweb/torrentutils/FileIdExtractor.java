@@ -1,6 +1,11 @@
 package moe.cdn.cweb.torrentutils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -9,8 +14,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
 public class FileIdExtractor {
-    public static String getIdFromMagnetLink(final String magnetLink) throws URISyntaxException,
-            UnsupportedEncodingException {
+    public static String getIdFromMagnetLink(final String magnetLink)
+            throws URISyntaxException, UnsupportedEncodingException {
         URI uri = new URI(magnetLink);
         if (!uri.toString().contains("?")) {
             throw new IllegalArgumentException("No query");

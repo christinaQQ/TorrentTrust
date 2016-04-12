@@ -18,7 +18,7 @@ public interface SignatureImportService {
      * Signs the specified data with the specified key pair.
      *
      * @param keyPair the key pair
-     * @param data    the data
+     * @param data the data
      * @return the signature for the specified key pair and the specified data.
      * @throws SignatureException
      * @throws InvalidKeyException
@@ -28,7 +28,7 @@ public interface SignatureImportService {
     /**
      * Imports the specified proto using the specified signature.
      *
-     * @param message   the proto
+     * @param message the proto
      * @param signature the signature
      * @return {@code true} if the import succeeded
      */

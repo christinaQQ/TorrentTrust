@@ -1,5 +1,8 @@
 package moe.cdn.cweb.security.utils;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,8 +10,6 @@ import com.google.protobuf.ByteString;
 
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
-
-import static org.junit.Assert.*;
 
 public class HashUtilsTest {
     private static final byte[] TEST_STRING = "Hello World!".getBytes();

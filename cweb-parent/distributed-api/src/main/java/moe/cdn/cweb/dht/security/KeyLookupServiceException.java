@@ -16,12 +16,13 @@ public class KeyLookupServiceException extends RuntimeException {
         super(cause);
     }
 
-    public KeyLookupServiceException(String message, Throwable cause, boolean enableSuppression,
-                                     boolean writableStackTrace) {
+    public KeyLookupServiceException(String message,
+            Throwable cause,
+            boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public KeyLookupServiceException() {
-    }
+    public KeyLookupServiceException() {}
 
 }

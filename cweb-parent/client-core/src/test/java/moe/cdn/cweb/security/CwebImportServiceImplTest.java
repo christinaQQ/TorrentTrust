@@ -98,7 +98,7 @@ public class CwebImportServiceImplTest {
                         .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.addVote(VOTE_1).get());
     }
-    
+
     @Test
     public void testImportVoteHistoryExistingFail() throws Exception {
         SignedVoteHistory signedVoteHistory = SignedVoteHistory.newBuilder()
@@ -112,6 +112,7 @@ public class CwebImportServiceImplTest {
                         .thenReturn(Futures.immediateFuture(true));
         assertFalse(cwebImportServiceImpl.addVote(VOTE_1).get());
     }
+
     @Test
     public void testImportVoteHistoryNewFail() throws Exception {
         SignedVoteHistory signedVoteHistory = SignedVoteHistory.newBuilder()

@@ -39,18 +39,20 @@ public interface AsyncMultiMap<K, V> {
     /**
      * Sets the bucket at the specified key to contain the specified value.
      *
-     * @param key   the key
+     * @param key the key
      * @param value the value
-     * @return a future containing {@code true} if the mapping is successfully set
+     * @return a future containing {@code true} if the mapping is successfully
+     *         set
      */
     ListenableFuture<Boolean> put(K key, V value);
 
     /**
      * Adds the specified value to the bucket at the specified key.
      *
-     * @param key   the key
+     * @param key the key
      * @param value the value
-     * @return a future containing {@code true} if the mapping is successfully added
+     * @return a future containing {@code true} if the mapping is successfully
+     *         added
      */
     ListenableFuture<Boolean> add(K key, V value);
 }

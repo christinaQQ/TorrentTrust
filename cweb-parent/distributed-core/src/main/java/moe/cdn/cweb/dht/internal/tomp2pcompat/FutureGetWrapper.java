@@ -1,15 +1,21 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
+import java.util.Map;
+
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;
 import net.tomp2p.dht.FutureGet;
-import net.tomp2p.futures.*;
+import net.tomp2p.futures.BaseFuture;
+import net.tomp2p.futures.BaseFutureListener;
+import net.tomp2p.futures.Cancel;
+import net.tomp2p.futures.FutureDone;
+import net.tomp2p.futures.FutureForkJoin;
+import net.tomp2p.futures.FutureResponse;
+import net.tomp2p.futures.FutureRouting;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.DigestResult;
 import net.tomp2p.storage.Data;
-
-import java.util.Map;
 
 /**
  * @author davix
@@ -21,21 +27,20 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
     }
 
     /**
-     * @return A reference to the builder that contains the data we were looking for
+     * @return A reference to the builder that contains the data we were looking
+     *         for
      */
     public DHTBuilder<?> builder() {
         return baseFuture.builder();
     }
 
     /**
-     * Returns back those futures that are still running. If 6 storage futures are started at the
-     * same time and 5 of
-     * them finish, and we specified that we are fine if 5 finishes, then futureDHT returns
-     * success. However, the future
-     * that may still be running is the one that stores the content to the closest peer. For
-     * testing this is not
-     * acceptable, thus after waiting for futureDHT, one needs to wait for the running futures as
-     * well.
+     * Returns back those futures that are still running. If 6 storage futures
+     * are started at the same time and 5 of them finish, and we specified that
+     * we are fine if 5 finishes, then futureDHT returns success. However, the
+     * future that may still be running is the one that stores the content to
+     * the closest peer. For testing this is not acceptable, thus after waiting
+     * for futureDHT, one needs to wait for the running futures as well.
      *
      * @return A future that finishes if all running futures are finished.
      */
@@ -44,8 +49,8 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
     }
 
     /**
-     * Adds all requests that have been created for the DHT operations. Those were created after
-     * the routing process.
+     * Adds all requests that have been created for the DHT operations. Those
+     * were created after the routing process.
      *
      * @param futureResponse The futurRepsonse that has been created
      */
@@ -54,30 +59,30 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
     }
 
     /**
-     * Adds a listener to the response future and releases all aquired channels in channel creator.
+     * Adds a listener to the response future and releases all aquired channels
+     * in channel creator.
      *
-     * @param channelCreator The channel creator that will be shutdown and all connections will
-     *                       be closed
+     * @param channelCreator The channel creator that will be shutdown and all
+     *        connections will be closed
      */
     public void addFutureDHTReleaseListener(ChannelCreator channelCreator) {
         baseFuture.addFutureDHTReleaseListener(channelCreator);
     }
 
     /**
-     * Returns the future object that was used for the routing. Before the FutureDHT is used,
-     * FutureRouting has to be
-     * completed successfully.
+     * Returns the future object that was used for the routing. Before the
+     * FutureDHT is used, FutureRouting has to be completed successfully.
      *
-     * @return The future object during the previous routing, or null if routing failed completely.
+     * @return The future object during the previous routing, or null if routing
+     *         failed completely.
      */
     public FutureRouting futureRouting() {
         return baseFuture.futureRouting();
     }
 
     /**
-     * Sets the future object that was used for the routing. Before the FutureDHT is used,
-     * FutureRouting has to be
-     * completed successfully.
+     * Sets the future object that was used for the routing. Before the
+     * FutureDHT is used, FutureRouting has to be completed successfully.
      *
      * @param futureRouting The future object to set
      */
@@ -189,9 +194,10 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
         }
 
         @Override
-        public void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData, Map<PeerAddress,
-                DigestResult> rawDigest, Map<PeerAddress, Byte> rawStatus, FutureDone<Void>
-                                         futuresCompleted) {
+        public void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData,
+                Map<PeerAddress, DigestResult> rawDigest,
+                Map<PeerAddress, Byte> rawStatus,
+                FutureDone<Void> futuresCompleted) {
             futureGet.receivedData(rawData, rawDigest, rawStatus, futuresCompleted);
         }
 

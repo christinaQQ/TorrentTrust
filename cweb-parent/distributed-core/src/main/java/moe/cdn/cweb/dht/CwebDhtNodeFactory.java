@@ -1,7 +1,6 @@
 package moe.cdn.cweb.dht;
 
 import java.util.Collection;
-import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;

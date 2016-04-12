@@ -6,8 +6,7 @@ package moe.cdn.cweb;
  * @author davix
  */
 public class NoSuchServiceProviderException extends RuntimeException {
-    public NoSuchServiceProviderException() {
-    }
+    public NoSuchServiceProviderException() {}
 
     public NoSuchServiceProviderException(String message) {
         super(message);
@@ -21,8 +20,10 @@ public class NoSuchServiceProviderException extends RuntimeException {
         super(cause);
     }
 
-    public NoSuchServiceProviderException(String message, Throwable cause, boolean
-            enableSuppression, boolean writableStackTrace) {
+    public NoSuchServiceProviderException(String message,
+            Throwable cause,
+            boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
