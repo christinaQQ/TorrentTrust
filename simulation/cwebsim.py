@@ -83,11 +83,11 @@ def getScore(user, target, trustCutoff = 2, trust_metric='BFS'):
     return None;
   return total / totalCount
 
-def getAllScores(users, targets, trustCutoff = 2, trust_metric='BFS'):
+def getAllScores(users, targets, trustCutoff = 2, trust_metric='BFS', num_eigentrust_iterations=2):
   global _eigentrust_values
   scores = {}
   if trust_metric == 'EIGENTRUST':
-    _eigentrust_values = calculateEigentrust(users, 5) ### TRY WITH 5 ITERATIONS OF EIGENTRUST
+    _eigentrust_values = calculateEigentrust(users, num_eigentrust_iterations) ### TRY WITH 5 ITERATIONS OF EIGENTRUST
   for user in users:
     for target in targets:
       score = getScore(user, target, trustCutoff, trust_metric)
@@ -109,11 +109,11 @@ if __name__ == "__main__":
                                                         "true" has evil node voting on one evil target untruthfully,
                                                         "false" doesnt have any, evil voters vote like non-evil ones
                                                       ''')
-  parser.add_argument('-i', '--interconnect', type=int, help = '''
+  parser.add_argument('-i', '--interconnect', type=int, default=0, help = '''
                                                   0 - no connections,
                                                   non-0-# # of connections to connect between spammers and legit users
                                                         ''')
-  parser.add_argument('-sf', '--social_network_file', type=str, help = '''
+  parser.add_argument('-sf', '--social_network_file', default=0, type=str, help = '''
                                                 social_network_file:
                                                   0 - don't read from file
                                                   name of a file from which graph is created
@@ -121,6 +121,8 @@ if __name__ == "__main__":
   parser.add_argument('-t', '--trust_metric', type=str, default='BFS', help = '''
                                                 BFS, EIGENTRUST
                                                         ''')
+  parser.add_argument('-c', '--num_eigentrust_iterations', type=int, default=2, 
+                                                help = ''' number of iterations of eigentrust''')
 
   args = parser.parse_args()
   bfsdepth = args.bfsdepth
@@ -129,6 +131,7 @@ if __name__ == "__main__":
   social_network_file = args.social_network_file
   trust_metric = args.trust_metric
   assign_evil = args.evil_targeting
+  num_eigentrust_iterations = args.num_eigentrust_iterations
   
   if trust_metric not in ('BFS', 'EIGENTRUST'):
     raise Exception('Trust metric {} not supported'.format(trust_metric))
@@ -143,7 +146,7 @@ if __name__ == "__main__":
       oneBigCluster = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'EVIL': .2}, 
         malConnectivity = .1)
       sys.stderr.write("Loaded {} users from {}...\n".format(len(oneBigCluster), social_network_file))
-    elif malclique == true:
+    elif malclique == True:
       evilCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")
       sys.stderr.write("Created {} spammers...\n".format(len(evilCluster)))
   
@@ -191,5 +194,5 @@ if __name__ == "__main__":
       sys.stderr.write("Writing results /w BFS @ Cutoff = {}...\n".format(bfsdepth))
     else:
       sys.stderr.write("Writing results /w EIGENTRUST ...\n")
-    getAllScores(oneBigCluster, allItems, int(bfsdepth), trust_metric)
+    getAllScores(oneBigCluster, allItems, int(bfsdepth), trust_metric, int(num_eigentrust_iterations))
 
