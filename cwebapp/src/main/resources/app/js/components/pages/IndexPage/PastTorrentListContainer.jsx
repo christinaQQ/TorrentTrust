@@ -1,14 +1,15 @@
 const React = require('React');
 const {DispatchMixin, SubscribeToStateChangesMixin} = require('../../mixins');
 const PastTorrentList = require('./PastTorrentList.jsx');
+const actions = require('../../../redux/actions');
 
 module.exports = React.createClass({
   mixins: [DispatchMixin, SubscribeToStateChangesMixin],
   onUpvote({hash}) {
-    console.log(`upvoted ${hash}`);
+    this.dispatchAction(actions.upvote({hash}));
   },
   onDownvote({hash}) {
-    console.log(`downvoted ${hash}`);
+    this.dispatchAction(actions.downvote({hash}));
   },
   render() {
     return (

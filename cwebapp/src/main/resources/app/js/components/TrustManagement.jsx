@@ -19,7 +19,8 @@ module.exports = React.createClass({
     }
   },
   render() {
-    const buttons = this.state.trusted_identities.map(({name, pubKey}) =>
+    const {pubKey} = this.state.current_identity;
+    const buttons = this.state.trusted_identities[pubKey].map(({name, pubKey}) =>
       <TrustedIdentityButton name={name} pubKey={pubKey} key={pubKey}/>
     );
     return (

@@ -9,9 +9,12 @@ module.exports = React.createClass({
     this._textarea.value = '';
   },
   onGetRatingClick() {
+    this.props.getTorrentRating({magnetLink: this.state.magnetLink}, rating =>
+      this.setState({rating})
+    );
   },
   addToTorrentList() {
-
+    this.props.addToTorrentList({magnetLink: this.state.magnetLink});
   },
   getInitialState() {
     return {dirty: false, magnetLink: null, rating: null};

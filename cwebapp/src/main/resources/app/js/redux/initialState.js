@@ -2,11 +2,15 @@ module.exports = {
   error_message: null,
   info_message: null,
   loading: false,
-  trusted_identities: [
-    {name: 'John Cena', pubKey: '60b725f15727cd6de42'},
-    {name: 'Arnold Shwarzenegger', pubKey: '3b5d5c377cd6de42'},
-    {name: 'Mickey Mouse', pubKey: '2cd6ee2cd6de42'}
-  ],
+  trusted_identities: {
+    '60b725f15727cd6de42': [
+      {name: 'John Cena', pubKey: '60b725f15727cd6de42'},
+      {name: 'Arnold Shwarzenegger', pubKey: '3b5d5c377cd6de42'},
+      {name: 'Mickey Mouse', pubKey: '2cd6ee2cd6de42'}
+    ],
+    '3b5d5c377cd6de42': [],
+    '2cd6ee2cd6de42': []
+  },
   possible_trust_algorithms: [
     {id: 'EIGENTRUST', name: 'Eigentrust'},
     {id: 'ONLY_FRIENDS', name: 'Only Friends'},
