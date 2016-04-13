@@ -6,7 +6,12 @@ package moe.cdn.cweb;
  * @author davix
  */
 public class NoSuchServiceProviderException extends RuntimeException {
-    public NoSuchServiceProviderException() {}
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 788L;
+
+	public NoSuchServiceProviderException() {}
 
     public NoSuchServiceProviderException(String message) {
         super(message);
