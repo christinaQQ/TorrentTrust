@@ -1,19 +1,29 @@
 package moe.cdn.cweb.app.api;
 
 import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.app.dto.TrustRating;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 /**
  * @author davix
  */
 @Path("object/{hash}")
-public class VoteObject extends CwebApiEndPoint {
+public class ObjectInfo extends CwebApiEndPoint {
+
+    @GET
+    @Path("{algo}")
+    public TrustRating getTrustRating(@PathParam("hash") String hash,
+                                      @PathParam("algo") String algo) {
+        return new TrustRating(new Random().nextDouble(), "rand");
+    }
 
     @POST
     @Path("up")
@@ -38,6 +48,4 @@ public class VoteObject extends CwebApiEndPoint {
                 .build()).get();
         return true;
     }
-
-
 }
