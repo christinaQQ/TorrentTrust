@@ -11,8 +11,8 @@ class CwebValidationServiceImpl extends SignatureValidationServiceImpl
         implements CwebSignatureValidationService {
 
     @Inject
-    public CwebValidationServiceImpl(KeyLookupService keyLookupService) {
-        super(keyLookupService);
+    public CwebValidationServiceImpl(UserKeyService userKeyService) {
+        super(userKeyService);
     }
 
     @Override

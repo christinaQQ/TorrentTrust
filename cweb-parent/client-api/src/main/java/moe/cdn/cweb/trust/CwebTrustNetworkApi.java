@@ -6,7 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
-public interface CwebTrustNetworkService {
+public interface CwebTrustNetworkApi {
     /**
      * Fetches the local trust network of a user. Returns an empty collection if
      * the user does not exist.
@@ -25,5 +25,5 @@ public interface CwebTrustNetworkService {
      * @return future of boolean indicator of whether the adding of trust
      *         completed successfully
      */
-    ListenableFuture<Boolean> addTrustedUser(User user);
+    ListenableFuture<Boolean> addUserAsTrusted(User user);
 }

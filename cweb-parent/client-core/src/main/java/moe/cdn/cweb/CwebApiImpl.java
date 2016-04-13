@@ -9,16 +9,16 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
-import moe.cdn.cweb.trust.CwebTrustNetworkService;
+import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteService;
 
 class CwebApiImpl implements CwebApi {
 
-    private final CwebTrustNetworkService trustNetworkService;
+    private final CwebTrustNetworkApi trustNetworkService;
     private final CwebVoteService voteService;
 
     @Inject
-    public CwebApiImpl(CwebTrustNetworkService trustNetworkService, CwebVoteService voteService) {
+    public CwebApiImpl(CwebTrustNetworkApi trustNetworkService, CwebVoteService voteService) {
         this.trustNetworkService = trustNetworkService;
         this.voteService = voteService;
     }

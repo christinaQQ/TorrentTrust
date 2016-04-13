@@ -7,7 +7,7 @@ public class TrustNetworkModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(CwebTrustNetworkService.class).to(CwebTrustNetworkServiceImpl.class)
+        bind(CwebTrustNetworkApi.class).to(CwebTrustNetworkApiImpl.class)
                 .in(Singleton.class);
     }
 

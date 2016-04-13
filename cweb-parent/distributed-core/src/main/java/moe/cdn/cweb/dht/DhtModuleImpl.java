@@ -142,6 +142,7 @@ public class DhtModuleImpl extends DhtModule {
     @Override
     protected void configure() {
         // ThrowingProviderBinder.forModule(this);
+        requireBinding(KeyEnvironment.class);
         requireBinding(Key.get(String.class, UserDomain.class));
         requireBinding(Key.get(String.class, VoteDomain.class));
         requireBinding(Key.get(String.class, VoteHistoryDomain.class));

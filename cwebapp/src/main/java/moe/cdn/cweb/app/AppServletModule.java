@@ -1,8 +1,10 @@
 package moe.cdn.cweb.app;
 
 import com.google.inject.servlet.ServletModule;
+import moe.cdn.cweb.app.api.CwebApiConfig;
+import moe.cdn.cweb.app.api.UserTrust;
 import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.inject.Singleton;
 import java.net.MalformedURLException;
@@ -19,6 +21,9 @@ public class AppServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
         bind(DefaultServlet.class).in(Singleton.class);
+        bind(ServletContainer.class).in(Singleton.class);
+
+        serve("/api/*").with(new ServletContainer(new CwebApiConfig()));
 
         URL appFile = App.class.getClassLoader().getResource("app/build/js/main.js");
         if (appFile == null) {

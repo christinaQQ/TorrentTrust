@@ -1,16 +1,15 @@
 package moe.cdn.cweb.security;
 
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.concurrent.Future;
-
 import com.google.common.util.concurrent.Futures;
 import com.google.protobuf.Message;
-
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.concurrent.Future;
 
 public interface CwebImportService extends SignatureImportService {
 
@@ -34,6 +33,14 @@ public interface CwebImportService extends SignatureImportService {
     Future<Boolean> importUser(User user) throws SignatureException, InvalidKeyException;
 
     /**
+     * Imports a public {@link User.TrustAssertion} for the current user.
+     *
+     * @param trustAssertion the trust assertion
+     * @return {@code true} if the import succeeded
+     */
+    Future<Boolean> importTrustAssertion(User.TrustAssertion trustAssertion);
+
+    /**
      * Imports a {@link Vote} record into the vote table and signs it with the
      * current key.
      *
@@ -46,7 +53,7 @@ public interface CwebImportService extends SignatureImportService {
      * Imports a {@link User} using the specified signature. The existing record
      * is updated if it exists.
      *
-     * @param user the user
+     * @param user      the user
      * @param signature the signature
      * @return {@code true} if the import succeeded
      */

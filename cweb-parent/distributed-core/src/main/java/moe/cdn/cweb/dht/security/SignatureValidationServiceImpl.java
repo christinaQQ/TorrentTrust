@@ -22,11 +22,11 @@ import moe.cdn.cweb.security.utils.SignatureUtils;
 class SignatureValidationServiceImpl implements SignatureValidationService {
 
     private static final Logger logger = LogManager.getLogger();
-    private final KeyLookupService keyLookupService;
+    private final UserKeyService userKeyService;
 
     @Inject
-    public SignatureValidationServiceImpl(KeyLookupService keyLookupService) {
-        this.keyLookupService = checkNotNull(keyLookupService);
+    public SignatureValidationServiceImpl(UserKeyService userKeyService) {
+        this.userKeyService = checkNotNull(userKeyService);
     }
 
     @Override
@@ -57,7 +57,7 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
     @Override
     public boolean validateAndCheckSignatureKeyInNetwork(Signature signature, byte[] data) {
         ListenableFuture<Optional<SignedUser>> futureOwner =
-                keyLookupService.findOwner(signature.getPublicKey());
+                userKeyService.findOwner(signature.getPublicKey());
         Optional<SignedUser> owner;
         try {
             owner = futureOwner.get();

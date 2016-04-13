@@ -51,8 +51,8 @@ public class FakeSignatureValidationServiceImplTest {
 
     // We should actually mock things at this point
     public FakeSignatureValidationServiceImplTest() {
-        KeyLookupService keyLookupService = new FakeKeyLookupServiceImpl(WEB_OF_TRUST);
-        validator = new SignatureValidationServiceImpl(keyLookupService);
+        UserKeyService userKeyService = new FakeUserKeyServiceImpl(WEB_OF_TRUST);
+        validator = new SignatureValidationServiceImpl(userKeyService);
     }
 
     private static Signature sign(byte[] data, KeyPair keypair) {

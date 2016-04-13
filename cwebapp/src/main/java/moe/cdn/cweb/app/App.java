@@ -3,18 +3,15 @@ package moe.cdn.cweb.app;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
+import moe.cdn.cweb.app.services.CwebApiService;
 import org.apache.commons.cli.*;
-import org.eclipse.jetty.server.Dispatcher;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.DispatcherType;
-import java.net.URI;
-import java.net.URL;
 import java.util.EnumSet;
 
 /**
@@ -53,6 +50,7 @@ public class App {
 
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         servletHandler.addServlet(DefaultServlet.class, "/");
+        servletHandler.addEventListener(new CwebApiService(1717));
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { servletHandler });
