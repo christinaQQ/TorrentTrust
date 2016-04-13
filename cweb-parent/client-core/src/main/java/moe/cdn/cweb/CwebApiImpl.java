@@ -24,8 +24,14 @@ class CwebApiImpl implements CwebApi {
     }
 
     @Override
-    public List<Vote> getVotesForUser(User user) {
-        return null;
+    public List<Vote> getVotesForUser(User user) throws CwebApiException {
+        try {
+            return voteService.getVoteHistory(user).get().stream().collect(Collectors.toList());
+        } catch (InterruptedException e) {
+            throw new CwebApiException(e);
+        } catch (ExecutionException e) {
+            throw new CwebApiException(e);
+        }
     }
 
     @Override

@@ -1,10 +1,16 @@
 package moe.cdn.cweb;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
-
-import java.util.*;
 
 /**
  * @author eyeung

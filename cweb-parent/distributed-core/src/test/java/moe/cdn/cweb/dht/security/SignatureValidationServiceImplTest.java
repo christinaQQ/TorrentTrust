@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import moe.cdn.cweb.dht.security.KeyLookupService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,8 +26,7 @@ public class SignatureValidationServiceImplTest {
     private static final KeyPair KEY_PAIR_ALT = KeyUtils.generateKeyPair();
     private static final User USER =
             User.newBuilder().setPublicKey(KEY_PAIR.getPublicKey()).setHandle("User A").build();
-    private static final SignedUser SIGNED_USER = SignedUser.newBuilder()
-            .setUser(USER)
+    private static final SignedUser SIGNED_USER = SignedUser.newBuilder().setUser(USER)
             .setSignature(SignatureUtils.signMessageUnchecked(KEY_PAIR, USER)).build();
     private static final Hash SAMPLE_MESSAGE = HashUtils.hashOf("Hello World");
 

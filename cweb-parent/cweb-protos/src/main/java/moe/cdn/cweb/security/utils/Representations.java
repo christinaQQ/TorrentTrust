@@ -11,6 +11,7 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
 
 /**
  * Methods to turn some of the protos to prettier formats
@@ -57,6 +58,11 @@ public final class Representations {
                 vote.getAssertionCount());
     }
 
+    public static String asString(VoteHistory voteHistory) {
+        return String.format("VoteHistory(owner=%s, records=[:%d])",
+                asString(voteHistory.getOwnerPublicKey()), voteHistory.getContentHashCount());
+    }
+
     public static String asString(SignedUser signedUser) {
         return String.format("SignedUser(user=%s, signature=%s)", asString(signedUser.getUser()),
                 asString(signedUser.getSignature(), signedUser.getUser()));
@@ -70,5 +76,5 @@ public final class Representations {
     public static String asString(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
     }
-    
+
 }

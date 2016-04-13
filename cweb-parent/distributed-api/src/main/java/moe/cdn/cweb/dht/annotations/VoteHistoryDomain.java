@@ -11,12 +11,13 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Indicates an injection for the vote domain of the DHT.
+ * Indicates an injection for the domain containing user vote correspondence of
+ * the DHT.
  *
- * @author davix
+ * @author jim
  */
 @BindingAnnotation
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
-public @interface VoteDomain {
+public @interface VoteHistoryDomain {
 }

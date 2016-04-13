@@ -1,20 +1,15 @@
 package moe.cdn.cweb.examples;
 
-import com.google.common.util.concurrent.Futures;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.DhtModuleService;
-import moe.cdn.cweb.dht.DhtPeerAddress;
-import moe.cdn.cweb.dht.ManagedPeer;
-import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.security.utils.KeyUtils;
-import moe.cdn.cweb.security.utils.SignatureUtils;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
@@ -25,15 +20,22 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
+import com.google.common.util.concurrent.Futures;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.dht.CwebMultiMap;
+import moe.cdn.cweb.dht.DhtModuleService;
+import moe.cdn.cweb.dht.DhtPeerAddress;
+import moe.cdn.cweb.dht.ManagedPeer;
+import moe.cdn.cweb.dht.annotations.DhtNodeController;
+import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.security.utils.SignatureUtils;
 
 @RunWith(Theories.class)
 public class UserDhtTest {
@@ -42,7 +44,8 @@ public class UserDhtTest {
 
     // Values > 38 seem to exhaust resources
     private static final int NUM_PEERS = 30;
-    private static final Key<CwebMultiMap<SignedUser>> MULTI_MAP_SIGNED_USER_KEY = Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {});
+    private static final Key<CwebMultiMap<SignedUser>> MULTI_MAP_SIGNED_USER_KEY =
+            Key.get(new TypeLiteral<CwebMultiMap<SignedUser>>() {});
 
     private static final KeyPair USER17_KEYS = KeyUtils.generateKeyPair();
     private static final KeyPair USER18_KEYS = KeyUtils.generateKeyPair();
@@ -56,14 +59,14 @@ public class UserDhtTest {
             User.newBuilder().setPublicKey(USER19_KEYS.getPublicKey()).setHandle("User 19").build();
 
     private static final SignedUser USER17_SIGNED = SignedUser.newBuilder()
-            .setSignature(SignatureUtils.signMessageUnchecked(USER17_KEYS, USER17))
-            .setUser(USER17).build();
+            .setSignature(SignatureUtils.signMessageUnchecked(USER17_KEYS, USER17)).setUser(USER17)
+            .build();
     private static final SignedUser USER18_SIGNED = SignedUser.newBuilder()
-            .setSignature(SignatureUtils.signMessageUnchecked(USER18_KEYS, USER18))
-            .setUser(USER18).build();
+            .setSignature(SignatureUtils.signMessageUnchecked(USER18_KEYS, USER18)).setUser(USER18)
+            .build();
     private static final SignedUser USER19_SIGNED = SignedUser.newBuilder()
-            .setSignature(SignatureUtils.signMessageUnchecked(USER19_KEYS, USER19))
-            .setUser(USER19).build();
+            .setSignature(SignatureUtils.signMessageUnchecked(USER19_KEYS, USER19)).setUser(USER19)
+            .build();
 
     @DataPoints
     public static Injector[] injectors;
@@ -77,8 +80,8 @@ public class UserDhtTest {
         ManagedPeer[] peers = new ManagedPeer[injectors.length];
         for (int i = 0; i < injectors.length; i++) {
             logger.debug("Creating peer " + i);
-            peers[i] = injectors[i].getInstance(Key.get(ManagedPeer.class, DhtNodeController
-                    .class));
+            peers[i] =
+                    injectors[i].getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
             peers[i].setReplication(5);
         }
         return peers;
@@ -86,8 +89,8 @@ public class UserDhtTest {
 
     static void bootstrap(ManagedPeer[] peers) throws InterruptedException, ExecutionException {
         logger.info("Bootstrapping nodes...");
-        Collection<DhtPeerAddress> all = Arrays.stream(peers).map(ManagedPeer::getAddress)
-                .collect(Collectors.toList());
+        Collection<DhtPeerAddress> all =
+                Arrays.stream(peers).map(ManagedPeer::getAddress).collect(Collectors.toList());
         // FIXME: Can't do an async bootstrap. Causes a netty error.
         Arrays.stream(peers).forEach(peer -> peer.bootstrapToSync(all));
         logger.debug("All peers {}", all);
@@ -125,8 +128,7 @@ public class UserDhtTest {
     public static void tearDownAfterClass() throws Exception {
         logger.info("Shutting down...");
         Futures.allAsList(
-                Arrays.stream(peers).map(ManagedPeer::shutdown).collect(Collectors.toList()))
-                .get();
+                Arrays.stream(peers).map(ManagedPeer::shutdown).collect(Collectors.toList())).get();
     }
 
     @Test

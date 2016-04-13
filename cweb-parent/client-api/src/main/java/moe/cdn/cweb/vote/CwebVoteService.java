@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 public interface CwebVoteService {
@@ -20,6 +21,26 @@ public interface CwebVoteService {
      * @return future of a collection of votes.
      */
     ListenableFuture<Collection<Vote>> getAllVotes(Hash object);
+
+    /**
+     * Gets a list of all votes that a certain user has cast. If no object
+     * indicated by the hash exists, a future of an empty collection will be
+     * returned.
+     *
+     * @param object
+     * @return future of a collection of votes.
+     */
+    ListenableFuture<Collection<Vote>> getVoteHistory(User user);
+
+    /**
+     * Gets the size of a user's vote history. This is faster than getting full
+     * history but may be greater than the actual number of votes a user has
+     * made.
+     * 
+     * @param user
+     * @return
+     */
+    ListenableFuture<Integer> getVoteHistorySize(User user);
 
     /**
      * Cast a vote for a certain object.

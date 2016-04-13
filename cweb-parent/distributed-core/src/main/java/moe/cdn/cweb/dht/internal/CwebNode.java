@@ -2,7 +2,6 @@ package moe.cdn.cweb.dht.internal;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;

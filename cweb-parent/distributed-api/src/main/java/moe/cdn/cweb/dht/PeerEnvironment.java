@@ -12,8 +12,8 @@ import moe.cdn.cweb.security.CwebId;
 public interface PeerEnvironment {
 
     /**
-     * Returns a collection of {@link DhtPeerAddress} objects that represnt peers
-     * used for bootstrapping.
+     * Returns a collection of {@link DhtPeerAddress} objects that represnt
+     * peers used for bootstrapping.
      * 
      * @return collection of id and address objects
      */

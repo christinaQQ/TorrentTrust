@@ -1,6 +1,24 @@
 package moe.cdn.cweb.dht.security;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.junit.Test;
+
 import com.google.protobuf.ByteString;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
@@ -9,16 +27,6 @@ import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import org.junit.Test;
-
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class FakeSignatureValidationServiceImplTest {
 
@@ -57,8 +65,7 @@ public class FakeSignatureValidationServiceImplTest {
             signer.update(data);
             return Signature.newBuilder().setPublicKey(keypair.getPublicKey())
                     .setAlgorithm(SignatureAlgorithm.SHA_256_WITH_RSA)
-                    .setSignature(ByteString.copyFrom(signer.sign()))
-                    .build();
+                    .setSignature(ByteString.copyFrom(signer.sign())).build();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeyException e) {
@@ -71,8 +78,8 @@ public class FakeSignatureValidationServiceImplTest {
     }
 
     private static SignedUser signUserRecord(KeyPair keypair, User user) {
-        return SignedUser.newBuilder().setUser(user)
-                .setSignature(sign(user.toByteArray(), keypair)).build();
+        return SignedUser.newBuilder().setUser(user).setSignature(sign(user.toByteArray(), keypair))
+                .build();
     }
 
     private static User generateUser(Key publicKey, String handle) {
@@ -129,8 +136,8 @@ public class FakeSignatureValidationServiceImplTest {
     @Test
     public void testCannotValidateMallorySignature() {
         Signature nonExistentUserSignature = sign(MESSAGE, KEY_PAIR_MALLORY);
-        assertFalse(validator.validateAndCheckSignatureKeyInNetwork(nonExistentUserSignature,
-                MESSAGE));
+        assertFalse(
+                validator.validateAndCheckSignatureKeyInNetwork(nonExistentUserSignature, MESSAGE));
     }
 
 }

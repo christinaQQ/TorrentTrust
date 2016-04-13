@@ -1,11 +1,12 @@
 package moe.cdn.cweb.security.utils;
 
-import com.google.protobuf.ByteString;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import com.google.protobuf.ByteString;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 
 public final class HashUtils {
     // Please don't instantiate this class

@@ -26,4 +26,7 @@ public final class CwebMisc {
     public static final BiPredicate<SecurityProtos.Hash, TorrentTrustProtos.SignedVote> HASH_SIGNED_VOTE_BI_PREDICATE =
             (hash, signedVote) -> signedVote.getVote().getContentHash().equals(hash);
 
+    public static final BiPredicate<SecurityProtos.Hash, TorrentTrustProtos.SignedVoteHistory> HASH_SIGNED_VOTE_HISTORY_BI_PREDICATE =
+            (hash, signedVoteHistory) -> signedVoteHistory.getHistory().getOwnerPublicKey()
+                    .getHash().equals(hash);
 }

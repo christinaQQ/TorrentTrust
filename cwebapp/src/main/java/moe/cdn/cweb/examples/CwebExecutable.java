@@ -6,8 +6,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import moe.cdn.cweb.CwebModuleService;
-import moe.cdn.cweb.dht.DhtModuleService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,10 +16,12 @@ import com.google.inject.Key;
 
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.CwebApiException;
+import moe.cdn.cweb.CwebModuleService;
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
 import moe.cdn.cweb.dht.security.KeyLookupService;
@@ -43,12 +43,10 @@ public class CwebExecutable {
      *
      * @throws CwebApiException
      */
-    public static void main(String[] args)
-            throws ExecutionException, InterruptedException, CwebApiException,
-            SignatureException, InvalidKeyException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException,
+            CwebApiException, SignatureException, InvalidKeyException {
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
-                CwebModuleService.getInstance().getCwebModule(),
-                new ExampleModule(1717, args));
+                CwebModuleService.getInstance().getCwebModule(), new ExampleModule(1717, args));
 
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
 
@@ -86,7 +84,7 @@ public class CwebExecutable {
                 .map(Representations::asString).collect(Collectors.toList()));
 
         // Add alt-vote
-        b = cwebImportService.addSignature(unknownVote,
+        b = cwebImportService.importSignature(unknownVote,
                 SignatureUtils.signMessageUnchecked(newKey, unknownVote)).get();
         System.out.println("imported foreign vote <Foo> (expect false): " + b);
         System.out.println("votes for <Foo>: " + cwebApi.getVotes(HashUtils.hashOf("Foo")).stream()
