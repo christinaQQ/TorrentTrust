@@ -22,7 +22,8 @@
             <AppenderRef ref="Console"/>
             <!--<AppenderRef ref="RollingFile"/>-->
         </Root>
-        <Logger name="net.tomp2p" level="warn"/>
-        <Logger name="io.netty" level="warn"/>
+        <Logger name="io.netty" level="info"/>
+        <Logger name="net.tomp2p" level="info"/>
+        <Logger name="org.eclipse.jetty" level="info"/>
     </Loggers>
 </Configuration>

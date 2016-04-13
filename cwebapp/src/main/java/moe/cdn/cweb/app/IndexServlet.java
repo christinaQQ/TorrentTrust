@@ -1,13 +1,14 @@
 package moe.cdn.cweb.app;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @SuppressWarnings("serial")
+@WebServlet(urlPatterns = {"/"})
 public class IndexServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -28,7 +29,9 @@ public class IndexServlet extends HttpServlet {
         writer.print("</head>");
         writer.print("<body><div id=\"app-container\"></div>");
         writer.print(
-                "<script>document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')</script>");
+                "<script>document.write('<script src=\"http://' + (location.host || 'localhost')"
+                        + ".split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')"
+                        + "</script>");
         for (String script : scripts) {
             writer.print(String.format(scriptTemplate, script));
         }
