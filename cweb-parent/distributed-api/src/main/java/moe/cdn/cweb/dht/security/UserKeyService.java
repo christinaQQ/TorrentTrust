@@ -34,7 +34,7 @@ public interface UserKeyService {
      * Adds an assertion about a key to the trust network of the current user.
      *
      * @param trustAssertion the trust assertion
-     * @return a future of {@code true} if the user is added and not already in the trusted network
+     * @return a future of {@code true} if the user is successfully updated
      */
     ListenableFuture<Boolean> addTrustAssertion(User.TrustAssertion trustAssertion);
 }
