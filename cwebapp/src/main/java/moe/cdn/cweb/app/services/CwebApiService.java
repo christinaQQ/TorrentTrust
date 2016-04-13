@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.CwebModuleService;
+import moe.cdn.cweb.GlobalEnvironment;
 import moe.cdn.cweb.app.App;
 import moe.cdn.cweb.app.AppModule;
 import moe.cdn.cweb.dht.DhtModuleService;
@@ -58,6 +59,9 @@ public class CwebApiService implements ServletContextListener {
 
         CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
         sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);
+
+        GlobalEnvironment globalEnvironment = injector.getInstance(GlobalEnvironment.class);
+        sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(), globalEnvironment);
     }
 
     @Override

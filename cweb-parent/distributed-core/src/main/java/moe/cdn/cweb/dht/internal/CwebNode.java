@@ -1,14 +1,10 @@
 package moe.cdn.cweb.dht.internal;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
-
 import moe.cdn.cweb.dht.Shutdownable;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.FutureGetWrapper;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.FuturePutWrapper;
@@ -22,20 +18,23 @@ import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+
 /**
  * Entry point for DHT operations. This is a wrapper around a {@link PeerDHT}.
  *
  * @author davix
  */
 public class CwebNode<T extends Message> implements Shutdownable {
-    // FIXME tomp2p workaround
+    // the use of the executor is a tomp2p workaround
     private static final Executor EXECUTOR = ForkJoinPool.commonPool();
     private final ManagedPeerDhtPeer self;
     private final Number160 domainKey;
     private final Parser<T> messageParser;
 
-    // TODO: Examine protection
-    // http://lists.tomp2p.net/pipermail/users/2013-July/000266.html
+    // See http://lists.tomp2p.net/pipermail/users/2013-July/000266.html for an explanation of
+    // terms "location key", "domain key", and "content key".
 
     public CwebNode(ManagedPeerDhtPeer self, Number160 domainKey, Parser<T> messageParser) {
         this.self = self;

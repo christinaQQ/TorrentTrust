@@ -11,6 +11,7 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.*;
 import moe.cdn.cweb.dht.CwebMultiMap;
+import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
@@ -28,19 +29,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CwebImportServiceImpl implements CwebImportService {
     private static final Logger logger = LogManager.getLogger();
 
-    private final KeyPair userKeyPair; // FIXME: keypair should be allowed to change
+    private final KeyEnvironment keyEnvironment;
     private final CwebMultiMap<SignedUser> userMap;
     private final CwebMultiMap<SignedVote> voteMap;
     private final CwebMultiMap<SignedVoteHistory> voteHistoryMap;
 
     @Inject
-    public CwebImportServiceImpl(KeyPair userKeyPair, // FIXME: allow multiple keypair identities
-                                 @UserDomain CwebMultiMap<SignedUser> userMap,
-                                 @VoteDomain CwebMultiMap<SignedVote> voteMap,
-                                 @VoteHistoryDomain CwebMultiMap<SignedVoteHistory>
-                                         voteHistoryMap) {
+    public CwebImportServiceImpl(
+            KeyEnvironment keyEnvironment,
+            @UserDomain CwebMultiMap<SignedUser> userMap,
+            @VoteDomain CwebMultiMap<SignedVote> voteMap,
+            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
 
-        this.userKeyPair = checkNotNull(userKeyPair);
+        this.keyEnvironment = checkNotNull(keyEnvironment);
         this.userMap = checkNotNull(userMap);
         this.voteMap = checkNotNull(voteMap);
         this.voteHistoryMap = checkNotNull(voteHistoryMap);
@@ -76,7 +77,7 @@ public class CwebImportServiceImpl implements CwebImportService {
      * @throws InvalidKeyException
      */
     private Signature sign(Message message) throws InvalidKeyException, SignatureException {
-        return sign(userKeyPair, message.toByteArray());
+        return sign(keyEnvironment.getKeyPair(), message.toByteArray());
     }
 
     @Override
@@ -116,7 +117,7 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Override
     public Future<Boolean> importTrustAssertion(User.TrustAssertion trustAssertion) {
-        return Futures.transform(userMap.get(userKeyPair.getPublicKey().getHash()),
+        return Futures.transform(userMap.get(keyEnvironment.getKeyPair().getPublicKey().getHash()),
                 (AsyncFunction<SignedUser, Boolean>) user -> {
                     User u = user.getUser();
                     u.getTrustedList().add(trustAssertion);

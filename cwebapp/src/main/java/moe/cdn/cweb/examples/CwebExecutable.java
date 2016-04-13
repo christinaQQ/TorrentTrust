@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import moe.cdn.cweb.dht.KeyEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +53,8 @@ public class CwebExecutable {
 
         CwebImportService cwebImportService = injector.getInstance(CwebImportService.class);
 
-        SecurityProtos.KeyPair myKey = injector.getInstance(SecurityProtos.KeyPair.class);
+        KeyEnvironment keyEnvironment = injector.getInstance(KeyEnvironment.class);
+        SecurityProtos.KeyPair myKey = keyEnvironment.getKeyPair();
         SecurityProtos.KeyPair newKey = KeyUtils.generateKeyPair();
 
         User user = User.newBuilder().setHandle("name").setPublicKey(myKey.getPublicKey()).build();

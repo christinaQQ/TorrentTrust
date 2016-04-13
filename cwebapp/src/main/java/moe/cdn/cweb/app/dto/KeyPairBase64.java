@@ -6,14 +6,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author davix
  */
 @XmlRootElement
-public class KeyPair {
+public class KeyPairBase64 {
     private String publicKeyBase64;
     private String privateKeyBase64;
 
-    public KeyPair() {
+    public KeyPairBase64() {
     }
 
-    public KeyPair(String publicKeyBase64, String privateKeyBase64) {
+    public KeyPairBase64(String publicKeyBase64, String privateKeyBase64) {
         this.privateKeyBase64 = privateKeyBase64;
         this.publicKeyBase64 = publicKeyBase64;
     }

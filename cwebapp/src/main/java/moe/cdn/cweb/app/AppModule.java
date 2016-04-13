@@ -22,7 +22,7 @@ public class AppModule extends AbstractModule {
         environment = GlobalEnvironment.newBuilderFromArgs(args)
                 .setPort(port)
                 .setId(new CwebId(new Random()))
-                .setKeyPair(KeyUtils.generateKeyPair()) // FIXME
+                .setKeyPair(KeyUtils.generateKeyPair()) // FIXME: read key pair from environment
                 .build();
     }
 
