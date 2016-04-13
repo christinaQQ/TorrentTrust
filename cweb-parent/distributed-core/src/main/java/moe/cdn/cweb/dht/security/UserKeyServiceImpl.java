@@ -6,7 +6,6 @@ import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
-import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
@@ -14,7 +13,6 @@ import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.annotations.KeyLookup;
-import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +24,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static moe.cdn.cweb.SecurityProtos.*;
 
 class UserKeyServiceImpl implements UserKeyService {
     private static final Logger logger = LogManager.getLogger();
@@ -82,7 +79,7 @@ class UserKeyServiceImpl implements UserKeyService {
     }
 
     @Override
-    public ListenableFuture<Boolean> addTrustAssertion(User.TrustAssertion trustAssertion) {
+    public ListenableFuture<Boolean> updateTrustAssertion(User.TrustAssertion trustAssertion) {
         logger.debug("Adding assertion to trust network: {}", trustAssertion);
         Hash hash = keyEnvironment.getKeyPair().getPublicKey().getHash();
         CwebMultiMap<SignedUser> signedUserCwebMultiMap = keyServiceCwebMapProvider.get();
@@ -96,8 +93,20 @@ class UserKeyServiceImpl implements UserKeyService {
                                         localUser))
                                 .setUser(localUser).build();
                     }
-                    SignedUser.newBuilder(self).setUser(User.newBuilder(self.getUser())
-                            .addTrusted(trustAssertion));
+                    int i = 0;
+                    for (User.TrustAssertion t : self.getUser().getTrustedList()) {
+                        if (t.getPublicKey().equals(trustAssertion.getPublicKey())) {
+                            break;
+                        }
+                        i++;
+                    }
+                    User.Builder builderForUser = User.newBuilder(self.getUser());
+                    if (i == self.getUser().getTrustedCount()) {
+                        builderForUser.addTrusted(trustAssertion);
+                    } else {
+                        builderForUser.setTrusted(i, trustAssertion);
+                    }
+                    SignedUser.newBuilder(self).setUser(builderForUser);
                     return signedUserCwebMultiMap.put(hash, self);
                 });
     }

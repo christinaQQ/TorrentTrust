@@ -31,10 +31,11 @@ public interface UserKeyService {
     ListenableFuture<Optional<Key>> findKey(Hash keyHash);
 
     /**
-     * Adds an assertion about a key to the trust network of the current user.
+     * Updates an assertion about a key to the trust network of the current user or adds the
+     * assertion if it does not exist.
      *
      * @param trustAssertion the trust assertion
      * @return a future of {@code true} if the user is successfully updated
      */
-    ListenableFuture<Boolean> addTrustAssertion(User.TrustAssertion trustAssertion);
+    ListenableFuture<Boolean> updateTrustAssertion(User.TrustAssertion trustAssertion);
 }

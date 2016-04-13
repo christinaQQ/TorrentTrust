@@ -1,29 +1,23 @@
 package moe.cdn.cweb.trust;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import moe.cdn.cweb.dht.CwebMultiMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
-
+import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.User.TrustAssertion;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 import moe.cdn.cweb.dht.security.UserKeyService;
 import moe.cdn.cweb.security.utils.Representations;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
 
@@ -54,11 +48,20 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
     }
 
     @Override
-    public ListenableFuture<Boolean> addUserAsTrusted(User user) {
-        logger.debug("Adding to trust network: {}", Representations.asString(user));
-        return userKeyService.addTrustAssertion(TrustAssertion.newBuilder()
-                .setPublicKey(user.getPublicKey())
+    public ListenableFuture<Boolean> addUserAsTrusted(Key publicKey) {
+        logger.debug("Adding to trust network: {}", Representations.asString(publicKey));
+        return userKeyService.updateTrustAssertion(TrustAssertion.newBuilder()
+                .setPublicKey(publicKey)
                 .setTrustAssertion(TrustAssertion.Trust.TRUSTED)
+                .build());
+    }
+
+    @Override
+    public ListenableFuture<Boolean> removeUserAsTrusted(Key publicKey) {
+        logger.debug("Removing from trust network: {}", Representations.asString(publicKey));
+        return userKeyService.updateTrustAssertion(TrustAssertion.newBuilder()
+                .setPublicKey(publicKey)
+                .setTrustAssertion(TrustAssertion.Trust.NOT_TRUSTED)
                 .build());
     }
 }
