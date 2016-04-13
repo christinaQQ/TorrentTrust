@@ -4,8 +4,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
 import org.ini4j.Ini;
 
@@ -15,7 +17,7 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.security.CwebId;
-import moe.cdn.cweb.security.KeyEnvironment;
+import moe.cdn.cweb.dht.KeyEnvironment;
 
 /**
  * Environment that stores configuration for the application.
@@ -30,6 +32,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final int udpPort;
     private final CwebId myId;
     private final KeyPair keyPair;
+    private String handle;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
             int tcpPort,
@@ -95,8 +98,28 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     }
 
     @Override
+    public String getHandle() {
+        if (handle == null) {
+            handle = randomHandle();
+        }
+        return handle;
+    }
+
+    private static String randomHandle() {
+        return new BigInteger(130, new Random()).toString(32);
+    }
+
+    @Override
     public KeyPair getKeyPair() {
         return keyPair;
+    }
+
+    @Override
+    public TorrentTrustProtos.User getLocalUser() {
+        return TorrentTrustProtos.User.newBuilder()
+                .setHandle(getHandle())
+                .setPublicKey(getKeyPair().getPublicKey())
+                .build();
     }
 
     /**

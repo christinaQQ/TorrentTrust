@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import moe.cdn.cweb.dht.CwebMultiMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,28 +22,28 @@ import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.User.TrustAssertion;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
-import moe.cdn.cweb.dht.security.KeyLookupService;
+import moe.cdn.cweb.dht.security.UserKeyService;
 import moe.cdn.cweb.security.utils.Representations;
 
-class CwebTrustNetworkServiceImpl implements CwebTrustNetworkService {
+class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
 
     private static final Logger logger = LogManager.getLogger();
-    private final KeyLookupService keyLookupService;
+    private final UserKeyService userKeyService;
     private final CwebSignatureValidationService signatureValidationService;
 
     @Inject
-    public CwebTrustNetworkServiceImpl(KeyLookupService keyLookupService,
-            CwebSignatureValidationService signatureValidationService) {
-        this.keyLookupService = checkNotNull(keyLookupService);
+    public CwebTrustNetworkApiImpl(UserKeyService userKeyService,
+                                   CwebSignatureValidationService signatureValidationService) {
+        this.userKeyService = checkNotNull(userKeyService);
         this.signatureValidationService = checkNotNull(signatureValidationService);
     }
 
     @Override
     public ListenableFuture<Collection<User>> getLocalTrustNetwork(User user) {
-        logger.info("Getting local trust network for {}", Representations.asString(user));
+        logger.debug("Getting local trust network for {}", Representations.asString(user));
         LinkedList<ListenableFuture<Optional<User>>> maybeUsers = new LinkedList<>();
         for (TrustAssertion t : user.getTrustedList()) {
-            maybeUsers.add(Futures.transform(keyLookupService.findOwner(t.getPublicKey()),
+            maybeUsers.add(Futures.transform(userKeyService.findOwner(t.getPublicKey()),
                     (Function<Optional<SignedUser>, Optional<User>>) maybeOwner -> maybeOwner.map(
                             o -> signatureValidationService.validateUser(o) ? o.getUser() : null)));
         }
@@ -53,8 +54,11 @@ class CwebTrustNetworkServiceImpl implements CwebTrustNetworkService {
     }
 
     @Override
-    public ListenableFuture<Boolean> addTrustedUser(User user) {
-        return null;
+    public ListenableFuture<Boolean> addUserAsTrusted(User user) {
+        logger.debug("Adding to trust network: {}", Representations.asString(user));
+        return userKeyService.addTrustAssertion(TrustAssertion.newBuilder()
+                .setPublicKey(user.getPublicKey())
+                .setTrustAssertion(TrustAssertion.Trust.TRUSTED)
+                .build());
     }
-
 }

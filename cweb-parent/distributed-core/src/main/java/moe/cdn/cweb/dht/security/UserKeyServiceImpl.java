@@ -1,38 +1,45 @@
 package moe.cdn.cweb.dht.security;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Inject;
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.dht.CwebMultiMap;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.dht.annotations.KeyLookup;
+import moe.cdn.cweb.dht.annotations.UserDomain;
+import moe.cdn.cweb.security.utils.Representations;
+import moe.cdn.cweb.security.utils.SignatureUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.inject.Provider;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.inject.Provider;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static moe.cdn.cweb.SecurityProtos.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Inject;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.annotations.KeyLookup;
-import moe.cdn.cweb.security.utils.Representations;
-
-class KeyLookupServiceImpl implements KeyLookupService {
+class UserKeyServiceImpl implements UserKeyService {
     private static final Logger logger = LogManager.getLogger();
 
     private final Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider;
+    private final KeyEnvironment keyEnvironment;
 
     @Inject
-    public KeyLookupServiceImpl(
-            @KeyLookup Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider) {
+    public UserKeyServiceImpl(
+            @KeyLookup Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider,
+            KeyEnvironment keyEnvironment) {
         this.keyServiceCwebMapProvider = checkNotNull(keyServiceCwebMapProvider);
+        this.keyEnvironment = keyEnvironment;
     }
 
     @Override
@@ -74,4 +81,24 @@ class KeyLookupServiceImpl implements KeyLookupService {
                 });
     }
 
+    @Override
+    public ListenableFuture<Boolean> addTrustAssertion(User.TrustAssertion trustAssertion) {
+        logger.debug("Adding assertion to trust network: {}", trustAssertion);
+        Hash hash = keyEnvironment.getKeyPair().getPublicKey().getHash();
+        CwebMultiMap<SignedUser> signedUserCwebMultiMap = keyServiceCwebMapProvider.get();
+        return Futures.transform(signedUserCwebMultiMap.get(hash),
+                (AsyncFunction<SignedUser, Boolean>) self -> {
+                    if (self == null) {
+                        User localUser = keyEnvironment.getLocalUser();
+                        self = SignedUser.newBuilder()
+                                .setSignature(SignatureUtils.signMessage(keyEnvironment
+                                                .getKeyPair(),
+                                        localUser))
+                                .setUser(localUser).build();
+                    }
+                    SignedUser.newBuilder(self).setUser(User.newBuilder(self.getUser())
+                            .addTrusted(trustAssertion));
+                    return signedUserCwebMultiMap.put(hash, self);
+                });
+    }
 }

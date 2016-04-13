@@ -24,7 +24,7 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.dht.security.KeyLookupService;
+import moe.cdn.cweb.dht.security.UserKeyService;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
@@ -66,9 +66,9 @@ public class CwebExecutable {
         boolean b = cwebImportService.importUser(user).get();
         System.out.println("imported user <user>: " + b);
 
-        KeyLookupService keyLookupService = injector.getInstance(KeyLookupService.class);
+        UserKeyService userKeyService = injector.getInstance(UserKeyService.class);
         ListenableFuture<Optional<SignedUser>> owner =
-                keyLookupService.findOwner(user.getPublicKey());
+                userKeyService.findOwner(user.getPublicKey());
         System.out.println(
                 "owner of <user>'s public key: " + owner.get().map(Representations::asString));
 

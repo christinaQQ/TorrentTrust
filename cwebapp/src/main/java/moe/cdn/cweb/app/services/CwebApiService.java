@@ -1,13 +1,16 @@
-package moe.cdn.cweb.app;
+package moe.cdn.cweb.app.services;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.CwebModuleService;
+import moe.cdn.cweb.app.App;
+import moe.cdn.cweb.app.AppModule;
 import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
+import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,32 +24,11 @@ public class CwebApiService implements ServletContextListener {
 
     private int dhtPort;
     private String[] args;
-    private volatile CwebApi instance;
     private ManagedPeer peerDht;
 
     public CwebApiService(int dhtPort, String... args) {
         this.dhtPort = dhtPort;
         this.args = args;
-    }
-
-    private CwebApi prepareCwebApi() {
-        Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
-                CwebModuleService.getInstance().getCwebModule(), new AppModule(dhtPort, args));
-        peerDht = injector.getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
-        return injector.getInstance(CwebApi.class);
-    }
-
-    public CwebApi getInstance() {
-        CwebApi result = instance;
-        if (result == null) {
-            synchronized (this) {
-                result = instance;
-                if (result == null) {
-                    instance = result = prepareCwebApi();
-                }
-            }
-        }
-        return result;
     }
 
     @Override
@@ -61,6 +43,17 @@ public class CwebApiService implements ServletContextListener {
             }
             dhtPort = i;
         }
+
+        Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
+                CwebModuleService.getInstance().getCwebModule(), new AppModule(dhtPort, args));
+
+        peerDht = injector.getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
+
+        CwebApi cwebApi = injector.getInstance(CwebApi.class);
+        sce.getServletContext().setAttribute(CwebApi.class.getName(), cwebApi);
+
+        CwebTrustNetworkApi trustNetwork = injector.getInstance(CwebTrustNetworkApi.class);
+        sce.getServletContext().setAttribute(CwebTrustNetworkApi.class.getName(), trustNetwork);
     }
 
     @Override

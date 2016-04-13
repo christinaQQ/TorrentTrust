@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import moe.cdn.cweb.SecurityProtos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,16 +17,16 @@ import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 
-class FakeKeyLookupServiceImpl implements KeyLookupService {
+class FakeUserKeyServiceImpl implements UserKeyService {
 
     private static final Logger logger = LogManager.getLogger();
     private final Map<Hash, SignedUser> keyserver;
 
-    public FakeKeyLookupServiceImpl() {
+    public FakeUserKeyServiceImpl() {
         this.keyserver = new HashMap<>();
     }
 
-    public FakeKeyLookupServiceImpl(List<SignedUser> records) {
+    public FakeUserKeyServiceImpl(List<SignedUser> records) {
         this();
         for (TorrentTrustProtos.SignedUser record : records) {
             keyserver.put(record.getUser().getPublicKey().getHash(), record);
@@ -51,6 +52,12 @@ class FakeKeyLookupServiceImpl implements KeyLookupService {
             return Futures
                     .immediateFuture(Optional.of(keyserver.get(keyHash).getUser().getPublicKey()));
         }
+    }
+
+    @Override
+    public ListenableFuture<Boolean> addTrustAssertion(TorrentTrustProtos.User.TrustAssertion
+                                                                   trustAssertion) {
+        throw new UnsupportedOperationException();
     }
 
 }

@@ -31,14 +31,14 @@ public class SignatureValidationServiceImplTest {
     private static final Hash SAMPLE_MESSAGE = HashUtils.hashOf("Hello World");
 
     @Mock
-    private KeyLookupService keyLookupService;
+    private UserKeyService userKeyService;
 
     private SignatureValidationServiceImpl signatureValidationService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        signatureValidationService = new SignatureValidationServiceImpl(keyLookupService);
+        signatureValidationService = new SignatureValidationServiceImpl(userKeyService);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SignatureValidationServiceImplTest {
 
     @Test
     public void testValidateAndCheckSignatureKeyInNetworkSignatureByteArray() throws Exception {
-        when(keyLookupService.findOwner(KEY_PAIR.getPublicKey()))
+        when(userKeyService.findOwner(KEY_PAIR.getPublicKey()))
                 .thenReturn(Futures.immediateFuture(Optional.of(SIGNED_USER)));
         assertTrue(signatureValidationService.validateAndCheckSignatureKeyInNetwork(
                 SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE), SAMPLE_MESSAGE));
@@ -70,7 +70,7 @@ public class SignatureValidationServiceImplTest {
 
     @Test
     public void testValidateAndCheckSignatureKeyInNetworkSignatureMessage() throws Exception {
-        when(keyLookupService.findOwner(KEY_PAIR.getPublicKey()))
+        when(userKeyService.findOwner(KEY_PAIR.getPublicKey()))
                 .thenReturn(Futures.immediateFuture(Optional.of(SIGNED_USER)));
         assertTrue(signatureValidationService.validateAndCheckSignatureKeyInNetwork(
                 SignatureUtils.signMessage(KEY_PAIR, SAMPLE_MESSAGE),
