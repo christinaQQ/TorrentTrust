@@ -1,6 +1,6 @@
 package moe.cdn.cweb.app.api;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import java.util.Base64;
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.app.dto.UserRef;
 import moe.cdn.cweb.security.utils.KeyUtils;
@@ -19,7 +19,7 @@ public class UserTrust extends CwebApiEndPoint {
     @POST
     public boolean trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         String publicKeyBase64 = userRef.getPublicKeyBase64();
-        byte[] publicKey = Base64.decode(publicKeyBase64);
+        byte[] publicKey = Base64.getDecoder().decode(publicKeyBase64);
         CwebTrustNetworkApi cwebTrustNetworkApi = getCwebTrustNetworkApi();
         return cwebTrustNetworkApi
                 .addUserAsTrusted(TorrentTrustProtos.User.newBuilder()
