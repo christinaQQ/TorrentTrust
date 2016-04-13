@@ -8374,16 +8374,20 @@ p {
   font-size: 16px;
 }
 
-button, button.btn {
+button, button.btn, input.btn, .btn {
   background-color: #ed2127;
   color: #fafafa;
-  border-radius: 1000px;
   font-family: "Utopia Std", sans-serif;
+  border-radius: 5px;
 }
 
-button:hover, button:focus, button.btn:hover, button.btn:focus {
+button:hover, button:focus, button.btn:hover, button.btn:focus, input.btn:hover, input.btn:focus, .btn:hover, .btn:focus {
   background-color: #e21218;
   color: whitesmoke;
+}
+
+button.rounded-button, button.btn.rounded-button, input.btn.rounded-button, .btn.rounded-button {
+  border-radius: 1000px;
 }
 
 .trust-management button.delete-button {
@@ -8410,4 +8414,8 @@ button:hover, button:focus, button.btn:hover, button.btn:focus {
 
 .settings-form input[type="radio"] {
   margin-right: 1em;
+}
+
+.settings-form label {
+  cursor: pointer;
 }

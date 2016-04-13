@@ -1,11 +1,11 @@
 const React = require('React');
-const Header = require('./includes/header.jsx');
+const Navbar = require('./navbar/Navbar.jsx');
 
 module.exports = React.createClass({
   render() {
     return (
       <div>
-        <Header/>
+        <Navbar/>
         <div className="container">
           {this.props.children}
         </div>

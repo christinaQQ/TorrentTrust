@@ -1,8 +1,8 @@
 const React = require('React');
 const TrustedIdentityButton = require('./includes/TrustedIdentityButton.jsx');
 const SubscribeToStateChangesMixin = require('./mixins/SubscribeToStateChangesMixin.js');
-const DispatchMixin = require('./mixins/DispatchMixin.js');
-const actions = require('../redux/actions/index.js');
+const DispatchMixin = require('./mixins').DispatchMixin;
+const actions = require('../redux/actions');
 
 module.exports = React.createClass({
   mixins: [SubscribeToStateChangesMixin, DispatchMixin],

@@ -16,7 +16,7 @@ module.exports = React.createClass({
       <p>
         {this.props.name} ({this.props.hash.substring(0, 8)}...) &nbsp;
         <button onClick={this.onDeleteButtonClick}
-                className="btn delete-button">
+                className="btn delete-button rounded-button">
                 Delete
         </button>
       </p>

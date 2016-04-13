@@ -8,6 +8,7 @@ const MockDownloadPage = require('./components/MockDownloadPage.jsx');
 const TrustManagement = require('./components/TrustManagement.jsx');
 const SettingsPage = require('./components/SettingsPage.jsx');
 const NotFoundPage = require('./components/NotFoundPage.jsx');
+const CreateIdentityPage = require('./components/pages/CreateIdentityPage');
 
 ReactDOM.render((
   <Router history={browserHistory}>
@@ -16,6 +17,7 @@ ReactDOM.render((
       <Route path="/mock-download-page" component={MockDownloadPage}/>
       <Route path="/trust-management" component={TrustManagement}/>
       <Route path="/settings" component={SettingsPage}/>
+      <Route path="/newIdentity" component={CreateIdentityPage}/>
       <Route path="*" component={NotFoundPage}/>
     </Route>
   </Router>
