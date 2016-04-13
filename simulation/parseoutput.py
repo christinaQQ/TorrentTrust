@@ -4,20 +4,32 @@ if len(sys.argv) < 2:
   raise Exception("Need to provide the file to analyze as the single argument")
 
 cutoff = 0 if len(sys.argv) < 3 else float(sys.argv[2])
+malicious_object = None
+
+#first find malicious object
+with open(sys.argv[1]) as f:
+  for line in f:
+    if line.strip() == "":
+      continue
+    user, target, score, usertype, targettype = tuple(line.strip().split('\t'))
+    if malicious_object == None and usertype == "EVIL" and targettype == "EVIL" and score == "1.0":
+      malicious_object = target
+      break
 
 with open(sys.argv[1]) as f:
   tpgood, tngood, fpgood, fngood = 0, 0, 0, 0
   goodScore, evilScore = 0, 0
   unknown = 0
+  virusCorrectScore, virusIncorrectScore = 0, 0
   for line in f:
     if line.strip() == "":
       continue
     user, target, score, usertype, targettype = tuple(line.strip().split('\t'))
-    
+
     if usertype == "EVIL":
       # Ignore evil users
       continue
-    
+
     if score == 'None':
       unknown += 1.0
       continue
@@ -38,6 +50,11 @@ with open(sys.argv[1]) as f:
         fpgood += 1.0
       else:
         tngood += 1.0
+
+    if target == malicious_object and label == "GOOD":
+      virusIncorrectScore += 1.0
+    elif target == malicious_object and label == "EVIL":
+      virusCorrectScore += 1.0
         
   precision = tpgood / (tpgood + fpgood)
   recall = tpgood / (tpgood + fngood)
@@ -49,3 +66,5 @@ with open(sys.argv[1]) as f:
   print "Precision: {}\nRecall: {}\nTrue Negative Rate:{}\nAccuracy:{}\nF1Score: {}\n\nUnclassified count: {}\nUnclassified Rate: {}\n".format(precision, recall, tnr, acc, fscore, unknown, uncr)
   
   print "Avg Good Score:{}\nAvg Evil Score:{}\n".format(goodScore / (tpgood + fngood), evilScore / (tngood + fpgood))
+
+  print "Virus Classification Correct: %f\n Incorrect: %f" % (virusCorrectScore, virusIncorrectScore)
