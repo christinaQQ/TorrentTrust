@@ -8400,14 +8400,23 @@ button.rounded-button, button.btn.rounded-button, input.btn.rounded-button, .btn
 .trust-management textarea {
   resize: none;
   border-color: #ed2127;
-  min-width: 340px;
+  min-width: 370px;
   min-height: 85px;
-  font-size: 12px;
-  padding: 5px 8px;
+  font-size: 14px;
   font-weight: 200;
 }
 
 .trust-management textarea:focus {
+  outline: none;
+  box-shadow: 0 0 4px #ed2127;
+}
+
+textarea {
+  padding: 5px 8px;
+  border-color: #ed2127;
+}
+
+textarea:focus {
   outline: none;
   box-shadow: 0 0 4px #ed2127;
 }
@@ -8418,4 +8427,11 @@ button.rounded-button, button.btn.rounded-button, input.btn.rounded-button, .btn
 
 .settings-form label {
   cursor: pointer;
+}
+
+.view-key-page textarea {
+  resize: none;
+  width: 100%;
+  min-height: 4em;
+  margin-bottom: 5px;
 }

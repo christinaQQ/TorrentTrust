@@ -18,7 +18,7 @@ module.exports = {
   },
   createNewIdentity({name}) {
     return dispatch => {
-      const hash = Array(36).join().split(',').map(() => '123456789abcde'.charAt(Math.floor(Math.random() * 15))).join('');
+      const hash = Array(36).join().split(',').map(() => '123456789abcdef'.charAt(Math.floor(Math.random() * 16))).join('');
       console.log(hash);
       dispatch(this._addUserIdentity({name, hash}));
       dispatch(this.switchUserIdentity({name, hash}));

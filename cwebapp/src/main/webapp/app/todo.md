@@ -1,5 +1,5 @@
 * Create a new identity (DONE)
-* View current key
+* View current key (DONE)
 * Main index UI
     - View past torrents
     - Vote on past torrents

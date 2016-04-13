@@ -118,15 +118,23 @@ button, button.btn, input.btn, .btn {
   textarea {
     resize: none;
     border-color: rgb(237, 33, 39);
-    min-width: 340px;
+    min-width: 370px;
     min-height: 85px;
-    font-size: 12px;
-    padding: 5px 8px;
+    font-size: 14px;
     font-weight: 200;
     &:focus {
       outline: none;
       box-shadow: 0 0 4px rgb(237, 33, 39);
     }
+  }
+}
+
+textarea {
+  padding: 5px 8px;
+  border-color: rgb(237, 33, 39);
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 4px rgb(237, 33, 39);
   }
 }
 
@@ -137,5 +145,14 @@ button, button.btn, input.btn, .btn {
 
   label {
     cursor: pointer;
+  }
+}
+
+.view-key-page {
+  textarea {
+    resize: none;
+    width: 100%;
+    min-height: 4em;
+    margin-bottom: 5px;
   }
 }

@@ -9,6 +9,7 @@ const TrustManagement = require('./components/TrustManagement.jsx');
 const SettingsPage = require('./components/SettingsPage.jsx');
 const NotFoundPage = require('./components/NotFoundPage.jsx');
 const CreateIdentityPage = require('./components/pages/CreateIdentityPage');
+const ViewKeyPage = require('./components/pages/ViewKeyPage');
 
 ReactDOM.render((
   <Router history={browserHistory}>
@@ -18,6 +19,7 @@ ReactDOM.render((
       <Route path="/trust-management" component={TrustManagement}/>
       <Route path="/settings" component={SettingsPage}/>
       <Route path="/newIdentity" component={CreateIdentityPage}/>
+      <Route path="/currentKey" component={ViewKeyPage}/>
       <Route path="*" component={NotFoundPage}/>
     </Route>
   </Router>
