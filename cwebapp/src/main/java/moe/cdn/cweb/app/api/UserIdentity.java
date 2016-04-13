@@ -13,7 +13,7 @@ public class UserIdentity {
     // TODO: should the "current" user really be stored in the backend? Single-user model??
 
     @GET
-    public Identity getOwnProfile() {
+    public Identity getAllProfiles() {
         return new Identity();
     }
 

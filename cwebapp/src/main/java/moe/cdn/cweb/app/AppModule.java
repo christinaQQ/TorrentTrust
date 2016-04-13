@@ -36,4 +36,8 @@ public class AppModule extends AbstractModule {
         bind(KeyEnvironment.class).toInstance(environment);
     }
 
+    public GlobalEnvironment getEnvironment() {
+        return environment;
+    }
+
 }

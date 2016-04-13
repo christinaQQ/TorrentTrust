@@ -46,8 +46,9 @@ public class CwebApiService implements ServletContextListener {
             dhtPort = i;
         }
 
+        AppModule appModule = new AppModule(dhtPort, args);
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
-                CwebModuleService.getInstance().getCwebModule(), new AppModule(dhtPort, args));
+                CwebModuleService.getInstance().getCwebModule(), appModule);
 
         peerDht = injector.getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
 
@@ -60,8 +61,8 @@ public class CwebApiService implements ServletContextListener {
         CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
         sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);
 
-        GlobalEnvironment globalEnvironment = injector.getInstance(GlobalEnvironment.class);
-        sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(), globalEnvironment);
+        sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(),
+                appModule.getEnvironment());
     }
 
     @Override
