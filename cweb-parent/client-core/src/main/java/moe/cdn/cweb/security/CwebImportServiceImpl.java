@@ -34,13 +34,13 @@ import moe.cdn.cweb.security.utils.SignatureUtils;
 public class CwebImportServiceImpl implements CwebImportService {
     private static final Logger logger = LogManager.getLogger();
 
-    private final KeyPair userKeyPair;
+    private final KeyPair userKeyPair; // FIXME: keypair should be allowed to change
     private final CwebMultiMap<SignedUser> userMap;
     private final CwebMultiMap<SignedVote> voteMap;
     private final CwebMultiMap<SignedVoteHistory> voteHistoryMap;
 
     @Inject
-    public CwebImportServiceImpl(KeyPair userKeyPair,
+    public CwebImportServiceImpl(KeyPair userKeyPair, // FIXME: allow multiple keypair identities
             @UserDomain CwebMultiMap<SignedUser> userMap,
             @VoteDomain CwebMultiMap<SignedVote> voteMap,
             @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {

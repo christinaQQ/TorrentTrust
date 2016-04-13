@@ -1,24 +1,28 @@
 package moe.cdn.cweb.app;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceFilter;
 import org.apache.commons.cli.*;
+import org.eclipse.jetty.server.Dispatcher;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.resource.ResourceCollection;
 
+import javax.servlet.DispatcherType;
 import java.net.URI;
 import java.net.URL;
+import java.util.EnumSet;
 
 /**
  * @author davix
  */
 public class App {
     private static final int DEFAULT_APP_PORT = 8080;
+    public static final String DHT_PORT_INIT_PARAM = "dht-port";
 
     public static void main(String[] args) throws Exception {
         Options options = new Options();
@@ -41,36 +45,14 @@ public class App {
             appPort = (int) parsedOptionValue;
         }
 
+        Injector injector = Guice.createInjector(new AppServletModule());
+
         Server server = new Server(appPort);
 
         ServletContextHandler servletHandler = new ServletContextHandler();
 
-        DefaultServlet appServlet = new DefaultServlet();
-        ServletHolder appHolder = new ServletHolder(appServlet);
-        URL appFile = App.class.getClassLoader().getResource("app/build/js/main.js");
-        if (appFile == null) {
-            throw new RuntimeException("Cannot find application resources");
-        }
-        URI appDir = appFile.toURI().resolve("../").normalize();
-        appHolder.setInitParameter("resourceBase", appDir.toURL().toExternalForm());
-        appHolder.setInitParameter("pathInfoOnly", "true");
-        appHolder.setInitParameter("dirAllowed", "false");
-        servletHandler.addServlet(appHolder, "/app/build/*");
-
-        DefaultServlet staticServlet = new DefaultServlet();
-        ServletHolder staticHolder = new ServletHolder(staticServlet);
-
-        URL staticFile = App.class.getClassLoader().getResource("static/giphy.gif");
-        if (staticFile == null) {
-            throw new RuntimeException("Cannot find static resources");
-        }
-        URI staticDir = staticFile.toURI().resolve("./").normalize();
-        staticHolder.setInitParameter("resourceBase", staticDir.toURL().toExternalForm());
-        staticHolder.setInitParameter("pathInfoOnly", "true");
-        appHolder.setInitParameter("dirAllowed", "false");
-        servletHandler.addServlet(staticHolder, "/static/*");
-
-        servletHandler.addServlet(IndexServlet.class, "/");
+        servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
+        servletHandler.addServlet(DefaultServlet.class, "/");
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { servletHandler });
