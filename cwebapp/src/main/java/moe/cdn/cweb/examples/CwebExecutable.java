@@ -73,12 +73,12 @@ public class CwebExecutable {
                 "owner of <user>'s public key: " + owner.get().map(Representations::asString));
 
         // Add vote
-        b = cwebImportService.addVote(voteFoo).get();
+        b = cwebImportService.updateVote(voteFoo).get();
         System.out.println("imported vote <Foo>: " + b);
         System.out.println("votes for <Foo>: " + cwebApi.getVotes(HashUtils.hashOf("Foo")).stream()
                 .map(Representations::asString).collect(Collectors.toList()));
 
-        b = cwebImportService.addVote(voteBar).get();
+        b = cwebImportService.updateVote(voteBar).get();
         System.out.println("imported vote <Bar>: " + b);
         System.out.println("votes for <Bar>: " + cwebApi.getVotes(HashUtils.hashOf("Bar")).stream()
                 .map(Representations::asString).collect(Collectors.toList()));

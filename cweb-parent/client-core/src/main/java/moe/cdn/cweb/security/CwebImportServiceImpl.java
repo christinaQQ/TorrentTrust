@@ -38,7 +38,7 @@ public class CwebImportServiceImpl implements CwebImportService {
                                  @UserDomain CwebMultiMap<SignedUser> userMap,
                                  @VoteDomain CwebMultiMap<SignedVote> voteMap,
                                  @VoteHistoryDomain CwebMultiMap<SignedVoteHistory>
-                                             voteHistoryMap) {
+                                         voteHistoryMap) {
 
         this.userKeyPair = checkNotNull(userKeyPair);
         this.userMap = checkNotNull(userMap);
@@ -80,16 +80,21 @@ public class CwebImportServiceImpl implements CwebImportService {
     }
 
     @Override
-    public synchronized ListenableFuture<Boolean> addVote(Vote vote)
+    public synchronized ListenableFuture<Boolean> updateVote(Vote vote)
             throws SignatureException, InvalidKeyException {
         // Get existing vote history and add content hash if necessary
         ListenableFuture<VoteHistory> amendedHistory =
                 Futures.transform(ensureVoteHistory(vote.getOwnerPublicKey()),
-                        (Function<VoteHistory, VoteHistory>) history -> history.getContentHashList()
-                                                                                .contains(vote
-                                                                                        .getContentHash()) ? history
-                                                                                                                 : history.toBuilder().addContentHash(vote.getContentHash())
-                                                                                .build());
+                        (Function<VoteHistory, VoteHistory>) history -> {
+                            // FIXME: should correctly update a vote on a duplicate property
+                            if (history.getContentHashList().contains(vote.getContentHash())) {
+                                return history;
+                            } else {
+                                return history.toBuilder()
+                                        .addContentHash(vote.getContentHash())
+                                        .build();
+                            }
+                        });
         // Write the history
         ListenableFuture<Boolean> voteHistoryFuture = Futures.transform(amendedHistory,
                 (AsyncFunction<VoteHistory, Boolean>) voteHistory -> importSignature(voteHistory,

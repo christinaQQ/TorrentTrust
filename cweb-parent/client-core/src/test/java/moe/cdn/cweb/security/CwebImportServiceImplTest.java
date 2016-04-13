@@ -82,7 +82,7 @@ public class CwebImportServiceImplTest {
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                         .thenReturn(Futures.immediateFuture(true));
-        assertTrue(cwebImportServiceImpl.addVote(VOTE_1).get());
+        assertTrue(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CwebImportServiceImplTest {
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                         .thenReturn(Futures.immediateFuture(true));
-        assertTrue(cwebImportServiceImpl.addVote(VOTE_1).get());
+        assertTrue(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class CwebImportServiceImplTest {
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                         .thenReturn(Futures.immediateFuture(true));
-        assertFalse(cwebImportServiceImpl.addVote(VOTE_1).get());
+        assertFalse(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class CwebImportServiceImplTest {
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
                         .thenReturn(Futures.immediateFuture(true));
-        assertFalse(cwebImportServiceImpl.addVote(VOTE_1).get());
+        assertFalse(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
     @Test

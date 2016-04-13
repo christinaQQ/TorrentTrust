@@ -7,7 +7,7 @@ public class VoteModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(CwebVoteService.class).to(CwebVoteServiceImpl.class).in(Singleton.class);
+        bind(CwebVoteApi.class).to(CwebVoteApiImpl.class).in(Singleton.class);
     }
 
 }

@@ -21,7 +21,7 @@ public interface CwebImportService extends SignatureImportService {
      * @throws SignatureException
      * @throws InvalidKeyException
      */
-    Future<Boolean> addVote(Vote vote) throws SignatureException, InvalidKeyException;
+    Future<Boolean> updateVote(Vote vote) throws SignatureException, InvalidKeyException;
 
     /**
      * Imports a {@link User} and signs it with the current key. The existing

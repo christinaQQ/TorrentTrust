@@ -11,7 +11,7 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
-public interface CwebVoteService {
+public interface CwebVoteApi {
     /**
      * Gets a list of all votes for a certain object hash. If no object
      * indicated by the hash exists, a future of an empty collection will be

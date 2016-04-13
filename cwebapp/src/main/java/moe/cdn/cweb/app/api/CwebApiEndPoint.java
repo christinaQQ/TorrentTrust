@@ -2,6 +2,7 @@ package moe.cdn.cweb.app.api;
 
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
+import moe.cdn.cweb.vote.CwebVoteApi;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
@@ -20,5 +21,9 @@ public class CwebApiEndPoint {
     protected CwebTrustNetworkApi getCwebTrustNetworkApi() {
         return (CwebTrustNetworkApi) servletContext.getAttribute(
                 CwebTrustNetworkApi.class.getName());
+    }
+
+    protected CwebVoteApi getCwebVoteApi() {
+        return (CwebVoteApi) servletContext.getAttribute(CwebVoteApi.class.getName());
     }
 }

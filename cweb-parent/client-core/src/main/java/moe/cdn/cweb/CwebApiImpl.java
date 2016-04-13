@@ -10,15 +10,15 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
-import moe.cdn.cweb.vote.CwebVoteService;
+import moe.cdn.cweb.vote.CwebVoteApi;
 
 class CwebApiImpl implements CwebApi {
 
     private final CwebTrustNetworkApi trustNetworkService;
-    private final CwebVoteService voteService;
+    private final CwebVoteApi voteService;
 
     @Inject
-    public CwebApiImpl(CwebTrustNetworkApi trustNetworkService, CwebVoteService voteService) {
+    public CwebApiImpl(CwebTrustNetworkApi trustNetworkService, CwebVoteApi voteService) {
         this.trustNetworkService = trustNetworkService;
         this.voteService = voteService;
     }

@@ -11,6 +11,7 @@ import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
+import moe.cdn.cweb.vote.CwebVoteApi;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -54,6 +55,9 @@ public class CwebApiService implements ServletContextListener {
 
         CwebTrustNetworkApi trustNetwork = injector.getInstance(CwebTrustNetworkApi.class);
         sce.getServletContext().setAttribute(CwebTrustNetworkApi.class.getName(), trustNetwork);
+
+        CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
+        sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);
     }
 
     @Override

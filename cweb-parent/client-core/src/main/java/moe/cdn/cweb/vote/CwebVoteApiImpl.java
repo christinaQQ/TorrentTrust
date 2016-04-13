@@ -29,7 +29,7 @@ import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 import moe.cdn.cweb.security.CwebImportService;
 
-class CwebVoteServiceImpl implements CwebVoteService {
+class CwebVoteApiImpl implements CwebVoteApi {
 
     private final CwebSignatureValidationService signatureValidationService;
     private final CwebImportService importService;
@@ -37,10 +37,10 @@ class CwebVoteServiceImpl implements CwebVoteService {
     private final CwebMultiMap<SignedVoteHistory> voteHistoryMap;
 
     @Inject
-    public CwebVoteServiceImpl(CwebSignatureValidationService signatureValidationService,
-            CwebImportService importService,
-            @VoteDomain CwebMultiMap<SignedVote> voteMap,
-            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
+    public CwebVoteApiImpl(CwebSignatureValidationService signatureValidationService,
+                           CwebImportService importService,
+                           @VoteDomain CwebMultiMap<SignedVote> voteMap,
+                           @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
         this.voteMap = checkNotNull(voteMap);
@@ -102,6 +102,6 @@ class CwebVoteServiceImpl implements CwebVoteService {
 
     @Override
     public Future<Boolean> castVote(Vote vote) throws SignatureException, InvalidKeyException {
-        return importService.addVote(vote);
+        return importService.updateVote(vote);
     }
 }
