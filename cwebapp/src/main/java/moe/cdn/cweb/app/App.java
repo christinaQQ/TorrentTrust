@@ -47,12 +47,13 @@ public class App {
 
         DefaultServlet appServlet = new DefaultServlet();
         ServletHolder appHolder = new ServletHolder(appServlet);
-        URL appFile = App.class.getClassLoader().getResource("app/build/js/main.js");
-        if (appFile == null) {
-            throw new RuntimeException("Cannot find application resources");
-        }
-        URI appDir = appFile.toURI().resolve("../").normalize();
-        appHolder.setInitParameter("resourceBase", appDir.toURL().toExternalForm());
+//        URL appFile = App.class.getClassLoader().getResource("app/build/js/main.js");
+//        if (appFile == null) {
+//            throw new RuntimeException("Cannot find application resources");
+//        }
+//        URI appDir = appFile.toURI().resolve("../").normalize();
+//        appHolder.setInitParameter("resourceBase", appDir.toURL().toExternalForm());
+        appHolder.setInitParameter("resourceBase", "src/main/resources/app/build");
         appHolder.setInitParameter("pathInfoOnly", "true");
         appHolder.setInitParameter("dirAllowed", "false");
         servletHandler.addServlet(appHolder, "/app/build/*");

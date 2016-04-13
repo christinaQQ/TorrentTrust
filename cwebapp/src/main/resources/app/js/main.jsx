@@ -1,4 +1,3 @@
-// require('bootstrap');
 const ReactDOM = require('react-dom');
 const React = require('react');
 const { Router, Route, IndexRoute, browserHistory } = require('react-router');

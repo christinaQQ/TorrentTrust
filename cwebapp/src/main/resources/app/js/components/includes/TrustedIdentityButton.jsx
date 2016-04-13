@@ -6,15 +6,15 @@ module.exports = React.createClass({
   mixins: [DispatchMixin],
   propTypes: {
     name: React.PropTypes.string.isRequired,
-    hash: React.PropTypes.string.isRequired
+    pubKey: React.PropTypes.string.isRequired
   },
   onDeleteButtonClick() {
-    this.dispatchAction(actions.deleteTrustedIdentity(this.props.hash));
+    this.dispatchAction(actions.deleteTrustedIdentity(this.props.pubKey));
   },
   render() {
     return (
       <p>
-        {this.props.name} ({this.props.hash.substring(0, 8)}...) &nbsp;
+        {this.props.name} ({this.props.pubKey.substring(0, 8)}...) &nbsp;
         <button onClick={this.onDeleteButtonClick}
                 className="btn delete-button rounded-button">
                 Delete

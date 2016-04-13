@@ -12,11 +12,11 @@ module.exports = React.createClass({
         {displayName}
         <div className="vote-buttons">
           <a href="#" onClick={() => this.props.onUpvote({hash})}>
-            <span className={`glyphicon glyphicon-triangle-top ${upvoted ? 'active' : ''}`}>
+            <span className={`glyphicon glyphicon-triangle-top vote-icon upvote ${upvoted ? 'active' : ''}`}>
             </span>
           </a>
           <a href="#" onClick={() => this.props.onDownvote({hash})}>
-            <span className={`glyphicon glyphicon-triangle-bottom ${downvoted ? 'active' : ''}`}>
+            <span className={`glyphicon glyphicon-triangle-bottom vote-icon downvote ${downvoted ? 'active' : ''}`}>
             </span>
           </a>
         </div>
@@ -24,6 +24,9 @@ module.exports = React.createClass({
     );
   },
   render() {
+    if (this.props.torrentList.length === 0) {
+      return <div>No torrents have been added.</div>;
+    }
     return (
       <ul>
         {this.generateListItems()}

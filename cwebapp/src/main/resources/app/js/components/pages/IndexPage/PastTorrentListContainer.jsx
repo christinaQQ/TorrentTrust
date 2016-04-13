@@ -13,7 +13,7 @@ module.exports = React.createClass({
   render() {
     return (
       <PastTorrentList
-        torrentList={this.state.torrent_list}
+        torrentList={this.state.torrent_lists[this.state.current_identity.pubKey]}
         onUpvote={this.onUpvote}
         onDownvote={this.onDownvote}
       />
