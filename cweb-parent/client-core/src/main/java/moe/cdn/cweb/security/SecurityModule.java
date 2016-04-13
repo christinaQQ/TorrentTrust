@@ -12,7 +12,7 @@ public class SecurityModule extends AbstractModule {
     @Provides
     @Singleton
     static KeyPair provideKeyPair(KeyEnvironment enviroment) {
-        return enviroment.getKeyPair();
+        return enviroment.getKeyPair(); // FIXME: allow multiple keypair identities
     }
 
     @Override

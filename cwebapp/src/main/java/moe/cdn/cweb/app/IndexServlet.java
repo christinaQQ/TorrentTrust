@@ -1,18 +1,19 @@
 package moe.cdn.cweb.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-
+import javax.inject.Singleton;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
-@SuppressWarnings("serial")
-@WebServlet(urlPatterns = {"/"})
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@Singleton
 public class IndexServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {

@@ -27,9 +27,7 @@ class CwebApiImpl implements CwebApi {
     public List<Vote> getVotesForUser(User user) throws CwebApiException {
         try {
             return voteService.getVoteHistory(user).get().stream().collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            throw new CwebApiException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new CwebApiException(e);
         }
     }
@@ -39,9 +37,7 @@ class CwebApiImpl implements CwebApi {
         try {
             return trustNetworkService.getLocalTrustNetwork(user).get().stream()
                     .collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            throw new CwebApiException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new CwebApiException(e);
         }
     }
@@ -50,9 +46,7 @@ class CwebApiImpl implements CwebApi {
     public List<Vote> getVotes(Hash objectHash) throws CwebApiException {
         try {
             return voteService.getAllVotes(objectHash).get().stream().collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            throw new CwebApiException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new CwebApiException(e);
         }
     }

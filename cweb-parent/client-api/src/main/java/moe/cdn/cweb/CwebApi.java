@@ -12,7 +12,7 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
  */
 public interface CwebApi {
 
-    // some of these should be changed to sets.
+    // fixme: some of these should be changed to sets.
 
     /**
      * Gets a user's voting history
