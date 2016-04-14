@@ -1,12 +1,6 @@
 package moe.cdn.cweb;
 
-import com.google.common.net.HostAndPort;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.dht.DhtPeerAddress;
-import moe.cdn.cweb.dht.KeyEnvironment;
-import moe.cdn.cweb.dht.PeerEnvironment;
-import moe.cdn.cweb.security.CwebId;
-import org.ini4j.Ini;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +10,15 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.ini4j.Ini;
+
+import com.google.common.net.HostAndPort;
+
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.dht.DhtPeerAddress;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.security.CwebId;
 
 /**
  * Environment that stores configuration for the application.
@@ -33,11 +35,11 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final UserEnvironment userEnvironment;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-                              int tcpPort,
-                              int udpPort,
-                              CwebId myId,
-                              String handle,
-                              KeyPair keyPair) {
+            int tcpPort,
+            int udpPort,
+            CwebId myId,
+            String handle,
+            KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
@@ -120,10 +122,8 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     @Override
     public TorrentTrustProtos.User getLocalUser() {
         synchronized (userEnvironment) {
-            return TorrentTrustProtos.User.newBuilder()
-                    .setHandle(getHandle())
-                    .setPublicKey(getKeyPair().getPublicKey())
-                    .build();
+            return TorrentTrustProtos.User.newBuilder().setHandle(getHandle())
+                    .setPublicKey(getKeyPair().getPublicKey()).build();
         }
     }
 

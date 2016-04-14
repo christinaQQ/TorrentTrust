@@ -1,7 +1,6 @@
 package moe.cdn.cweb;
 
 import moe.cdn.cweb.dht.PeerEnvironment;
-import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.security.SecurityModule;
 import moe.cdn.cweb.spi.CwebModule;
 import moe.cdn.cweb.trust.TrustNetworkModule;

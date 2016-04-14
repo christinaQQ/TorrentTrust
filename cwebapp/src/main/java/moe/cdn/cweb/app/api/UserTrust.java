@@ -1,14 +1,15 @@
 package moe.cdn.cweb.app.api;
 
-import moe.cdn.cweb.app.dto.UserRef;
-import moe.cdn.cweb.security.utils.KeyUtils;
-import moe.cdn.cweb.trust.CwebTrustNetworkApi;
+import java.util.Base64;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.util.Base64;
-import java.util.concurrent.ExecutionException;
+
+import moe.cdn.cweb.app.dto.UserRef;
+import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 
 /**
  * @author davix

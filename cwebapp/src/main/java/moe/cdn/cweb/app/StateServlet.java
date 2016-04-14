@@ -13,21 +13,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
-public class StateServlet extends HttpServlet{
+public class StateServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-    	// get the file
+        // get the file
         res.setContentType("application/json");
         OutputStream out = res.getOutputStream();
         String stateFilePath = this.getInitParameter("stateFilePath");
         Files.copy(Paths.get(stateFilePath), out);
         out.flush();
     }
-    
+
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-    	InputStream in = req.getInputStream();
+        InputStream in = req.getInputStream();
         String stateFilePath = this.getInitParameter("stateFilePath");
         Files.copy(in, Paths.get(stateFilePath), StandardCopyOption.REPLACE_EXISTING);
         res.setContentType("application/json");

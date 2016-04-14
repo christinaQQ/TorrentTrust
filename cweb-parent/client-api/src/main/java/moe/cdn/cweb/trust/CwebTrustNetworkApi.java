@@ -1,11 +1,11 @@
 package moe.cdn.cweb.trust;
 
+import java.util.Collection;
+
 import com.google.common.util.concurrent.ListenableFuture;
-import moe.cdn.cweb.SecurityProtos;
+
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-
-import java.util.Collection;
 
 public interface CwebTrustNetworkApi {
     /**
@@ -14,7 +14,7 @@ public interface CwebTrustNetworkApi {
      *
      * @param user user that we want to check the trust network for
      * @return future of collection of users belonging to the user's trust
-     * network
+     *         network
      */
     ListenableFuture<Collection<User>> getLocalTrustNetwork(User user);
 
@@ -23,8 +23,8 @@ public interface CwebTrustNetworkApi {
      * exist, the result will be false.
      *
      * @param publicKey user being added
-     * @return future of boolean indicating whether adding the user to the trust network
-     * completed successfully
+     * @return future of boolean indicating whether adding the user to the trust
+     *         network completed successfully
      */
     ListenableFuture<Boolean> addUserAsTrusted(Key publicKey);
 
@@ -32,8 +32,8 @@ public interface CwebTrustNetworkApi {
      * Removes a user from the current user's trust network.
      *
      * @param publicKey user being removed
-     * @return future of boolean indicating whether removing the user from the trust network
-     * completed successfully.
+     * @return future of boolean indicating whether removing the user from the
+     *         trust network completed successfully.
      */
     ListenableFuture<Boolean> removeUserAsTrusted(Key publicKey);
 }

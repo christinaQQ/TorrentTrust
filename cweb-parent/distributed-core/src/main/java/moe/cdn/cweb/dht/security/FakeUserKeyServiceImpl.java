@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import moe.cdn.cweb.SecurityProtos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,8 +54,8 @@ class FakeUserKeyServiceImpl implements UserKeyService {
     }
 
     @Override
-    public ListenableFuture<Boolean> updateTrustAssertion(TorrentTrustProtos.User.TrustAssertion
-                                                                   trustAssertion) {
+    public ListenableFuture<Boolean> updateTrustAssertion(
+            TorrentTrustProtos.User.TrustAssertion trustAssertion) {
         throw new UnsupportedOperationException();
     }
 

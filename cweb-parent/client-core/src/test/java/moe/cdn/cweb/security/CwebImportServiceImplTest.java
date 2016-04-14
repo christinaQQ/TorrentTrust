@@ -1,25 +1,32 @@
 package moe.cdn.cweb.security;
 
-import com.google.common.util.concurrent.Futures;
-import com.google.protobuf.Message;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos;
-import moe.cdn.cweb.TorrentTrustProtos.*;
-import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.KeyEnvironment;
-import moe.cdn.cweb.security.utils.HashUtils;
-import moe.cdn.cweb.security.utils.KeyUtils;
-import moe.cdn.cweb.security.utils.SignatureUtils;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.common.util.concurrent.Futures;
+import com.google.protobuf.Message;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.SecurityProtos.Signature;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
+import moe.cdn.cweb.dht.CwebMultiMap;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.security.utils.HashUtils;
+import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.security.utils.SignatureUtils;
 
 public class CwebImportServiceImplTest {
 
@@ -53,31 +60,29 @@ public class CwebImportServiceImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        cwebImportServiceImpl =
-                new CwebImportServiceImpl(new KeyEnvironment() {
-                    @Override
-                    public String getHandle() {
-                        return null;
-                    }
+        cwebImportServiceImpl = new CwebImportServiceImpl(new KeyEnvironment() {
+            @Override
+            public String getHandle() {
+                return null;
+            }
 
-                    @Override
-                    public KeyPair getKeyPair() {
-                        return KEY_PAIR;
-                    }
+            @Override
+            public KeyPair getKeyPair() {
+                return KEY_PAIR;
+            }
 
-                    @Override
-                    public User getLocalUser() {
-                        return null;
-                    }
-                }, userMap, voteMap,
-                        voteHistoryMap);
+            @Override
+            public User getLocalUser() {
+                return null;
+            }
+        }, userMap, voteMap, voteHistoryMap);
     }
 
     @Test
     public void testImportUser() throws Exception {
         when(userMap.put(USER_1.getPublicKey().getHash(),
                 SignedUser.newBuilder().setSignature(USER_1_SIGNATURE).setUser(USER_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                        .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.importUser(USER_1).get());
     }
 
@@ -88,10 +93,10 @@ public class CwebImportServiceImplTest {
         when(voteHistoryMap.put(USER_1.getPublicKey().getHash(),
                 SignedVoteHistory.newBuilder().setHistory(VOTE_HISTORY_1)
                         .setSignature(VOTE_HISTORY_1_SIGNATURE).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                                .thenReturn(Futures.immediateFuture(true));
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                        .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
@@ -105,7 +110,7 @@ public class CwebImportServiceImplTest {
                 .thenReturn(Futures.immediateFuture(true));
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                        .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
@@ -119,7 +124,7 @@ public class CwebImportServiceImplTest {
                 .thenReturn(Futures.immediateFuture(false));
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                        .thenReturn(Futures.immediateFuture(true));
         assertFalse(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
@@ -133,7 +138,7 @@ public class CwebImportServiceImplTest {
                 .thenReturn(Futures.immediateFuture(false));
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                        .thenReturn(Futures.immediateFuture(true));
         assertFalse(cwebImportServiceImpl.updateVote(VOTE_1).get());
     }
 
@@ -143,7 +148,7 @@ public class CwebImportServiceImplTest {
                 .put(USER_1.getPublicKey().getHash(),
                         TorrentTrustProtos.SignedUser.newBuilder().setSignature(USER_1_SIGNATURE)
                                 .setUser(USER_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                                        .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.importSignature(USER_1, USER_1_SIGNATURE).get());
     }
 
@@ -153,7 +158,7 @@ public class CwebImportServiceImplTest {
                 .thenReturn(Futures.immediateFuture(null));
         when(voteMap.add(CONTENT_HASH,
                 SignedVote.newBuilder().setSignature(VOTE_1_SIGNATURE).setVote(VOTE_1).build()))
-                .thenReturn(Futures.immediateFuture(true));
+                        .thenReturn(Futures.immediateFuture(true));
         assertTrue(cwebImportServiceImpl.importSignature(VOTE_1, VOTE_1_SIGNATURE).get());
     }
 
@@ -168,7 +173,7 @@ public class CwebImportServiceImplTest {
                 .put(USER_1.getPublicKey().getHash(),
                         TorrentTrustProtos.SignedUser.newBuilder().setSignature(USER_1_SIGNATURE)
                                 .setUser(USER_1).build()))
-                .thenReturn(Futures.immediateFuture(false));
+                                        .thenReturn(Futures.immediateFuture(false));
         assertFalse(cwebImportServiceImpl.importSignature(USER_1, USER_1_SIGNATURE).get());
     }
 

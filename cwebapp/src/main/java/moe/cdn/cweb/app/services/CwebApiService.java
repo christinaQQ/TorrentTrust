@@ -1,8 +1,14 @@
 package moe.cdn.cweb.app.services;
 
+import java.util.concurrent.ExecutionException;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.CwebModuleService;
 import moe.cdn.cweb.GlobalEnvironment;
@@ -13,10 +19,6 @@ import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author davix
@@ -69,10 +71,11 @@ public class CwebApiService implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         if (peerDht != null) {
             try {
-                peerDht.shutdown().get(); // TODO: Should this shutdown actually be blocking?
+                peerDht.shutdown().get(); // TODO: Should this shutdown actually
+                                          // be blocking?
             } catch (InterruptedException | ExecutionException e) {
-                sce.getServletContext().log(
-                        "An exception occurred while shutting down the local DHT node.", e);
+                sce.getServletContext()
+                        .log("An exception occurred while shutting down the local DHT node.", e);
             }
         }
     }

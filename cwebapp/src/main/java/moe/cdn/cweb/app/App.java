@@ -1,25 +1,32 @@
 package moe.cdn.cweb.app;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceFilter;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.app.services.CwebApiService;
-import moe.cdn.cweb.security.utils.KeyUtils;
-import org.apache.commons.cli.*;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
-import javax.servlet.DispatcherType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceFilter;
+
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.app.services.CwebApiService;
+import moe.cdn.cweb.security.utils.KeyUtils;
 
 /**
  * @author davix
@@ -30,20 +37,14 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         Options options = new Options();
-        Option appPortOption = Option.builder()
-                .longOpt("app-port")
-                .hasArg()
-                .type(Number.class)
-                .argName("n")
-                .desc("The port that will be used to communicate the status of the application.")
-                .build();
-        Option flatFileOption = Option.builder()
-                .longOpt("data-file")
-                .hasArg()
-                .type(String.class)
-                .argName("s")
-                .desc("The file that stores the data for this users identities, votes, etc.")
-                .build();
+        Option appPortOption =
+                Option.builder().longOpt("app-port").hasArg().type(Number.class).argName("n")
+                        .desc("The port that will be used to communicate the status of the application.")
+                        .build();
+        Option flatFileOption =
+                Option.builder().longOpt("data-file").hasArg().type(String.class).argName("s")
+                        .desc("The file that stores the data for this users identities, votes, etc.")
+                        .build();
         options.addOption(appPortOption);
         options.addOption(flatFileOption);
         CommandLineParser parser = new DefaultParser();
@@ -64,30 +65,26 @@ public class App {
             settingsPath = Paths.get((String) parsedFileOptionValue);
         }
         if (!Files.exists(settingsPath)) {
-            // ok we need to create a user identity here.. no idea how to do that...
+            // ok we need to create a user identity here.. no idea how to do
+            // that...
             KeyPair keyPair = KeyUtils.generateKeyPair();
-            String pubKey = Base64.getEncoder().encodeToString(
-                    keyPair.getPublicKey().getRaw().toByteArray());
-            String privKey = Base64.getEncoder().encodeToString(
-                    keyPair.getPublicKey().getRaw().toByteArray());
-            String[] lines = {
-                    "{",
-                    "\"error_message\": null,",
-                    "\"info_message\": null,",
+            String pubKey = Base64.getEncoder()
+                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
+            String privKey = Base64.getEncoder()
+                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
+            String[] lines = {"{", "\"error_message\": null,", "\"info_message\": null,",
                     "\"trusted_identities\": {\"" + pubKey + "\": []},",
                     "\"possible_trust_algorithms\": [",
                     "    {\"id\": \"EIGENTRUST\", \"name\": \"Eigentrust\"},",
                     "    {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only Friends\"},",
-                    "    {\"id\": \"FRIEND_OF_FRIEND\", \"name\": \"Friends of friends\"}",
-                    "  ],",
+                    "    {\"id\": \"FRIEND_OF_FRIEND\", \"name\": \"Friends of friends\"}", "  ],",
                     "\"current_trust_algorithm\": {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only "
                             + "Friends\"},",
                     "\"current_identity\": {\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
                             + " \", \"privateKey\": \"" + privKey + "\"}",
                     "\"user_identities\": [{\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
                             + " \", \"privateKey\": \"" + privKey + "\"}]",
-                    "\"torrent_lists\": {\"" + pubKey + "\": []}",
-                    "}"
+                    "\"torrent_lists\": {\"" + pubKey + "\": []}", "}"
 
             };
 

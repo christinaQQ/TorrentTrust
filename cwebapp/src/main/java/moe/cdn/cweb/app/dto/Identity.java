@@ -11,8 +11,7 @@ public class Identity {
     private String handle;
     private KeyPairBase64 keyPair;
 
-    public Identity() {
-    }
+    public Identity() {}
 
     public Identity(String idBase64, String handle, KeyPairBase64 keyPair) {
         this.idBase64 = idBase64;

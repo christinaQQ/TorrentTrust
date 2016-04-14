@@ -10,8 +10,7 @@ public class TrustRating {
     private double rating;
     private String algorithmName;
 
-    public TrustRating() {
-    }
+    public TrustRating() {}
 
     public TrustRating(double rating, String algorithmName) {
         this.rating = rating;

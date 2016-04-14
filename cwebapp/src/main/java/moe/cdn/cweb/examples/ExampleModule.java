@@ -5,12 +5,12 @@ import java.util.Random;
 import com.google.inject.AbstractModule;
 
 import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
 import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.security.CwebId;
-import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.security.utils.KeyUtils;
 
 /**

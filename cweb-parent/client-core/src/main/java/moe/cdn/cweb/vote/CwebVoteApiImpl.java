@@ -38,9 +38,9 @@ class CwebVoteApiImpl implements CwebVoteApi {
 
     @Inject
     public CwebVoteApiImpl(CwebSignatureValidationService signatureValidationService,
-                           CwebImportService importService,
-                           @VoteDomain CwebMultiMap<SignedVote> voteMap,
-                           @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
+            CwebImportService importService,
+            @VoteDomain CwebMultiMap<SignedVote> voteMap,
+            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
         this.voteMap = checkNotNull(voteMap);

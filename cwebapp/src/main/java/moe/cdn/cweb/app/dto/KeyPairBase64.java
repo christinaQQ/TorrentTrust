@@ -10,8 +10,7 @@ public class KeyPairBase64 {
     private String publicKeyBase64;
     private String privateKeyBase64;
 
-    public KeyPairBase64() {
-    }
+    public KeyPairBase64() {}
 
     public KeyPairBase64(String publicKeyBase64, String privateKeyBase64) {
         this.privateKeyBase64 = privateKeyBase64;

@@ -9,11 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import com.google.inject.BindingAnnotation;
+
 import moe.cdn.cweb.dht.security.UserKeyService;
 
 /**
- * Indicates an injection for {@link UserKeyService}
- * .
+ * Indicates an injection for {@link UserKeyService} .
  * 
  * @author davix
  */
