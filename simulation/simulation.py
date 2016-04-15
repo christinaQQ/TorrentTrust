@@ -158,7 +158,7 @@ def generateFromFile(fileName, allItems, designation = 'GOOD', namePrefix = 'Gro
       # look into this: the data is undirected
       users[friend].addTrusted(users[user])
   
-  bad_users = generateBadCliques(malConnectivity, clusterSize - goodClusterSize, users, 5, allItems)
+  bad_users = generateBadCliques(malConnectivity, clusterSize - goodClusterSize, users, 10, allItems)
   return users + bad_users
 
 def generateBadUsers(malConnectivity, goodClusterSize, clusterSize, users):
@@ -174,9 +174,8 @@ def generateBadUsers(malConnectivity, goodClusterSize, clusterSize, users):
   return bad_users
 
 def generateBadCliques(malConnectivity, num_bad, users, num_clusters, allItems):
-  # numConnect = np.random.normal(malConnectivity * goodClusterSize,3,clusterSize - goodClusterSize)
+  numConnect = np.random.normal(malConnectivity,3,num_clusters)
   evilItems = [i for i in allItems if i.designation == 'EVIL']
-
      # generate bad users
   bad_users = []
   size_bad_cluster = (num_bad) / num_clusters
@@ -194,10 +193,11 @@ def generateBadCliques(malConnectivity, num_bad, users, num_clusters, allItems):
         if user != friend:
           user.addTrusted(friend)
       user.group = evil_item.owner
+    # connect it to the good users
+    for goodUser in random.sample(users, abs(int(round(numConnect[i])))):
+      user.addTrusted(goodUser)
+      goodUser.addTrusted(user)
   return [user for clique in bad_users for user in clique]
-
-
-
 
 
   # for i, name in enumerate(nameGenerator('Group2', clusterSize - goodClusterSize)):

@@ -144,7 +144,7 @@ if __name__ == "__main__":
     
     if social_network_file:
       oneBigCluster = sim.generateFromFile(social_network_file, allItems, designationRatios = {'GOOD': .8, 'EVIL': .2},
-        malConnectivity = .1)
+        malConnectivity = interconnect)
       sys.stderr.write("Loaded {} users from {}...\n".format(len(oneBigCluster), social_network_file))
     elif malclique == True:
       evilCluster = sim.generateClique(1000, 'EVIL', namePrefix= "Spammers:")

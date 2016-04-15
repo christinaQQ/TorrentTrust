@@ -4,7 +4,7 @@ if len(sys.argv) < 2:
   raise Exception("Need to provide the file to analyze as the single argument")
 
 cutoff = 0 if len(sys.argv) < 3 else float(sys.argv[2])
-malicious_object = None
+malicious_objects = set()
 
 #first find malicious object
 with open(sys.argv[1]) as f:
@@ -12,9 +12,8 @@ with open(sys.argv[1]) as f:
     if line.strip() == "":
       continue
     user, target, score, usertype, targettype = tuple(line.strip().split('\t'))
-    if malicious_object == None and usertype == "EVIL" and targettype == "EVIL" and score == "1.0":
-      malicious_object = target
-      break
+    if usertype == "EVIL" and targettype == "EVIL" and score == "1.0" and target not in malicious_objects:
+      malicious_objects.add(target)
 
 with open(sys.argv[1]) as f:
   tpgood, tngood, fpgood, fngood = 0, 0, 0, 0
@@ -51,9 +50,9 @@ with open(sys.argv[1]) as f:
       else:
         tngood += 1.0
 
-    if target == malicious_object and label == "GOOD":
+    if target in malicious_objects and label == "GOOD":
       virusIncorrectScore += 1.0
-    elif target == malicious_object and label == "EVIL":
+    elif target in malicious_objects and label == "EVIL":
       virusCorrectScore += 1.0
         
   precision = tpgood / (tpgood + fpgood)
