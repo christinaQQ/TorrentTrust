@@ -132,7 +132,7 @@ def generateClique(cliqueSize, designation = 'GOOD', namePrefix = 'Group1'):
         user.addTrusted(friend)
   return users
 
-def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1', designationRatios = {'GOOD': .8, 'EVIL': .2},
+def generateFromFile(fileName, allItems, designation = 'GOOD', namePrefix = 'Group1', designationRatios = {'GOOD': .8, 'EVIL': .2},
     malConnectivity = .1):
   with open(fileName, 'r') as f:
     f.readline()
@@ -157,6 +157,11 @@ def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1', desi
       users[user].addTrusted(users[friend])
       # look into this: the data is undirected
       users[friend].addTrusted(users[user])
+  
+  bad_users = generateBadCliques(malConnectivity, clusterSize - goodClusterSize, users, 5, allItems)
+  return users + bad_users
+
+def generateBadUsers(malConnectivity, goodClusterSize, clusterSize, users):
   # generate bad users
   bad_users = []
   numConnect = np.random.normal(malConnectivity * goodClusterSize,3,clusterSize - goodClusterSize)
@@ -165,12 +170,49 @@ def generateFromFile(fileName, designation = 'GOOD', namePrefix = 'Group1', desi
     for goodUser in random.sample(users, abs(int(round(numConnect[i])))):
       badUser.addTrusted(goodUser)
       goodUser.addTrusted(badUser)
-
     bad_users.append(badUser)
+  return bad_users
+
+def generateBadCliques(malConnectivity, num_bad, users, num_clusters, allItems):
+  # numConnect = np.random.normal(malConnectivity * goodClusterSize,3,clusterSize - goodClusterSize)
+  evilItems = [i for i in allItems if i.designation == 'EVIL']
+
+     # generate bad users
+  bad_users = []
+  size_bad_cluster = (num_bad) / num_clusters
+  for n in range(num_clusters):
+    bad_users.append([])
+    for i, name in enumerate(nameGenerator('Group9%i' % n, size_bad_cluster)):
+      bad_users[n].append(User(name, 'EVIL'))
+  for i, bad_user_group in enumerate(bad_users):
+    # assign a piece of content
+    evil_item = evilItems[i]
+    evil_item.owner = "EvilVirus%i" % i
+    # create the clique
+    for user in bad_user_group:
+      for friend in bad_user_group:
+        if user != friend:
+          user.addTrusted(friend)
+      user.group = evil_item.owner
+  return [user for clique in bad_users for user in clique]
 
 
-  return users + bad_users
 
+
+
+  # for i, name in enumerate(nameGenerator('Group2', clusterSize - goodClusterSize)):
+  #   badUser = User(name, 'EVIL')
+  #   for goodUser in random.sample(users, abs(int(round(numConnect[i])))):
+  #     badUser.addTrusted(goodUser)
+  #     goodUser.addTrusted(badUser)
+  #   bad_users.append(badUser)
+  #   # Pick one evil item
+  #   evilItem = [i for i in allItems if i.designation == 'EVIL'][0]
+  #   evilItem.owner = "EvilVirusSomething"
+  #   evilCluster = [u for u in oneBigCluster if u.designation == 'EVIL']
+  #   for u in evilCluster:
+  #     u.group = evilItem.owner
+  #   sys.stderr.write("Evil target assigned to EVIL users...\n")
 
 def assignEvilTargets(evilUsers, targets, targetsPerUser = 3):
   targetset = set(targets)

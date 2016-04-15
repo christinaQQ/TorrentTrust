@@ -143,7 +143,7 @@ if __name__ == "__main__":
     # Build the graph
     
     if social_network_file:
-      oneBigCluster = sim.generateFromFile(social_network_file, designationRatios = {'GOOD': .8, 'EVIL': .2}, 
+      oneBigCluster = sim.generateFromFile(social_network_file, allItems, designationRatios = {'GOOD': .8, 'EVIL': .2},
         malConnectivity = .1)
       sys.stderr.write("Loaded {} users from {}...\n".format(len(oneBigCluster), social_network_file))
     elif malclique == True:
@@ -164,14 +164,14 @@ if __name__ == "__main__":
       oneBigCluster = sim.generateRandomizedCluster(2000, designationRatios ={'GOOD': 1}, namePrefix= "AllGood:")
     # oneBigCluster must be produced at this point
       
-    if assign_evil:
-      # Pick one evil item
-      evilItem = [i for i in allItems if i.designation == 'EVIL'][0]
-      evilItem.owner = "EvilVirusSomething"
-      evilCluster = [u for u in oneBigCluster if u.designation == 'EVIL']
-      for u in evilCluster:
-        u.group = evilItem.owner
-      sys.stderr.write("Evil target assigned to EVIL users...\n")
+    # if assign_evil:
+    #   # Pick one evil item
+    #   evilItem = [i for i in allItems if i.designation == 'EVIL'][0]
+    #   evilItem.owner = "EvilVirusSomething"
+    #   evilCluster = [u for u in oneBigCluster if u.designation == 'EVIL']
+    #   for u in evilCluster:
+    #     u.group = evilItem.owner
+    #   sys.stderr.write("Evil target assigned to EVIL users...\n")
       
       # Assign evil targets
       #s im.assignEvilTargets([u for u in oneBigCluster if u.designation == 'EVIL'], [i for i in allItems if i.designation == 'EVIL']) 
