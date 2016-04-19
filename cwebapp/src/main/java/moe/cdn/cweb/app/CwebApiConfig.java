@@ -1,6 +1,6 @@
-package moe.cdn.cweb.app.api;
+package moe.cdn.cweb.app;
 
-import moe.cdn.cweb.app.api.exceptions.handlers.NoSuchThingExceptionMapper;
+import moe.cdn.cweb.app.exceptions.handlers.NoSuchThingExceptionMapper;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.UriConnegFilter;

@@ -2,8 +2,10 @@ package moe.cdn.cweb.app.dto;
 
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.app.util.KeyAdapter;
+import moe.cdn.cweb.app.util.Base64KeyAdapter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -11,11 +13,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author davix
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class KeyPairBase64 {
-    @XmlJavaTypeAdapter(KeyAdapter.class)
+    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
     private SecurityProtos.Key publicKey;
 
-    @XmlJavaTypeAdapter(KeyAdapter.class)
+    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
     private SecurityProtos.Key privateKey;
 
     public KeyPairBase64() {

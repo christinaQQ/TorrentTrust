@@ -1,4 +1,4 @@
-package moe.cdn.cweb.app.api.exceptions;
+package moe.cdn.cweb.app.exceptions;
 
 public class NoSuchThingException extends RuntimeException {
 

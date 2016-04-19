@@ -1,9 +1,9 @@
-package moe.cdn.cweb.app.api;
+package moe.cdn.cweb.app;
 
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.app.api.exceptions.KeyPairConflictException;
-import moe.cdn.cweb.app.api.exceptions.NoSuchUserException;
+import moe.cdn.cweb.app.exceptions.KeyPairConflictException;
+import moe.cdn.cweb.app.exceptions.NoSuchUserException;
 import moe.cdn.cweb.app.dto.Identity;
 import moe.cdn.cweb.app.dto.KeyPairBase64;
 import moe.cdn.cweb.app.dto.UserName;

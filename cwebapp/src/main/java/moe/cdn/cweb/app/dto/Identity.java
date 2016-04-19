@@ -3,6 +3,8 @@ package moe.cdn.cweb.app.dto;
 import moe.cdn.cweb.app.util.Base64CwebIdAdapter;
 import moe.cdn.cweb.security.CwebId;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -10,6 +12,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author davix
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Identity {
     @XmlJavaTypeAdapter(Base64CwebIdAdapter.class)
     private CwebId id;

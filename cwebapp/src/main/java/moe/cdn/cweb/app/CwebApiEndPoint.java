@@ -1,4 +1,4 @@
-package moe.cdn.cweb.app.api;
+package moe.cdn.cweb.app;
 
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.GlobalEnvironment;

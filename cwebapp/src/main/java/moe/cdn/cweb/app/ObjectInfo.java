@@ -1,4 +1,4 @@
-package moe.cdn.cweb.app.api;
+package moe.cdn.cweb.app;
 
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.app.dto.TrustRating;

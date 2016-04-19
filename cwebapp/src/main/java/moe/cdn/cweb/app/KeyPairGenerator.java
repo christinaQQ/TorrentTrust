@@ -1,4 +1,4 @@
-package moe.cdn.cweb.app.api;
+package moe.cdn.cweb.app;
 
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.app.dto.KeyPairBase64;

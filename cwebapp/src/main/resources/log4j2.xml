@@ -28,6 +28,6 @@
         <Logger name="net.tomp2p" level="info"/>
         <Logger name="org.eclipse.jetty" level="info"/>
         <Logger name="org.jvnet.hk2" level="warn"/>
-        <Logger name="org.glassfish.jersey" level="warn"/>
+        <Logger name="org.glassfish.jersey" level="debug"/>
     </Loggers>
 </Configuration>

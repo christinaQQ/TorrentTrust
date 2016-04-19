@@ -9,7 +9,7 @@ import java.util.Base64;
 /**
  * @author davix
  */
-public class KeyAdapter extends XmlAdapter<String, SecurityProtos.Key> {
+public class Base64KeyAdapter extends XmlAdapter<String, SecurityProtos.Key> {
 
     @Override
     public SecurityProtos.Key unmarshal(String v) throws InvalidProtocolBufferException {

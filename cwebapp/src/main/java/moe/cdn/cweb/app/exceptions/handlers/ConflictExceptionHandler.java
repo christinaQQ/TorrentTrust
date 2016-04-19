@@ -1,6 +1,6 @@
-package moe.cdn.cweb.app.api.exceptions.handlers;
+package moe.cdn.cweb.app.exceptions.handlers;
 
-import moe.cdn.cweb.app.api.exceptions.ConflictException;
+import moe.cdn.cweb.app.exceptions.ConflictException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
