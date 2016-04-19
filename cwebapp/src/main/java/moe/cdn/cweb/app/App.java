@@ -36,6 +36,7 @@ public class App {
     private static final int DEFAULT_APP_PORT = 8080;
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         Options options = new Options();
         Option appPortOption =
                 Option.builder().longOpt("app-port").hasArg().type(Number.class).argName("n")

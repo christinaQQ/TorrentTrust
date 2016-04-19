@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * @author davix
  */
-public class Base64StringBytesAdapter extends XmlAdapter<String, byte[]> {
+public class Base64BytesAdapter extends XmlAdapter<String, byte[]> {
 
     @Override
     public byte[] unmarshal(String v) {

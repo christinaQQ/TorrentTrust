@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class UserRef {
-    // FIXME @XmlJavaTypeAdapter(BytesBase64StringAdapter.class)
     private String publicKeyBase64;
 
     public String getPublicKeyBase64() {

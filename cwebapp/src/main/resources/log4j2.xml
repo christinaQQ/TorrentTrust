@@ -22,8 +22,12 @@
             <AppenderRef ref="Console"/>
             <!--<AppenderRef ref="RollingFile"/>-->
         </Root>
+        <Logger name="com.google.inject" level="warn"/>
         <Logger name="io.netty" level="info"/>
+        <Logger name="javax.management" level="warn"/>
         <Logger name="net.tomp2p" level="info"/>
         <Logger name="org.eclipse.jetty" level="info"/>
+        <Logger name="org.jvnet.hk2" level="warn"/>
+        <Logger name="org.glassfish.jersey" level="warn"/>
     </Loggers>
 </Configuration>
