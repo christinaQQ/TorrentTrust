@@ -1,19 +1,13 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
-import java.util.Map;
-
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;
 import net.tomp2p.dht.FuturePut;
-import net.tomp2p.futures.BaseFuture;
-import net.tomp2p.futures.BaseFutureListener;
-import net.tomp2p.futures.Cancel;
-import net.tomp2p.futures.FutureDone;
-import net.tomp2p.futures.FutureForkJoin;
-import net.tomp2p.futures.FutureResponse;
-import net.tomp2p.futures.FutureRouting;
+import net.tomp2p.futures.*;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
+
+import java.util.Map;
 
 /**
  * @author davix
@@ -26,7 +20,7 @@ public class FuturePutWrapper extends BaseFutureAsListenableFuture<PutResponse, 
 
     /**
      * @return A reference to the builder that contains the data we were looking
-     *         for
+     * for
      */
     public DHTBuilder<?> builder() {
         return baseFuture.builder();
@@ -61,7 +55,7 @@ public class FuturePutWrapper extends BaseFutureAsListenableFuture<PutResponse, 
      * in channel creator.
      *
      * @param channelCreator The channel creator that will be shutdown and all
-     *        connections will be closed
+     *                       connections will be closed
      */
     public void addFutureDHTReleaseListener(ChannelCreator channelCreator) {
         baseFuture.addFutureDHTReleaseListener(channelCreator);
@@ -72,7 +66,7 @@ public class FuturePutWrapper extends BaseFutureAsListenableFuture<PutResponse, 
      * FutureDHT is used, FutureRouting has to be completed successfully.
      *
      * @return The future object during the previous routing, or null if routing
-     *         failed completely.
+     * failed completely.
      */
     public FutureRouting futureRouting() {
         return baseFuture.futureRouting();
@@ -186,7 +180,7 @@ public class FuturePutWrapper extends BaseFutureAsListenableFuture<PutResponse, 
 
         @Override
         public void storedKeys(Map<PeerAddress, Map<Number640, Byte>> rawResult,
-                FutureDone<Void> futuresCompleted) {
+                               FutureDone<Void> futuresCompleted) {
             futurePut.storedKeys(rawResult, futuresCompleted);
         }
 

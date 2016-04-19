@@ -1,15 +1,13 @@
 package moe.cdn.cweb.security.utils;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
+import com.google.protobuf.ByteString;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.protobuf.ByteString;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class HashUtilsTest {
     private static final byte[] TEST_STRING = "Hello World!".getBytes();
@@ -20,8 +18,23 @@ public class HashUtilsTest {
             0x7f, 0xf1, 0xfc, 0x53, 0xb9, 0x2d, 0xc1, 0x81, 0x48, 0xa1, 0xd6, 0x5d, 0xfc, 0x2d,
             0x4b, 0x1f, 0xa3, 0xd6, 0x77, 0x28, 0x4a, 0xdd, 0xd2, 0x00, 0x12, 0x6d, 0x90, 0x69});
 
+    /**
+     * Makes an integer array into a byte array
+     *
+     * @param array
+     * @return
+     */
+    private static byte[] asByteArray(int[] array) {
+        byte[] copy = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            copy[i] = (byte) array[i];
+        }
+        return copy;
+    }
+
     @Before
-    public void setUp() throws Exception {}
+    public void setUp() throws Exception {
+    }
 
     @Test
     public void testSha1() {
@@ -47,19 +60,5 @@ public class HashUtilsTest {
                 Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_1)
                         .setHashValue(ByteString.copyFrom(SHA1_TEST_STRING)).build(),
                 HashUtils.sha1HashOf(TEST_STRING));
-    }
-
-    /**
-     * Makes an integer array into a byte array
-     * 
-     * @param array
-     * @return
-     */
-    private static byte[] asByteArray(int[] array) {
-        byte[] copy = new byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            copy[i] = (byte) array[i];
-        }
-        return copy;
     }
 }

@@ -1,13 +1,12 @@
 package moe.cdn.cweb.app.util;
 
-import java.util.Base64;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.Base64;
 
 /**
  * @author davix
  */
-public class BytesBase64StringAdapter extends XmlAdapter<byte[], String> {
+public class Base64StringAdapter extends XmlAdapter<byte[], String> {
 
     @Override
     public String unmarshal(byte[] v) throws Exception {

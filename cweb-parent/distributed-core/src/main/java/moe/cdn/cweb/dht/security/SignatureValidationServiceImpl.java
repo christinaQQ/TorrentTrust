@@ -1,31 +1,29 @@
 package moe.cdn.cweb.dht.security;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
-
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.security.exceptions.UnsupportedAlgorithmException;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 class SignatureValidationServiceImpl implements SignatureValidationService {
 
     private static final Logger logger = LogManager.getLogger();
-    private final UserKeyService userKeyService;
+    private final KeyLookupService userKeyService;
 
     @Inject
-    public SignatureValidationServiceImpl(UserKeyService userKeyService) {
+    public SignatureValidationServiceImpl(KeyLookupService userKeyService) {
         this.userKeyService = checkNotNull(userKeyService);
     }
 

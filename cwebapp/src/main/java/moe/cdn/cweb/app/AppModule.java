@@ -1,10 +1,14 @@
 package moe.cdn.cweb.app;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 import com.google.inject.AbstractModule;
 
 import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.IdentityEnvironment;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -20,14 +24,16 @@ public class AppModule extends AbstractModule {
     private final GlobalEnvironment environment;
 
     public AppModule(int port, String... args) {
+        KeyEnvironment identityEnvironment;
+        try {
+            identityEnvironment = IdentityEnvironment.readFromFile(
+                    new File(getClass().getClassLoader().getResource("identities.ini").toURI()));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+            identityEnvironment = new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default");
+        }
         environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
-                .setId(new CwebId(new Random())).setKeyPair(KeyUtils.generateKeyPair()) // FIXME:
-                                                                                        // read
-                                                                                        // key
-                                                                                        // pair
-                                                                                        // from
-                                                                                        // environment
-                .build();
+                .setId(new CwebId(new Random())).setKeyEnvironment(identityEnvironment).build();
     }
 
     @Override

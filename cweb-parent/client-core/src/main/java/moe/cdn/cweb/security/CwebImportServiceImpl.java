@@ -1,30 +1,15 @@
 package moe.cdn.cweb.security;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.concurrent.Future;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
-
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
-import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.TorrentTrustProtos.Vote;
-import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
+import moe.cdn.cweb.TorrentTrustProtos.*;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -32,6 +17,13 @@ import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CwebImportServiceImpl implements CwebImportService {
     private static final Logger logger = LogManager.getLogger();
@@ -43,9 +35,10 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Inject
     public CwebImportServiceImpl(KeyEnvironment keyEnvironment,
-            @UserDomain CwebMultiMap<SignedUser> userMap,
-            @VoteDomain CwebMultiMap<SignedVote> voteMap,
-            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
+                                 @UserDomain CwebMultiMap<SignedUser> userMap,
+                                 @VoteDomain CwebMultiMap<SignedVote> voteMap,
+                                 @VoteHistoryDomain CwebMultiMap<SignedVoteHistory>
+                                         voteHistoryMap) {
 
         this.keyEnvironment = checkNotNull(keyEnvironment);
         this.userMap = checkNotNull(userMap);
@@ -62,8 +55,10 @@ public class CwebImportServiceImpl implements CwebImportService {
     private ListenableFuture<VoteHistory> ensureVoteHistory(Key userPublicKey) {
         return Futures.transform(voteHistoryMap.get(userPublicKey.getHash()),
                 (Function<SignedVoteHistory, VoteHistory>) history -> history == null
-                        ? VoteHistory.newBuilder().setOwnerPublicKey(userPublicKey).build()
-                        : history.getHistory());
+                                                                      ? VoteHistory.newBuilder()
+                                                                              .setOwnerPublicKey
+                                                                                      (userPublicKey).build()
+                                                                      : history.getHistory());
     }
 
     @Override
@@ -107,24 +102,16 @@ public class CwebImportServiceImpl implements CwebImportService {
         return Futures
                 .transform(voteHistoryFuture,
                         (AsyncFunction<Boolean, Boolean>) success -> success
-                                ? importSignature(vote, sign(vote))
-                                : Futures.immediateFuture(false));
+                                                                     ? importSignature(vote, sign
+                                (vote))
+                                                                     : Futures.immediateFuture
+                                (false));
     }
 
     @Override
     public ListenableFuture<Boolean> importUser(User user)
             throws SignatureException, InvalidKeyException {
         return importSignature(user, sign(user));
-    }
-
-    @Override
-    public Future<Boolean> importTrustAssertion(User.TrustAssertion trustAssertion) {
-        return Futures.transform(userMap.get(keyEnvironment.getKeyPair().getPublicKey().getHash()),
-                (AsyncFunction<SignedUser, Boolean>) user -> {
-                    User u = user.getUser();
-                    u.getTrustedList().add(trustAssertion);
-                    return importUser(u);
-                });
     }
 
     @Override
@@ -153,5 +140,4 @@ public class CwebImportServiceImpl implements CwebImportService {
                 Representations.asString(signature));
         return voteHistoryMap.put(voteHistory.getOwnerPublicKey().getHash(), signedVoteHistory);
     }
-
 }

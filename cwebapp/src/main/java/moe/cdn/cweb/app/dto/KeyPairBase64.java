@@ -1,35 +1,51 @@
 package moe.cdn.cweb.app.dto;
 
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.app.util.Base64KeyAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * @author davix
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class KeyPairBase64 {
-    private String publicKeyBase64;
-    private String privateKeyBase64;
+    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
+    private SecurityProtos.Key publicKey;
 
-    public KeyPairBase64() {}
+    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
+    private SecurityProtos.Key privateKey;
 
-    public KeyPairBase64(String publicKeyBase64, String privateKeyBase64) {
-        this.privateKeyBase64 = privateKeyBase64;
-        this.publicKeyBase64 = publicKeyBase64;
+    public KeyPairBase64() {
     }
 
-    public String getPublicKeyBase64() {
-        return publicKeyBase64;
+    public KeyPairBase64(SecurityProtos.Key publicKey, SecurityProtos.Key privateKey) {
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
     }
 
-    public void setPublicKeyBase64(String publicKeyBase64) {
-        this.publicKeyBase64 = publicKeyBase64;
+    public static KeyPairBase64 fromKeyPair(KeyPair keyPair) {
+        return new KeyPairBase64(keyPair.getPublicKey(), keyPair.getPrivateKey());
     }
 
-    public String getPrivateKeyBase64() {
-        return privateKeyBase64;
+    public SecurityProtos.Key getPrivateKey() {
+        return privateKey;
     }
 
-    public void setPrivateKeyBase64(String privateKeyBase64) {
-        this.privateKeyBase64 = privateKeyBase64;
+    public void setPrivateKey(SecurityProtos.Key privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public SecurityProtos.Key getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(SecurityProtos.Key publicKey) {
+        this.publicKey = publicKey;
     }
 }

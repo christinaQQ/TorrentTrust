@@ -1,19 +1,9 @@
 package moe.cdn.cweb.examples;
 
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.CwebApiException;
 import moe.cdn.cweb.CwebModuleService;
@@ -25,12 +15,20 @@ import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.dht.security.UserKeyService;
+import moe.cdn.cweb.dht.security.KeyLookupService;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * Entry point for testing. Do not use in production.
@@ -68,7 +66,7 @@ public class CwebExecutable {
         boolean b = cwebImportService.importUser(user).get();
         System.out.println("imported user <user>: " + b);
 
-        UserKeyService userKeyService = injector.getInstance(UserKeyService.class);
+        KeyLookupService userKeyService = injector.getInstance(KeyLookupService.class);
         ListenableFuture<Optional<SignedUser>> owner =
                 userKeyService.findOwner(user.getPublicKey());
         System.out.println(

@@ -1,8 +1,8 @@
 package moe.cdn.cweb.dht.security;
 
-import javax.inject.Singleton;
-
 import com.google.inject.AbstractModule;
+
+import javax.inject.Singleton;
 
 /**
  * @author davix
@@ -10,7 +10,7 @@ import com.google.inject.AbstractModule;
 public class DhtSecurityModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(UserKeyService.class).to(UserKeyServiceImpl.class).in(Singleton.class);
+        bind(KeyLookupService.class).to(KeyLookupServiceImpl.class).in(Singleton.class);
         bind(SignatureValidationService.class).to(SignatureValidationServiceImpl.class)
                 .in(Singleton.class);
         bind(CwebSignatureValidationService.class).to(CwebValidationServiceImpl.class)

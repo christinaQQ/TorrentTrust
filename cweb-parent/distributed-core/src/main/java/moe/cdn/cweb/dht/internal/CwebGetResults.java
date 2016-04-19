@@ -1,8 +1,8 @@
 package moe.cdn.cweb.dht.internal;
 
-import java.util.Collection;
-
 import com.google.protobuf.Message;
+
+import java.util.Collection;
 
 /**
  * @author davix

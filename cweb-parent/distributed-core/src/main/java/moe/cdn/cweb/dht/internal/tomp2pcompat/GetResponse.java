@@ -1,12 +1,12 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
-import java.util.Map;
-
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.DigestResult;
 import net.tomp2p.storage.Data;
+
+import java.util.Map;
 
 /**
  * API exposed by tomp2p for a "get" operation.
@@ -17,17 +17,17 @@ public interface GetResponse {
     /**
      * Finish the future and set the keys and data that have been received.
      *
-     * @param rawData The keys and data that have been received with information
-     *        from which peer it has been received.
-     * @param rawDigest The hashes of the content stored with information from
-     *        which peer it has been received.
+     * @param rawData          The keys and data that have been received with information
+     *                         from which peer it has been received.
+     * @param rawDigest        The hashes of the content stored with information from
+     *                         which peer it has been received.
      * @param rawStatus
      * @param futuresCompleted
      */
     void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData,
-            Map<PeerAddress, DigestResult> rawDigest,
-            Map<PeerAddress, Byte> rawStatus,
-            FutureDone<Void> futuresCompleted);
+                      Map<PeerAddress, DigestResult> rawDigest,
+                      Map<PeerAddress, Byte> rawStatus,
+                      FutureDone<Void> futuresCompleted);
 
     /**
      * Returns the raw data from the get operation.
@@ -38,13 +38,13 @@ public interface GetResponse {
 
     /**
      * @return The raw digest information with hashes of the content and the
-     *         information which peer has been contacted
+     * information which peer has been contacted
      */
     Map<PeerAddress, DigestResult> rawDigest();
 
     /**
      * @return The raw digest information with hashes of the content and the
-     *         information which peer has been contacted
+     * information which peer has been contacted
      */
     Map<PeerAddress, Byte> rawStatus();
 

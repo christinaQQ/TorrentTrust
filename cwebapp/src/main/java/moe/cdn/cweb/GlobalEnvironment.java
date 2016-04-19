@@ -4,11 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
-import java.util.Random;
 
 import org.ini4j.Ini;
 
@@ -32,19 +29,18 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final int tcpPort;
     private final int udpPort;
     private final CwebId myId;
-    private final UserEnvironment userEnvironment;
+    private final KeyEnvironment keyEnvironment;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
             int tcpPort,
             int udpPort,
             CwebId myId,
-            String handle,
-            KeyPair keyPair) {
+            KeyEnvironment identityEnvironment) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.myId = myId;
-        this.userEnvironment = new UserEnvironment(handle, keyPair);
+        this.keyEnvironment = checkNotNull(identityEnvironment);
     }
 
     public static Builder newBuilder() {
@@ -78,10 +74,6 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         return builder;
     }
 
-    private static String randomHandle() {
-        return new BigInteger(130, new Random()).toString(32);
-    }
-
     @Override
     public Collection<DhtPeerAddress> getPeerAddresses() {
         return idAndAddresses;
@@ -103,28 +95,8 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     }
 
     @Override
-    public String getHandle() {
-        synchronized (userEnvironment) {
-            if (userEnvironment.handle == null) {
-                userEnvironment.handle = randomHandle();
-            }
-            return userEnvironment.handle;
-        }
-    }
-
-    @Override
     public KeyPair getKeyPair() {
-        synchronized (userEnvironment) {
-            return userEnvironment.keyPair;
-        }
-    }
-
-    @Override
-    public TorrentTrustProtos.User getLocalUser() {
-        synchronized (userEnvironment) {
-            return TorrentTrustProtos.User.newBuilder().setHandle(getHandle())
-                    .setPublicKey(getKeyPair().getPublicKey()).build();
-        }
+        return keyEnvironment.getKeyPair();
     }
 
     /**
@@ -137,8 +109,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         private int tcpPort;
         private int udpPort;
         private CwebId myId;
-        private String handle;
-        private KeyPair keyPair;
+        private KeyEnvironment keyEnvironment;
 
         public Builder() {
             idAndAddresses = new ArrayList<>();
@@ -175,28 +146,13 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
             return this;
         }
 
-        public Builder setHandle(String handle) {
-            this.handle = handle;
-            return this;
-        }
-
-        public Builder setKeyPair(KeyPair keyPair) {
-            this.keyPair = checkNotNull(keyPair);
+        public Builder setKeyEnvironment(KeyEnvironment keyEnvironment) {
+            this.keyEnvironment = checkNotNull(keyEnvironment);
             return this;
         }
 
         public GlobalEnvironment build() {
-            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, handle, keyPair);
-        }
-    }
-
-    public static class UserEnvironment {
-        private final KeyPair keyPair;
-        private String handle;
-
-        public UserEnvironment(String handle, KeyPair keyPair) {
-            this.handle = handle;
-            this.keyPair = Objects.requireNonNull(keyPair);
+            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyEnvironment);
         }
     }
 }

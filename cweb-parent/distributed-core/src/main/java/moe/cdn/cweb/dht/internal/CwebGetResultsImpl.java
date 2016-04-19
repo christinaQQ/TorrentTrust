@@ -1,20 +1,18 @@
 package moe.cdn.cweb.dht.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
-
 import moe.cdn.cweb.dht.internal.tomp2pcompat.GetResponse;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.GetResponseWrapper;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.storage.Data;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author davix

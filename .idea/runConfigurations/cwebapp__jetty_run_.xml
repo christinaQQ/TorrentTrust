@@ -1,0 +1,27 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="cwebapp [jetty:run]" type="MavenRunConfiguration" factoryName="Maven" singleton="true">
+    <MavenSettings>
+      <option name="myGeneralSettings" />
+      <option name="myRunnerSettings" />
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="profiles">
+            <set />
+          </option>
+          <option name="goals">
+            <list>
+              <option value="jetty:run" />
+              <option value="-Dlog4j.configurationFile=src/main/resources/log4j2.xml" />
+            </list>
+          </option>
+          <option name="profilesMap">
+            <map />
+          </option>
+          <option name="resolveToWorkspace" value="false" />
+          <option name="workingDirPath" value="$PROJECT_DIR$/cwebapp" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <method />
+  </configuration>
+</component>

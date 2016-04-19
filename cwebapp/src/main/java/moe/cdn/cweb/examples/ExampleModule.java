@@ -1,10 +1,8 @@
 package moe.cdn.cweb.examples;
 
-import java.util.Random;
-
 import com.google.inject.AbstractModule;
-
 import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.IdentityEnvironment;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -12,6 +10,8 @@ import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.utils.KeyUtils;
+
+import java.util.Random;
 
 /**
  * @author davix
@@ -21,7 +21,9 @@ public class ExampleModule extends AbstractModule {
 
     public ExampleModule(int port, String... args) {
         environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
-                .setId(new CwebId(new Random())).setKeyPair(KeyUtils.generateKeyPair()).build();
+                .setId(new CwebId(new Random()))
+                .setKeyEnvironment(new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default"))
+                .build();
     }
 
     @Override

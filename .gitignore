@@ -9,7 +9,9 @@ buildNumber.properties
 .mvn/timing.properties
 
 # Intellij Ignorefiles
-.idea/
+!.idea/
+.idea/*
+!.idea/runConfigurations/
 
 # Eclipse Ignorefiles
 .settings/

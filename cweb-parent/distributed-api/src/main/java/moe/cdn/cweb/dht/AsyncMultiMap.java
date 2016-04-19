@@ -1,8 +1,8 @@
 package moe.cdn.cweb.dht;
 
-import java.util.Collection;
-
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.Collection;
 
 /**
  * A multimap that backed by asynchronous operations.
@@ -39,20 +39,20 @@ public interface AsyncMultiMap<K, V> {
     /**
      * Sets the bucket at the specified key to contain the specified value.
      *
-     * @param key the key
+     * @param key   the key
      * @param value the value
      * @return a future containing {@code true} if the mapping is successfully
-     *         set
+     * set
      */
     ListenableFuture<Boolean> put(K key, V value);
 
     /**
      * Adds the specified value to the bucket at the specified key.
      *
-     * @param key the key
+     * @param key   the key
      * @param value the value
      * @return a future containing {@code true} if the mapping is successfully
-     *         added
+     * added
      */
     ListenableFuture<Boolean> add(K key, V value);
 }

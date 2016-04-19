@@ -1,18 +1,16 @@
 package moe.cdn.cweb.dht;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.protobuf.Message;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.security.CwebId;
+
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-
-import javax.inject.Inject;
-
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.protobuf.Message;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.security.CwebId;
 
 class CwebMultiMapImpl<V extends Message> implements CwebMultiMap<V> {
 
@@ -22,8 +20,8 @@ class CwebMultiMapImpl<V extends Message> implements CwebMultiMap<V> {
 
     @Inject
     public CwebMultiMapImpl(ManagedDhtNode<V> collection,
-            Function<Hash, CwebId> keyReducer,
-            BiPredicate<Hash, V> notCollision) {
+                            Function<Hash, CwebId> keyReducer,
+                            BiPredicate<Hash, V> notCollision) {
         this.collection = collection;
         this.keyReducer = keyReducer;
         this.notCollision = notCollision;

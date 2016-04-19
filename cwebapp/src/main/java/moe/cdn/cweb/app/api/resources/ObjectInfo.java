@@ -1,17 +1,17 @@
-package moe.cdn.cweb.app.api;
+package moe.cdn.cweb.app.api.resources;
 
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.app.api.CwebApiEndPoint;
+import moe.cdn.cweb.app.dto.TrustRating;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-
-import moe.cdn.cweb.TorrentTrustProtos;
-import moe.cdn.cweb.app.dto.TrustRating;
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author davix
@@ -22,7 +22,7 @@ public class ObjectInfo extends CwebApiEndPoint {
     @GET
     @Path("{algo}")
     public TrustRating getTrustRating(@PathParam("hash") String hash,
-            @PathParam("algo") String algo) {
+                                      @PathParam("algo") String algo) {
         return new TrustRating(new Random().nextDouble(), "rand");
     }
 

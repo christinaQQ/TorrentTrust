@@ -1,22 +1,20 @@
 package moe.cdn.cweb.dht.security;
 
-import java.util.Optional;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.TorrentTrustProtos.User;
 
-public interface UserKeyService {
+import java.util.Optional;
+
+public interface KeyLookupService {
     /**
      * Finds the owner of a certain key
      *
      * @param publicKey
      * @return future producing either a user record or nothing
      * @throws KeyLookupServiceException if there are multiple users found for
-     *         one key or if the operation was interrupted.
+     *                                   one key or if the operation was interrupted.
      */
     ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey);
 
@@ -26,16 +24,7 @@ public interface UserKeyService {
      * @param keyHash hash of the public key
      * @return future producing either a public key or nothing
      * @throws KeyLookupServiceException if there are multiple keys for the hash
-     *         or if the operation was interrupted.
+     *                                   or if the operation was interrupted.
      */
     ListenableFuture<Optional<Key>> findKey(Hash keyHash);
-
-    /**
-     * Updates an assertion about a key to the trust network of the current user
-     * or adds the assertion if it does not exist.
-     *
-     * @param trustAssertion the trust assertion
-     * @return a future of {@code true} if the user is successfully updated
-     */
-    ListenableFuture<Boolean> updateTrustAssertion(User.TrustAssertion trustAssertion);
 }

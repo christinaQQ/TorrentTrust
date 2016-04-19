@@ -1,31 +1,29 @@
 package moe.cdn.cweb.dht.security;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.TorrentTrustProtos;
-import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-
-class FakeUserKeyServiceImpl implements UserKeyService {
+class FakeKeyLookupServiceImpl implements KeyLookupService {
 
     private static final Logger logger = LogManager.getLogger();
     private final Map<Hash, SignedUser> keyserver;
 
-    public FakeUserKeyServiceImpl() {
+    public FakeKeyLookupServiceImpl() {
         this.keyserver = new HashMap<>();
     }
 
-    public FakeUserKeyServiceImpl(List<SignedUser> records) {
+    public FakeKeyLookupServiceImpl(List<SignedUser> records) {
         this();
         for (TorrentTrustProtos.SignedUser record : records) {
             keyserver.put(record.getUser().getPublicKey().getHash(), record);
@@ -52,11 +50,4 @@ class FakeUserKeyServiceImpl implements UserKeyService {
                     .immediateFuture(Optional.of(keyserver.get(keyHash).getUser().getPublicKey()));
         }
     }
-
-    @Override
-    public ListenableFuture<Boolean> updateTrustAssertion(
-            TorrentTrustProtos.User.TrustAssertion trustAssertion) {
-        throw new UnsupportedOperationException();
-    }
-
 }

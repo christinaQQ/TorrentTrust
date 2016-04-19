@@ -1,15 +1,14 @@
 package moe.cdn.cweb.vote;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.Collection;
 import java.util.concurrent.Future;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 public interface CwebVoteApi {
     /**
@@ -36,7 +35,7 @@ public interface CwebVoteApi {
      * Gets the size of a user's vote history. This is faster than getting full
      * history but may be greater than the actual number of votes a user has
      * made.
-     * 
+     *
      * @param user
      * @return
      */
@@ -47,7 +46,7 @@ public interface CwebVoteApi {
      *
      * @param vote
      * @return future of boolean indicator indicating whether the vote was
-     *         successfully cast
+     * successfully cast
      */
     Future<Boolean> castVote(Vote vote) throws SignatureException, InvalidKeyException;
 }

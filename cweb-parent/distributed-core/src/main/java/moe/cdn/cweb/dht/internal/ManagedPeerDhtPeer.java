@@ -1,15 +1,8 @@
 package moe.cdn.cweb.dht.internal;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.PeerEnvironment;
@@ -26,12 +19,17 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * A {@link PeerDHT} peer that is under management. This allows external sources
  * to manage the peer without requiring access to TomP2P.
- * 
- * @author jim
  *
+ * @author jim
  */
 public class ManagedPeerDhtPeer implements ManagedPeer {
     private final PeerDHT peerDht;
@@ -44,6 +42,35 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
                 HostAndPort.fromParts(peerDht.peerAddress().inetAddress().getHostAddress(),
                         peerDht.peerAddress().tcpPort()));
         this.replication = Optional.empty();
+    }
+
+    /**
+     * Builds a {@link ManagedPeer} from the environment. Does NOT bootstrap to
+     * peers.
+     *
+     * @param peerEnvironment environment containing parameters to build to
+     * @param storage         storage validator
+     * @return a ManagedDhtPeer
+     * @throws IOException
+     */
+    public static ManagedPeerDhtPeer fromEnviroment(PeerEnvironment peerEnvironment,
+                                                    Storage storage) throws IOException {
+        Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
+                .tcpPort(peerEnvironment.getLocalTcpPort())
+                .udpPort(peerEnvironment.getLocalUdpPort()).start();
+        PeerDHT peerDht = new PeerBuilderDHT(peer).storage(storage).start();
+        return new ManagedPeerDhtPeer(peerDht);
+    }
+
+    /**
+     * Translates a {@link DhtPeerAddress} to a {@link PeerAddress}
+     *
+     * @param address
+     * @return
+     */
+    private static PeerAddress peerAddressFromDhtPeerAddress(DhtPeerAddress address) {
+        return new PeerAddress(Number160s.fromCwebId(address.getId()), new InetSocketAddress(
+                address.getHostAndPort().getHostText(), address.getHostAndPort().getPort()));
     }
 
     public PeerDHT getUnmanaged() {
@@ -75,7 +102,7 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
 
     /**
      * Bootstraps from raw {@link PeerAddress} instead
-     * 
+     *
      * @param peerAddresses
      * @return
      */
@@ -92,7 +119,7 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
 
     /**
      * Bootstraps from {@link PeerAddress} instead
-     * 
+     *
      * @param peerAddresses
      * @return
      */
@@ -153,34 +180,5 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
                 return null;
             }
         };
-    }
-
-    /**
-     * Builds a {@link ManagedPeer} from the environment. Does NOT bootstrap to
-     * peers.
-     * 
-     * @param peerEnvironment environment containing parameters to build to
-     * @param storage storage validator
-     * @return a ManagedDhtPeer
-     * @throws IOException
-     */
-    public static ManagedPeerDhtPeer fromEnviroment(PeerEnvironment peerEnvironment,
-            Storage storage) throws IOException {
-        Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
-                .tcpPort(peerEnvironment.getLocalTcpPort())
-                .udpPort(peerEnvironment.getLocalUdpPort()).start();
-        PeerDHT peerDht = new PeerBuilderDHT(peer).storage(storage).start();
-        return new ManagedPeerDhtPeer(peerDht);
-    }
-
-    /**
-     * Translates a {@link DhtPeerAddress} to a {@link PeerAddress}
-     * 
-     * @param address
-     * @return
-     */
-    private static PeerAddress peerAddressFromDhtPeerAddress(DhtPeerAddress address) {
-        return new PeerAddress(Number160s.fromCwebId(address.getId()), new InetSocketAddress(
-                address.getHostAndPort().getHostText(), address.getHostAndPort().getPort()));
     }
 }

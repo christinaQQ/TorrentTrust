@@ -1,26 +1,19 @@
 package moe.cdn.cweb.security.utils;
 
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
+import com.google.protobuf.ByteString;
+import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.SecurityProtos.Key.KeyType;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.security.exceptions.MalformedKeyException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.security.*;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.protobuf.ByteString;
-
-import moe.cdn.cweb.SecurityProtos.Key;
-import moe.cdn.cweb.SecurityProtos.Key.KeyType;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.security.exceptions.MalformedKeyException;
 
 /**
  * Utilities for creation and manipulation of keys.
@@ -33,7 +26,8 @@ public final class KeyUtils {
     /**
      * This class should not be instantiated.
      */
-    private KeyUtils() {}
+    private KeyUtils() {
+    }
 
     /**
      * Builds a cweb-proto public key from the specified bytes
