@@ -1,13 +1,5 @@
 package moe.cdn.cweb.app.api;
 
-import java.util.Base64;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.app.api.exceptions.KeyPairConflictException;
@@ -15,6 +7,12 @@ import moe.cdn.cweb.app.api.exceptions.NoSuchUserException;
 import moe.cdn.cweb.app.dto.Identity;
 import moe.cdn.cweb.app.dto.KeyPairBase64;
 import moe.cdn.cweb.app.dto.UserName;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author davix
@@ -43,10 +41,7 @@ public class UserIdentity extends CwebApiEndPoint {
             // TODO
             throw new NoSuchUserException(keyPair.getPublicKey());
         }
-        return new Identity(getCwebEnvironment().getMyId().toBase64String(),
-                current.get().getHandle(),
-                new KeyPairBase64(
-                        Base64.getEncoder().encodeToString(keyPair.getPublicKey().toByteArray()),
-                        Base64.getEncoder().encodeToString(keyPair.getPrivateKey().toByteArray())));
+        return new Identity(getCwebEnvironment().getMyId(), current.get().getHandle(),
+                KeyPairBase64.fromKeyPair(keyPair));
     }
 }

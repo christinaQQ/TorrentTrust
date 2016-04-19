@@ -17,10 +17,6 @@ public class KeyPairGenerator {
     @POST
     public KeyPairBase64 generateKeyPair() {
         SecurityProtos.KeyPair protoKeyPair = KeyUtils.generateKeyPair();
-        return new KeyPairBase64(
-                Base64.getEncoder()
-                        .encodeToString(protoKeyPair.getPublicKey().getRaw().toByteArray()),
-                Base64.getEncoder()
-                        .encodeToString(protoKeyPair.getPrivateKey().getRaw().toByteArray()));
+        return KeyPairBase64.fromKeyPair(protoKeyPair);
     }
 }

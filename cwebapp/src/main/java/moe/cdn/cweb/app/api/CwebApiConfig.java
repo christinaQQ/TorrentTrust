@@ -2,11 +2,10 @@ package moe.cdn.cweb.app.api;
 
 import javax.ws.rs.ApplicationPath;
 
+import moe.cdn.cweb.app.api.exceptions.handlers.NoSuchThingExceptionMapper;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
-
-import moe.cdn.cweb.app.util.Base64StringBytesAdapter;
 
 @ApplicationPath("api")
 public class CwebApiConfig extends ResourceConfig {
@@ -16,7 +15,7 @@ public class CwebApiConfig extends ResourceConfig {
 
         register(UriConnegFilter.class);
 
-        register(NoSuchThingExceptionHandler.class);
+        register(NoSuchThingExceptionMapper.class);
 
         packages("moe.cdn.cweb.app.api");
     }
