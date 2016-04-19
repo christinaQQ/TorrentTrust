@@ -72,7 +72,7 @@ public class CwebImportServiceImplTest {
             }
 
             @Override
-            public User getLocalUser() {
+            public SignedUser getUserInfo() {
                 return null;
             }
         }, userMap, voteMap, voteHistoryMap);

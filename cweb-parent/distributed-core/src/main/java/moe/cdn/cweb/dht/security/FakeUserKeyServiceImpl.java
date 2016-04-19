@@ -53,10 +53,4 @@ class FakeUserKeyServiceImpl implements UserKeyService {
         }
     }
 
-    @Override
-    public ListenableFuture<Boolean> updateTrustAssertion(
-            TorrentTrustProtos.User.TrustAssertion trustAssertion) {
-        throw new UnsupportedOperationException();
-    }
-
 }

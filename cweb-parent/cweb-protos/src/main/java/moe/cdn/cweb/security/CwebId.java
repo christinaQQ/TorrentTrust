@@ -75,9 +75,13 @@ public class CwebId {
         return bytes;
     }
 
+    public String toBase64String() {
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
     @Override
     public String toString() {
-        return Base64.getEncoder().encodeToString(bytes);
+        return toBase64String();
     }
 
     @Override

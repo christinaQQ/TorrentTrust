@@ -1,6 +1,12 @@
 package moe.cdn.cweb;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.net.HostAndPort;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.dht.DhtPeerAddress;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.security.CwebId;
+import org.ini4j.Ini;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,15 +16,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
 
-import org.ini4j.Ini;
-
-import com.google.common.net.HostAndPort;
-
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.dht.DhtPeerAddress;
-import moe.cdn.cweb.dht.KeyEnvironment;
-import moe.cdn.cweb.dht.PeerEnvironment;
-import moe.cdn.cweb.security.CwebId;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Environment that stores configuration for the application.
@@ -35,11 +33,11 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final UserEnvironment userEnvironment;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-            int tcpPort,
-            int udpPort,
-            CwebId myId,
-            String handle,
-            KeyPair keyPair) {
+                              int tcpPort,
+                              int udpPort,
+                              CwebId myId,
+                              String handle,
+                              KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
@@ -120,10 +118,21 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     }
 
     @Override
-    public TorrentTrustProtos.User getLocalUser() {
+    public UserInfo getUserInfo() {
         synchronized (userEnvironment) {
-            return TorrentTrustProtos.User.newBuilder().setHandle(getHandle())
-                    .setPublicKey(getKeyPair().getPublicKey()).build();
+            String handle = getHandle();
+            KeyPair keyPair = getKeyPair();
+            return new UserInfo() {
+                @Override
+                public String getHandle() {
+                    return handle;
+                }
+
+                @Override
+                public KeyPair getKeyPair() {
+                    return keyPair;
+                }
+            };
         }
     }
 

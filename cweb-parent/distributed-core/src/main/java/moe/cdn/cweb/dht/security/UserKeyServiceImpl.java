@@ -81,35 +81,4 @@ class UserKeyServiceImpl implements UserKeyService {
                 });
     }
 
-    @Override
-    public ListenableFuture<Boolean> updateTrustAssertion(User.TrustAssertion trustAssertion) {
-        logger.debug("Adding assertion to trust network: {}", trustAssertion);
-        Hash hash = keyEnvironment.getKeyPair().getPublicKey().getHash();
-        CwebMultiMap<SignedUser> signedUserCwebMultiMap = keyServiceCwebMapProvider.get();
-        return Futures.transform(signedUserCwebMultiMap.get(hash),
-                (AsyncFunction<SignedUser, Boolean>) self -> {
-                    if (self == null) {
-                        User localUser = keyEnvironment.getLocalUser();
-                        self = SignedUser.newBuilder()
-                                .setSignature(SignatureUtils
-                                        .signMessage(keyEnvironment.getKeyPair(), localUser))
-                                .setUser(localUser).build();
-                    }
-                    int i = 0;
-                    for (User.TrustAssertion t : self.getUser().getTrustedList()) {
-                        if (t.getPublicKey().equals(trustAssertion.getPublicKey())) {
-                            break;
-                        }
-                        i++;
-                    }
-                    User.Builder builderForUser = User.newBuilder(self.getUser());
-                    if (i == self.getUser().getTrustedCount()) {
-                        builderForUser.addTrusted(trustAssertion);
-                    } else {
-                        builderForUser.setTrusted(i, trustAssertion);
-                    }
-                    SignedUser.newBuilder(self).setUser(builderForUser);
-                    return signedUserCwebMultiMap.put(hash, self);
-                });
-    }
 }
