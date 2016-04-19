@@ -38,7 +38,6 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
             int tcpPort,
             int udpPort,
             CwebId myId,
-            String handle,
             KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
@@ -113,7 +112,6 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         private int tcpPort;
         private int udpPort;
         private CwebId myId;
-        private String handle;
         private KeyPair keyPair;
 
         public Builder() {
@@ -151,18 +149,13 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
             return this;
         }
 
-        public Builder setHandle(String handle) {
-            this.handle = handle;
-            return this;
-        }
-
         public Builder setKeyPair(KeyPair keyPair) {
             this.keyPair = checkNotNull(keyPair);
             return this;
         }
 
         public GlobalEnvironment build() {
-            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, handle, keyPair);
+            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyPair);
         }
     }
 }
