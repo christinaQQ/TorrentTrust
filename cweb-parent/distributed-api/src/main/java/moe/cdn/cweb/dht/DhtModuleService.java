@@ -1,10 +1,10 @@
 package moe.cdn.cweb.dht;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
 import moe.cdn.cweb.NoSuchServiceProviderException;
 import moe.cdn.cweb.dht.spi.DhtModule;
+
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 /**
  * Service that provides a {@link DhtModule}.

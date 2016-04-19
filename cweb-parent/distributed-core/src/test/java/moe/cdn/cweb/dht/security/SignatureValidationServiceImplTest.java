@@ -1,18 +1,6 @@
 package moe.cdn.cweb.dht.security;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.google.common.util.concurrent.Futures;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
@@ -20,6 +8,16 @@ import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.SignatureUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class SignatureValidationServiceImplTest {
     private static final KeyPair KEY_PAIR = KeyUtils.generateKeyPair();

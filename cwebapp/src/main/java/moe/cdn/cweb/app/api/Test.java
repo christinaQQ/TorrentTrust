@@ -12,6 +12,6 @@ import javax.ws.rs.Path;
 public class Test {
     @GET
     public State test() {
-        return new State(new byte[]{17, 17, 17, 17});
+        return new State(new byte[] {17, 17, 17, 17});
     }
 }

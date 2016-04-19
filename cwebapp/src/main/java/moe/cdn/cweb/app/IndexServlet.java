@@ -1,16 +1,15 @@
 package moe.cdn.cweb.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @Singleton
 public class IndexServlet extends HttpServlet {
@@ -33,7 +32,9 @@ public class IndexServlet extends HttpServlet {
         writer.print("</head>");
         writer.print("<body><div id=\"app-container\"></div>");
         writer.print(
-                "<script>document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')</script>");
+                "<script>document.write('<script src=\"http://' + (location.host || 'localhost')"
+                        + ".split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')"
+                        + "</script>");
         // writer.print(this.getHydrationScript());
         for (String script : scripts) {
             writer.print(String.format(scriptTemplate, script));

@@ -1,9 +1,9 @@
 package moe.cdn.cweb;
 
+import moe.cdn.cweb.spi.CwebModule;
+
 import java.util.Iterator;
 import java.util.ServiceLoader;
-
-import moe.cdn.cweb.spi.CwebModule;
 
 /**
  * Service that provides a {@link CwebModule}.

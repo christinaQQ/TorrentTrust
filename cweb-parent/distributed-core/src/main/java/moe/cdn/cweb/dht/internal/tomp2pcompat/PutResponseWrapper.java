@@ -1,10 +1,10 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
-import java.util.Map;
-
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
+
+import java.util.Map;
 
 public class PutResponseWrapper implements PutResponse {
     private final PutResponse underlying;
@@ -15,7 +15,7 @@ public class PutResponseWrapper implements PutResponse {
 
     @Override
     public void storedKeys(Map<PeerAddress, Map<Number640, Byte>> rawResult,
-            FutureDone<Void> futuresCompleted) {
+                           FutureDone<Void> futuresCompleted) {
         underlying.storedKeys(rawResult, futuresCompleted);
     }
 

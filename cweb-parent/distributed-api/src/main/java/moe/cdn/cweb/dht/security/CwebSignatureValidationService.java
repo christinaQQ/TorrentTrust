@@ -25,7 +25,7 @@ public interface CwebSignatureValidationService extends SignatureValidationServi
 
     /**
      * Validates a signed vote history to make sure it's authentic
-     * 
+     *
      * @param signedVoteHistory
      * @return indicator boolean of whether the vote history object is authentic
      */

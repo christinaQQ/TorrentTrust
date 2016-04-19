@@ -4,7 +4,8 @@ public class ConflictException extends RuntimeException {
 
     private static final long serialVersionUID = 6443565122063640632L;
 
-    public ConflictException() {}
+    public ConflictException() {
+    }
 
     public ConflictException(String message) {
         super(message);
@@ -19,9 +20,9 @@ public class ConflictException extends RuntimeException {
     }
 
     public ConflictException(String message,
-            Throwable cause,
-            boolean enableSuppression,
-            boolean writableStackTrace) {
+                             Throwable cause,
+                             boolean enableSuppression,
+                             boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

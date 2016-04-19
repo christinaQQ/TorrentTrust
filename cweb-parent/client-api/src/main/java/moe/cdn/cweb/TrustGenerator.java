@@ -34,7 +34,7 @@ public interface TrustGenerator {
      * @param src the source user
      * @param tgt the target user
      * @return shortest path length to {@code tgt} if {@code tgt} is in the
-     *         extended network; otherwise, 0
+     * extended network; otherwise, 0
      */
     double trustCoefficientNetwork(User src, User tgt);
 
@@ -42,11 +42,11 @@ public interface TrustGenerator {
      * Determines whether a target user is in the source user's network within a
      * certain number of hops.
      *
-     * @param src the source user
-     * @param tgt the target user
+     * @param src     the source user
+     * @param tgt     the target user
      * @param numHops maximum allowed steps to reach {@code tgt}
      * @return the shortest path length from {@code src} to {@code tgt} if
-     *         {@code tgt} in {@code
+     * {@code tgt} in {@code
      * src}'s network; otherwise 0
      */
     double trustCoefficientNumSteps(User src, User tgt, int numHops);

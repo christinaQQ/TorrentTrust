@@ -7,7 +7,8 @@ public class NoSuchUserException extends NoSuchThingException {
 
     private static final long serialVersionUID = 6904854389758454782L;
 
-    public NoSuchUserException() {}
+    public NoSuchUserException() {
+    }
 
     public NoSuchUserException(Key publicKey) {
         this(Representations.asString(publicKey));
@@ -26,9 +27,9 @@ public class NoSuchUserException extends NoSuchThingException {
     }
 
     public NoSuchUserException(String message,
-            Throwable cause,
-            boolean enableSuppression,
-            boolean writableStackTrace) {
+                               Throwable cause,
+                               boolean enableSuppression,
+                               boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

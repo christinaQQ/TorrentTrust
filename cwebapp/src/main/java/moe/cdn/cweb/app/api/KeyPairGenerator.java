@@ -1,13 +1,11 @@
 package moe.cdn.cweb.app.api;
 
-import java.util.Base64;
-
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.app.dto.KeyPairBase64;
 import moe.cdn.cweb.security.utils.KeyUtils;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 /**
  * @author davix

@@ -1,19 +1,18 @@
 package moe.cdn.cweb.dht;
 
-import java.util.Collection;
-
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
-
 import moe.cdn.cweb.dht.internal.CwebGetResults;
 import moe.cdn.cweb.dht.internal.CwebNode;
 import moe.cdn.cweb.dht.internal.CwebPutResults;
 import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.security.CwebId;
 import net.tomp2p.peers.Number160;
+
+import java.util.Collection;
 
 /**
  * @author davix
@@ -22,8 +21,8 @@ class CwebDhtNodeFactory implements DhtNodeFactory {
 
     @Override
     public <T extends Message> ManagedDhtNode<T> create(ManagedPeerDhtPeer self,
-            String domainKey,
-            Parser<T> messageParser) {
+                                                        String domainKey,
+                                                        Parser<T> messageParser) {
         return new AsCwebManagedDhtNode<>(
                 new CwebNode<>(self, Number160.createHash(domainKey), messageParser));
     }
@@ -51,7 +50,8 @@ class CwebDhtNodeFactory implements DhtNodeFactory {
         @Override
         public ListenableFuture<Collection<T>> getAll(CwebId key) {
             return Futures.transform(cwebNode.all(key),
-                    (Function<? super CwebGetResults<T>, ? extends Collection<T>>) CwebGetResults::all);
+                    (Function<? super CwebGetResults<T>, ? extends Collection<T>>)
+                            CwebGetResults::all);
         }
 
         @Override

@@ -1,12 +1,12 @@
 package moe.cdn.cweb.app.api;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Context;
-
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.GlobalEnvironment;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
+
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Context;
 
 /**
  * @author davix

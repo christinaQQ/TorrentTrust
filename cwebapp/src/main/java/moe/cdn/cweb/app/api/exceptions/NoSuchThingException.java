@@ -4,7 +4,8 @@ public class NoSuchThingException extends RuntimeException {
 
     private static final long serialVersionUID = -7714777783118891616L;
 
-    public NoSuchThingException() {}
+    public NoSuchThingException() {
+    }
 
     public NoSuchThingException(String message) {
         super(message);
@@ -19,9 +20,9 @@ public class NoSuchThingException extends RuntimeException {
     }
 
     public NoSuchThingException(String message,
-            Throwable cause,
-            boolean enableSuppression,
-            boolean writableStackTrace) {
+                                Throwable cause,
+                                boolean enableSuppression,
+                                boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

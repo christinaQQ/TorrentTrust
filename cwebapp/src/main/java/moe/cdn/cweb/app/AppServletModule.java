@@ -1,5 +1,11 @@
 package moe.cdn.cweb.app;
 
+import com.google.inject.servlet.ServletModule;
+import moe.cdn.cweb.app.api.CwebApiConfig;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.glassfish.jersey.servlet.ServletContainer;
+
+import javax.inject.Singleton;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -7,19 +13,18 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Singleton;
-
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.glassfish.jersey.servlet.ServletContainer;
-
-import com.google.inject.servlet.ServletModule;
-
-import moe.cdn.cweb.app.api.CwebApiConfig;
-
 /**
  * @author davix
  */
 public class AppServletModule extends ServletModule {
+    private static Map<String, String> newInitParameters(URL resourceDirUrl) {
+        Map<String, String> appInitParameters = new HashMap<>();
+        appInitParameters.put("resourceBase", resourceDirUrl.toExternalForm());
+        appInitParameters.put("pathInfoOnly", "true");
+        appInitParameters.put("dirAllowed", "false");
+        return appInitParameters;
+    }
+
     @Override
     protected void configureServlets() {
         bind(DefaultServlet.class).in(Singleton.class);
@@ -53,13 +58,5 @@ public class AppServletModule extends ServletModule {
         }
         serve("/static/*").with(DefaultServlet.class, newInitParameters(staticDirUrl));
         serve("/*").with(IndexServlet.class);
-    }
-
-    private static Map<String, String> newInitParameters(URL resourceDirUrl) {
-        Map<String, String> appInitParameters = new HashMap<>();
-        appInitParameters.put("resourceBase", resourceDirUrl.toExternalForm());
-        appInitParameters.put("pathInfoOnly", "true");
-        appInitParameters.put("dirAllowed", "false");
-        return appInitParameters;
     }
 }

@@ -1,12 +1,11 @@
 package moe.cdn.cweb.dht;
 
 import com.google.common.net.HostAndPort;
-
 import moe.cdn.cweb.security.CwebId;
 
 /**
  * Object to store both node identities and addresses.
- * 
+ *
  * @author davix, jim
  */
 public class DhtPeerAddress {

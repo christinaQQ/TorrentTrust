@@ -1,28 +1,13 @@
 package moe.cdn.cweb.dht;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-
-import javax.inject.Singleton;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
-import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.dht.annotations.KeyLookup;
-import moe.cdn.cweb.dht.annotations.UserDomain;
-import moe.cdn.cweb.dht.annotations.VoteDomain;
-import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
+import moe.cdn.cweb.dht.annotations.*;
 import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.dht.security.DhtSecurityModule;
 import moe.cdn.cweb.dht.spi.DhtModule;
@@ -31,6 +16,14 @@ import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.CwebMisc;
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number160;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 public class DhtModuleImpl extends DhtModule {
     private static final Logger logger = LogManager.getLogger();
@@ -59,24 +52,26 @@ public class DhtModuleImpl extends DhtModule {
     @Provides
     @Singleton
     static ManagedDhtNode<SignedUser> provideSignedUserDhtNode(DhtNodeFactory factory,
-            ManagedPeerDhtPeer self,
-            @UserDomain String domainKey) {
+                                                               ManagedPeerDhtPeer self,
+                                                               @UserDomain String domainKey) {
         return factory.create(self, domainKey, SignedUser.PARSER);
     }
 
     @Provides
     @Singleton
     static ManagedDhtNode<SignedVote> provideSignedVoteDhtNode(DhtNodeFactory factory,
-            ManagedPeerDhtPeer self,
-            @VoteDomain String domainKey) {
+                                                               ManagedPeerDhtPeer self,
+                                                               @VoteDomain String domainKey) {
         return factory.create(self, domainKey, SignedVote.PARSER);
     }
 
     @Provides
     @Singleton
     static ManagedDhtNode<SignedVoteHistory> provideSignedVoteHistoryDhtNode(DhtNodeFactory factory,
-            ManagedPeerDhtPeer self,
-            @VoteHistoryDomain String domainKey) {
+                                                                             ManagedPeerDhtPeer
+                                                                                     self,
+                                                                             @VoteHistoryDomain
+                                                                             String domainKey) {
         return factory.create(self, domainKey, SignedVoteHistory.PARSER);
     }
 
@@ -121,7 +116,8 @@ public class DhtModuleImpl extends DhtModule {
     @Provides
     @Singleton
     public static ManagedPeerDhtPeer provideManagedPeerDhtPeer(Storage storage,
-            PeerEnvironment peerEnvironment) throws IOException {
+                                                               PeerEnvironment peerEnvironment)
+            throws IOException {
         // FIXME: Do not initialize a local DHT node in a Guice module
 
         ManagedPeerDhtPeer peerDhtPeer =

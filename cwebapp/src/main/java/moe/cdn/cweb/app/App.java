@@ -1,32 +1,25 @@
 package moe.cdn.cweb.app;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceFilter;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.app.services.CwebApiService;
+import moe.cdn.cweb.security.utils.KeyUtils;
+import org.apache.commons.cli.*;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceFilter;
-
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.app.services.CwebApiService;
-import moe.cdn.cweb.security.utils.KeyUtils;
+import javax.servlet.DispatcherType;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.EnumSet;
 
 /**
  * @author davix
@@ -40,11 +33,13 @@ public class App {
         Options options = new Options();
         Option appPortOption =
                 Option.builder().longOpt("app-port").hasArg().type(Number.class).argName("n")
-                        .desc("The port that will be used to communicate the status of the application.")
+                        .desc("The port that will be used to communicate the status of the "
+                                + "application.")
                         .build();
         Option flatFileOption =
                 Option.builder().longOpt("data-file").hasArg().type(String.class).argName("s")
-                        .desc("The file that stores the data for this users identities, votes, etc.")
+                        .desc("The file that stores the data for this users identities, votes, "
+                                + "etc.")
                         .build();
         options.addOption(appPortOption);
         options.addOption(flatFileOption);

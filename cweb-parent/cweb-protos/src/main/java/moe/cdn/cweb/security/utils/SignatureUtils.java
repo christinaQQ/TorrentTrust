@@ -1,21 +1,19 @@
 package moe.cdn.cweb.security.utils;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.SignatureException;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
-
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
 import moe.cdn.cweb.security.exceptions.MalformedSignatureException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.SignatureException;
 
 /**
  * Utilities for signing and verification of signatures
@@ -26,7 +24,8 @@ public final class SignatureUtils {
     private static final Logger logger = LogManager.getLogger();
 
     // Please don't instantiate this class
-    private SignatureUtils() {}
+    private SignatureUtils() {
+    }
 
     private static java.security.Signature getDefaultSignatureAlgorithm() {
         try {
@@ -46,12 +45,12 @@ public final class SignatureUtils {
      * Validates a byte array against a signature
      *
      * @param signature signature proto
-     * @param message message byte array to verify
+     * @param message   message byte array to verify
      * @return boolean indicator of verification success
      * @throws MalformedSignatureException if the signature does not contain a
-     *         public key
-     * @throws IllegalArgumentException if the signature is not signed with
-     *         SHA256withRSA
+     *                                     public key
+     * @throws IllegalArgumentException    if the signature is not signed with
+     *                                     SHA256withRSA
      */
     public static boolean validateMessage(Signature signature, byte[] message) {
         if (!signature.hasPublicKey()) {
@@ -79,11 +78,11 @@ public final class SignatureUtils {
      * Signs a byte array message
      *
      * @param keypair keypair used to sign the message (only the private key is
-     *        used)
+     *                used)
      * @param message message to be signed
      * @return signature proto containing signature for message
      * @throws IllegalArgumentException if the keypair does not contain a
-     *         private key
+     *                                  private key
      */
     public static Signature signMessage(KeyPair keypair, byte[] message)
             throws InvalidKeyException, SignatureException {
@@ -96,7 +95,8 @@ public final class SignatureUtils {
         signer.update(message);
         return Signature.newBuilder().setAlgorithm(SignatureAlgorithm.SHA_256_WITH_RSA)
                 .setPublicKey(keypair.hasPublicKey() ? keypair.getPublicKey()
-                        : KeyUtils.fromKey(KeyUtils.toPublicKey(privateKey)))
+                                                     : KeyUtils.fromKey(KeyUtils.toPublicKey
+                        (privateKey)))
                 .setSignature(ByteString.copyFrom(signer.sign())).build();
     }
 
@@ -124,7 +124,7 @@ public final class SignatureUtils {
      * Validates a {@link Message} with a {@link KeyPair}
      *
      * @param signature signature to validate against
-     * @param message protocol buffer based message to sign
+     * @param message   protocol buffer based message to sign
      * @return boolean indicator of whether the signature validated correctly
      */
     public static boolean validateMessage(Signature signature, Message message) {

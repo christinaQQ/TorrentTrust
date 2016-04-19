@@ -1,12 +1,6 @@
 package moe.cdn.cweb.dht.storage;
 
-import javax.inject.Inject;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.protobuf.InvalidProtocolBufferException;
-
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
@@ -16,6 +10,10 @@ import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
 
 class IncomingDataValidator {
     private static final Logger logger = LogManager.getLogger();
@@ -27,9 +25,9 @@ class IncomingDataValidator {
 
     @Inject
     public IncomingDataValidator(@VoteDomain Number160 voteDomainKey,
-            @UserDomain Number160 userDomainKey,
-            @VoteHistoryDomain Number160 voteHistoryDomainKey,
-            CwebSignatureValidationService cwebSignatureValidationService) {
+                                 @UserDomain Number160 userDomainKey,
+                                 @VoteHistoryDomain Number160 voteHistoryDomainKey,
+                                 CwebSignatureValidationService cwebSignatureValidationService) {
         this.voteDomainKey = voteDomainKey;
         this.userDomainKey = userDomainKey;
         this.voteHistoryDomainKey = voteHistoryDomainKey;

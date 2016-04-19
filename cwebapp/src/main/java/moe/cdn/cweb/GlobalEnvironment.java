@@ -1,6 +1,13 @@
 package moe.cdn.cweb;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.net.HostAndPort;
+import jersey.repackaged.com.google.common.collect.Iterables;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.dht.DhtPeerAddress;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.security.CwebId;
+import org.ini4j.Ini;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,16 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.ini4j.Ini;
-
-import com.google.common.net.HostAndPort;
-
-import jersey.repackaged.com.google.common.collect.Iterables;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.dht.DhtPeerAddress;
-import moe.cdn.cweb.dht.KeyEnvironment;
-import moe.cdn.cweb.dht.PeerEnvironment;
-import moe.cdn.cweb.security.CwebId;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Environment that stores configuration for the application.
@@ -35,10 +33,10 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final Set<KeyPair> identities;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-            int tcpPort,
-            int udpPort,
-            CwebId myId,
-            KeyPair keyPair) {
+                              int tcpPort,
+                              int udpPort,
+                              CwebId myId,
+                              KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;

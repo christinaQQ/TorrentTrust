@@ -1,21 +1,15 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
-import java.util.Map;
-
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;
 import net.tomp2p.dht.FutureGet;
-import net.tomp2p.futures.BaseFuture;
-import net.tomp2p.futures.BaseFutureListener;
-import net.tomp2p.futures.Cancel;
-import net.tomp2p.futures.FutureDone;
-import net.tomp2p.futures.FutureForkJoin;
-import net.tomp2p.futures.FutureResponse;
-import net.tomp2p.futures.FutureRouting;
+import net.tomp2p.futures.*;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.DigestResult;
 import net.tomp2p.storage.Data;
+
+import java.util.Map;
 
 /**
  * @author davix
@@ -28,7 +22,7 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
 
     /**
      * @return A reference to the builder that contains the data we were looking
-     *         for
+     * for
      */
     public DHTBuilder<?> builder() {
         return baseFuture.builder();
@@ -63,7 +57,7 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
      * in channel creator.
      *
      * @param channelCreator The channel creator that will be shutdown and all
-     *        connections will be closed
+     *                       connections will be closed
      */
     public void addFutureDHTReleaseListener(ChannelCreator channelCreator) {
         baseFuture.addFutureDHTReleaseListener(channelCreator);
@@ -74,7 +68,7 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
      * FutureDHT is used, FutureRouting has to be completed successfully.
      *
      * @return The future object during the previous routing, or null if routing
-     *         failed completely.
+     * failed completely.
      */
     public FutureRouting futureRouting() {
         return baseFuture.futureRouting();
@@ -195,9 +189,9 @@ public class FutureGetWrapper extends BaseFutureAsListenableFuture<GetResponse, 
 
         @Override
         public void receivedData(Map<PeerAddress, Map<Number640, Data>> rawData,
-                Map<PeerAddress, DigestResult> rawDigest,
-                Map<PeerAddress, Byte> rawStatus,
-                FutureDone<Void> futuresCompleted) {
+                                 Map<PeerAddress, DigestResult> rawDigest,
+                                 Map<PeerAddress, Byte> rawStatus,
+                                 FutureDone<Void> futuresCompleted) {
             futureGet.receivedData(rawData, rawDigest, rawStatus, futuresCompleted);
         }
 

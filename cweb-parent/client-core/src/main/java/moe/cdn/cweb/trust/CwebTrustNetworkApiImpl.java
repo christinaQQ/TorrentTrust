@@ -1,25 +1,10 @@
 package moe.cdn.cweb.trust;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
-
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
@@ -32,6 +17,15 @@ import moe.cdn.cweb.dht.security.KeyLookupService;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
 
@@ -43,9 +37,9 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
 
     @Inject
     public CwebTrustNetworkApiImpl(KeyLookupService userKeyService,
-            CwebSignatureValidationService signatureValidationService,
-            CwebImportService importService,
-            KeyEnvironment keyEnvironment) {
+                                   CwebSignatureValidationService signatureValidationService,
+                                   CwebImportService importService,
+                                   KeyEnvironment keyEnvironment) {
         this.keyLookupService = checkNotNull(userKeyService);
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
