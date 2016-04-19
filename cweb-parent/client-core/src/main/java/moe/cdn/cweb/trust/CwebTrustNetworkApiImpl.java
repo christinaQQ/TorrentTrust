@@ -2,6 +2,8 @@ package moe.cdn.cweb.trust;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.User.TrustAssertion;
@@ -27,6 +30,7 @@ import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
 import moe.cdn.cweb.dht.security.KeyLookupService;
 import moe.cdn.cweb.security.CwebImportService;
+import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
 
 class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
@@ -102,5 +106,19 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
         return Futures.transform(
                 keyLookupService.findOwner(keyEnvironment.getKeyPair().getPublicKey()),
                 (Function<Optional<SignedUser>, Optional<User>>) o -> o.map(SignedUser::getUser));
+    }
+
+    public ListenableFuture<Optional<KeyPair>> registerNewUserIdentity(String handle) {
+        KeyPair keyPair = KeyUtils.generateKeyPair();
+        try {
+            return Futures.transform(
+                    importService.importUser(User.newBuilder().setHandle(handle)
+                            .setPublicKey(keyPair.getPublicKey()).build()),
+                    (Function<Boolean, Optional<KeyPair>>) success -> {
+                        return success ? Optional.of(keyPair) : Optional.empty();
+                    });
+        } catch (InvalidKeyException | SignatureException e) {
+            return Futures.immediateFailedFuture(e);
+        }
     }
 }

@@ -1,6 +1,10 @@
 package moe.cdn.cweb.app.dto;
 
+import java.util.Base64;
+
 import javax.xml.bind.annotation.XmlRootElement;
+
+import moe.cdn.cweb.SecurityProtos.KeyPair;
 
 /**
  * @author davix
@@ -31,5 +35,11 @@ public class KeyPairBase64 {
 
     public void setPrivateKeyBase64(String privateKeyBase64) {
         this.privateKeyBase64 = privateKeyBase64;
+    }
+
+    public static final KeyPairBase64 fromKeyPair(KeyPair keyPair) {
+        return new KeyPairBase64(
+                Base64.getEncoder().encodeToString(keyPair.getPublicKey().toByteArray()),
+                Base64.getEncoder().encodeToString(keyPair.getPrivateKey().toByteArray()));
     }
 }

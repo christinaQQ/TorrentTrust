@@ -63,6 +63,7 @@ public class CwebApiService implements ServletContextListener {
         CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
         sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);
 
+        
         sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(),
                 appModule.getEnvironment());
     }

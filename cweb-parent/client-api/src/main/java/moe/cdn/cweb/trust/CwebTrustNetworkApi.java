@@ -6,15 +6,29 @@ import java.util.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import moe.cdn.cweb.SecurityProtos.Key;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
 public interface CwebTrustNetworkApi {
     /**
      * Fetches the identity of the current user.
      * 
-     * @return
+     * @return optional containing user object if current user is registered in
+     *         the network.
      */
     ListenableFuture<Optional<User>> getUserIdentity();
+
+    /**
+     * Registers a new identity (keypair) with the handle being the user handle.
+     * Returns the a {@link KeyPair} if it was successful otherwise returns an
+     * empty optional.
+     * 
+     * If any errors were encountered, the future will fail with such errors.
+     * 
+     * @param handle handle for the user we're adding
+     * @return keyPair key pair of user we just added
+     */
+    ListenableFuture<Optional<KeyPair>> registerNewUserIdentity(String handle);
 
     /**
      * Fetches the local trust network of a user. Returns an empty collection if

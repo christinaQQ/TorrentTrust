@@ -6,6 +6,7 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
 
+import moe.cdn.cweb.app.api.exceptions.handlers.NoSuchThingExceptionHandler;
 import moe.cdn.cweb.app.util.Base64StringBytesAdapter;
 
 @ApplicationPath("api")
@@ -16,9 +17,9 @@ public class CwebApiConfig extends ResourceConfig {
 
         register(UriConnegFilter.class);
 
-        register(Base64StringBytesAdapter.class);
+        // register(Base64StringBytesAdapter.class);
 
-        register(ApiExceptionHandler.class);
+        register(NoSuchThingExceptionHandler.class);
 
         packages("moe.cdn.cweb.app.api");
     }
