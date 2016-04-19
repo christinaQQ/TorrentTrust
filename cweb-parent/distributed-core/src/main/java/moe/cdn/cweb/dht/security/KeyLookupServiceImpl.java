@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
@@ -21,25 +20,19 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.annotations.KeyLookup;
 import moe.cdn.cweb.security.utils.Representations;
-import moe.cdn.cweb.security.utils.SignatureUtils;
 
-class UserKeyServiceImpl implements UserKeyService {
+class KeyLookupServiceImpl implements KeyLookupService {
     private static final Logger logger = LogManager.getLogger();
 
     private final Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider;
-    private final KeyEnvironment keyEnvironment;
 
     @Inject
-    public UserKeyServiceImpl(
-            @KeyLookup Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider,
-            KeyEnvironment keyEnvironment) {
+    public KeyLookupServiceImpl(
+            @KeyLookup Provider<CwebMultiMap<SignedUser>> keyServiceCwebMapProvider) {
         this.keyServiceCwebMapProvider = checkNotNull(keyServiceCwebMapProvider);
-        this.keyEnvironment = keyEnvironment;
     }
 
     @Override
@@ -80,5 +73,4 @@ class UserKeyServiceImpl implements UserKeyService {
                     }
                 });
     }
-
 }

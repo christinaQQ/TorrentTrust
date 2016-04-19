@@ -10,10 +10,10 @@ import java.lang.annotation.Target;
 
 import com.google.inject.BindingAnnotation;
 
-import moe.cdn.cweb.dht.security.UserKeyService;
+import moe.cdn.cweb.dht.security.KeyLookupService;
 
 /**
- * Indicates an injection for {@link UserKeyService} .
+ * Indicates an injection for {@link KeyLookupService} .
  * 
  * @author davix
  */

@@ -54,28 +54,17 @@ public class CwebImportServiceImplTest {
     private CwebMultiMap<SignedVote> voteMap;
     @Mock
     private CwebMultiMap<SignedVoteHistory> voteHistoryMap;
+    @Mock
+    private KeyEnvironment keyEnvironment;
 
     private CwebImportServiceImpl cwebImportServiceImpl;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        cwebImportServiceImpl = new CwebImportServiceImpl(new KeyEnvironment() {
-            @Override
-            public String getHandle() {
-                return null;
-            }
-
-            @Override
-            public KeyPair getKeyPair() {
-                return KEY_PAIR;
-            }
-
-            @Override
-            public SignedUser getUserInfo() {
-                return null;
-            }
-        }, userMap, voteMap, voteHistoryMap);
+        cwebImportServiceImpl =
+                new CwebImportServiceImpl(keyEnvironment, userMap, voteMap, voteHistoryMap);
+        when(keyEnvironment.getKeyPair()).thenReturn(KEY_PAIR);
     }
 
     @Test

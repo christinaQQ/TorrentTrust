@@ -5,6 +5,7 @@ import java.security.SignatureException;
 import java.util.concurrent.Future;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 
 import moe.cdn.cweb.SecurityProtos.Signature;
@@ -22,7 +23,7 @@ public interface CwebImportService extends SignatureImportService {
      * @throws SignatureException
      * @throws InvalidKeyException
      */
-    Future<Boolean> updateVote(Vote vote) throws SignatureException, InvalidKeyException;
+    ListenableFuture<Boolean> updateVote(Vote vote) throws SignatureException, InvalidKeyException;
 
     /**
      * Imports a {@link User} and signs it with the current key. The existing
@@ -31,15 +32,7 @@ public interface CwebImportService extends SignatureImportService {
      * @param user the user
      * @return {@code true} if the import succeeded
      */
-    Future<Boolean> importUser(User user) throws SignatureException, InvalidKeyException;
-
-    /**
-     * Imports a public {@link User.TrustAssertion} for the current user.
-     *
-     * @param trustAssertion the trust assertion
-     * @return {@code true} if the import succeeded
-     */
-    Future<Boolean> importTrustAssertion(User.TrustAssertion trustAssertion);
+    ListenableFuture<Boolean> importUser(User user) throws SignatureException, InvalidKeyException;
 
     /**
      * Imports a {@link Vote} record into the vote table and signs it with the
@@ -48,7 +41,7 @@ public interface CwebImportService extends SignatureImportService {
      * @param vote the vote
      * @return {@code true} if the import succeeded
      */
-    Future<Boolean> importSignature(Vote vote, Signature signature);
+    ListenableFuture<Boolean> importSignature(Vote vote, Signature signature);
 
     /**
      * Imports a {@link User} using the specified signature. The existing record
@@ -58,7 +51,7 @@ public interface CwebImportService extends SignatureImportService {
      * @param signature the signature
      * @return {@code true} if the import succeeded
      */
-    Future<Boolean> importSignature(User user, Signature signature);
+    ListenableFuture<Boolean> importSignature(User user, Signature signature);
 
     /**
      * Imports a {@link VoteHistory} into the vote history table and signs it
@@ -67,7 +60,7 @@ public interface CwebImportService extends SignatureImportService {
      * @param voteHistory the vote's history
      * @return {@code true} if the import succeeded
      */
-    Future<Boolean> importSignature(VoteHistory voteHistory, Signature signature);
+    ListenableFuture<Boolean> importSignature(VoteHistory voteHistory, Signature signature);
 
     @Override
     default Future<Boolean> importSignature(Message message, Signature signature) {

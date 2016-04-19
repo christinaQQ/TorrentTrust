@@ -7,9 +7,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-import moe.cdn.cweb.TorrentTrustProtos.User;
 
-public interface UserKeyService {
+public interface KeyLookupService {
     /**
      * Finds the owner of a certain key
      *
@@ -29,5 +28,4 @@ public interface UserKeyService {
      *         or if the operation was interrupted.
      */
     ListenableFuture<Optional<Key>> findKey(Hash keyHash);
-
 }

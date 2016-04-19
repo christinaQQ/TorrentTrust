@@ -1,6 +1,7 @@
 package moe.cdn.cweb.trust;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -8,6 +9,13 @@ import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 
 public interface CwebTrustNetworkApi {
+    /**
+     * Fetches the identity of the current user.
+     * 
+     * @return
+     */
+    ListenableFuture<Optional<User>> getUserIdentity();
+
     /**
      * Fetches the local trust network of a user. Returns an empty collection if
      * the user does not exist.

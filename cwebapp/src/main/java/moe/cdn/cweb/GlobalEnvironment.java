@@ -1,22 +1,24 @@
 package moe.cdn.cweb;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
+import org.ini4j.Ini;
+
 import com.google.common.net.HostAndPort;
+
+import jersey.repackaged.com.google.common.collect.Iterables;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.security.CwebId;
-import org.ini4j.Ini;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Environment that stores configuration for the application.
@@ -30,19 +32,19 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final int tcpPort;
     private final int udpPort;
     private final CwebId myId;
-    private final UserEnvironment userEnvironment;
+    private final Set<KeyPair> identities;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-                              int tcpPort,
-                              int udpPort,
-                              CwebId myId,
-                              String handle,
-                              KeyPair keyPair) {
+            int tcpPort,
+            int udpPort,
+            CwebId myId,
+            String handle,
+            KeyPair keyPair) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.myId = myId;
-        this.userEnvironment = new UserEnvironment(handle, keyPair);
+        this.identities = Collections.singleton(keyPair);
     }
 
     public static Builder newBuilder() {
@@ -76,10 +78,6 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         return builder;
     }
 
-    private static String randomHandle() {
-        return new BigInteger(130, new Random()).toString(32);
-    }
-
     @Override
     public Collection<DhtPeerAddress> getPeerAddresses() {
         return idAndAddresses;
@@ -101,39 +99,8 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     }
 
     @Override
-    public String getHandle() {
-        synchronized (userEnvironment) {
-            if (userEnvironment.handle == null) {
-                userEnvironment.handle = randomHandle();
-            }
-            return userEnvironment.handle;
-        }
-    }
-
-    @Override
     public KeyPair getKeyPair() {
-        synchronized (userEnvironment) {
-            return userEnvironment.keyPair;
-        }
-    }
-
-    @Override
-    public UserInfo getUserInfo() {
-        synchronized (userEnvironment) {
-            String handle = getHandle();
-            KeyPair keyPair = getKeyPair();
-            return new UserInfo() {
-                @Override
-                public String getHandle() {
-                    return handle;
-                }
-
-                @Override
-                public KeyPair getKeyPair() {
-                    return keyPair;
-                }
-            };
-        }
+        return Iterables.getOnlyElement(identities);
     }
 
     /**
@@ -196,16 +163,6 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
 
         public GlobalEnvironment build() {
             return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, handle, keyPair);
-        }
-    }
-
-    public static class UserEnvironment {
-        private final KeyPair keyPair;
-        private String handle;
-
-        public UserEnvironment(String handle, KeyPair keyPair) {
-            this.handle = handle;
-            this.keyPair = Objects.requireNonNull(keyPair);
         }
     }
 }

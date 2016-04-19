@@ -25,7 +25,7 @@ import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.dht.security.UserKeyService;
+import moe.cdn.cweb.dht.security.KeyLookupService;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.HashUtils;
 import moe.cdn.cweb.security.utils.KeyUtils;
@@ -68,7 +68,7 @@ public class CwebExecutable {
         boolean b = cwebImportService.importUser(user).get();
         System.out.println("imported user <user>: " + b);
 
-        UserKeyService userKeyService = injector.getInstance(UserKeyService.class);
+        KeyLookupService userKeyService = injector.getInstance(KeyLookupService.class);
         ListenableFuture<Optional<SignedUser>> owner =
                 userKeyService.findOwner(user.getPublicKey());
         System.out.println(

@@ -16,16 +16,16 @@ import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 
-class FakeUserKeyServiceImpl implements UserKeyService {
+class FakeKeyLookupServiceImpl implements KeyLookupService {
 
     private static final Logger logger = LogManager.getLogger();
     private final Map<Hash, SignedUser> keyserver;
 
-    public FakeUserKeyServiceImpl() {
+    public FakeKeyLookupServiceImpl() {
         this.keyserver = new HashMap<>();
     }
 
-    public FakeUserKeyServiceImpl(List<SignedUser> records) {
+    public FakeKeyLookupServiceImpl(List<SignedUser> records) {
         this();
         for (TorrentTrustProtos.SignedUser record : records) {
             keyserver.put(record.getUser().getPublicKey().getHash(), record);
@@ -52,5 +52,4 @@ class FakeUserKeyServiceImpl implements UserKeyService {
                     .immediateFuture(Optional.of(keyserver.get(keyHash).getUser().getPublicKey()));
         }
     }
-
 }

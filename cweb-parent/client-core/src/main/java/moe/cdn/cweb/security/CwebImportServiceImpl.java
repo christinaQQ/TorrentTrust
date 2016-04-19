@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
-import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -118,16 +117,6 @@ public class CwebImportServiceImpl implements CwebImportService {
     }
 
     @Override
-    public Future<Boolean> importTrustAssertion(User.TrustAssertion trustAssertion) {
-        return Futures.transform(userMap.get(keyEnvironment.getKeyPair().getPublicKey().getHash()),
-                (AsyncFunction<SignedUser, Boolean>) user -> {
-                    User u = user.getUser();
-                    u.getTrustedList().add(trustAssertion);
-                    return importUser(u);
-                });
-    }
-
-    @Override
     public ListenableFuture<Boolean> importSignature(Vote vote, Signature signature) {
         SignedVote signedVote =
                 SignedVote.newBuilder().setSignature(signature).setVote(vote).build();
@@ -153,5 +142,4 @@ public class CwebImportServiceImpl implements CwebImportService {
                 Representations.asString(signature));
         return voteHistoryMap.put(voteHistory.getOwnerPublicKey().getHash(), signedVoteHistory);
     }
-
 }

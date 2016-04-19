@@ -5,5 +5,6 @@ package moe.cdn.cweb;
  */
 public interface UserInfo {
     String getHandle();
+
     SecurityProtos.KeyPair getKeyPair();
 }

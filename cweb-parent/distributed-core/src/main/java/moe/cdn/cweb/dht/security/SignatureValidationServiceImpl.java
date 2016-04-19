@@ -22,10 +22,10 @@ import moe.cdn.cweb.security.utils.SignatureUtils;
 class SignatureValidationServiceImpl implements SignatureValidationService {
 
     private static final Logger logger = LogManager.getLogger();
-    private final UserKeyService userKeyService;
+    private final KeyLookupService userKeyService;
 
     @Inject
-    public SignatureValidationServiceImpl(UserKeyService userKeyService) {
+    public SignatureValidationServiceImpl(KeyLookupService userKeyService) {
         this.userKeyService = checkNotNull(userKeyService);
     }
 

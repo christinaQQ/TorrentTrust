@@ -31,7 +31,7 @@ public class SignatureValidationServiceImplTest {
     private static final Hash SAMPLE_MESSAGE = HashUtils.hashOf("Hello World");
 
     @Mock
-    private UserKeyService userKeyService;
+    private KeyLookupService userKeyService;
 
     private SignatureValidationServiceImpl signatureValidationService;
 

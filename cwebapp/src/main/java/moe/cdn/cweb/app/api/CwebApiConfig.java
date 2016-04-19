@@ -18,6 +18,8 @@ public class CwebApiConfig extends ResourceConfig {
 
         register(Base64StringBytesAdapter.class);
 
+        register(ApiExceptionHandler.class);
+
         packages("moe.cdn.cweb.app.api");
     }
 
