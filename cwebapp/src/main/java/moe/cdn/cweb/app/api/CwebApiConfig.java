@@ -1,12 +1,13 @@
 package moe.cdn.cweb.app.api;
 
-import moe.cdn.cweb.app.api.exceptions.mappers.ConflictExceptionMapper;
-import moe.cdn.cweb.app.api.exceptions.mappers.NoSuchThingExceptionMapper;
+import javax.ws.rs.ApplicationPath;
+
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
 
-import javax.ws.rs.ApplicationPath;
+import moe.cdn.cweb.app.api.exceptions.mappers.ConflictExceptionMapper;
+import moe.cdn.cweb.app.api.exceptions.mappers.NoSuchThingExceptionMapper;
 
 @ApplicationPath("api")
 public class CwebApiConfig extends ResourceConfig {

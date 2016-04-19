@@ -2,6 +2,7 @@ package moe.cdn.cweb.examples;
 
 import com.google.inject.AbstractModule;
 import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.IdentityEnvironment;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -20,7 +21,9 @@ public class ExampleModule extends AbstractModule {
 
     public ExampleModule(int port, String... args) {
         environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
-                .setId(new CwebId(new Random())).setKeyPair(KeyUtils.generateKeyPair()).build();
+                .setId(new CwebId(new Random()))
+                .setKeyEnvironment(new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default"))
+                .build();
     }
 
     @Override

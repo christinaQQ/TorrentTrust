@@ -1,22 +1,21 @@
 package moe.cdn.cweb;
 
-import com.google.common.net.HostAndPort;
-import jersey.repackaged.com.google.common.collect.Iterables;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.dht.DhtPeerAddress;
-import moe.cdn.cweb.dht.KeyEnvironment;
-import moe.cdn.cweb.dht.PeerEnvironment;
-import moe.cdn.cweb.security.CwebId;
-import org.ini4j.Ini;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.ini4j.Ini;
+
+import com.google.common.net.HostAndPort;
+
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.dht.DhtPeerAddress;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.dht.PeerEnvironment;
+import moe.cdn.cweb.security.CwebId;
 
 /**
  * Environment that stores configuration for the application.
@@ -30,18 +29,18 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final int tcpPort;
     private final int udpPort;
     private final CwebId myId;
-    private final Set<KeyPair> identities;
+    private final KeyEnvironment keyEnvironment;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-                              int tcpPort,
-                              int udpPort,
-                              CwebId myId,
-                              KeyPair keyPair) {
+            int tcpPort,
+            int udpPort,
+            CwebId myId,
+            KeyEnvironment identityEnvironment) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.myId = myId;
-        this.identities = Collections.singleton(keyPair);
+        this.keyEnvironment = checkNotNull(identityEnvironment);
     }
 
     public static Builder newBuilder() {
@@ -97,7 +96,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
 
     @Override
     public KeyPair getKeyPair() {
-        return Iterables.getOnlyElement(identities);
+        return keyEnvironment.getKeyPair();
     }
 
     /**
@@ -110,7 +109,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         private int tcpPort;
         private int udpPort;
         private CwebId myId;
-        private KeyPair keyPair;
+        private KeyEnvironment keyEnvironment;
 
         public Builder() {
             idAndAddresses = new ArrayList<>();
@@ -147,13 +146,13 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
             return this;
         }
 
-        public Builder setKeyPair(KeyPair keyPair) {
-            this.keyPair = checkNotNull(keyPair);
+        public Builder setKeyEnvironment(KeyEnvironment keyEnvironment) {
+            this.keyEnvironment = checkNotNull(keyEnvironment);
             return this;
         }
 
         public GlobalEnvironment build() {
-            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyPair);
+            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyEnvironment);
         }
     }
 }
