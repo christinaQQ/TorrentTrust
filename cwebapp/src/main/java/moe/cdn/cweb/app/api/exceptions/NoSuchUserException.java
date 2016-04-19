@@ -1,4 +1,4 @@
-package moe.cdn.cweb.app.exceptions;
+package moe.cdn.cweb.app.api.exceptions;
 
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.security.utils.Representations;

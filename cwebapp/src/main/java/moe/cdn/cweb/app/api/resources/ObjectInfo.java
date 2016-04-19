@@ -1,6 +1,7 @@
-package moe.cdn.cweb.app;
+package moe.cdn.cweb.app.api.resources;
 
 import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.dto.TrustRating;
 
 import javax.ws.rs.GET;

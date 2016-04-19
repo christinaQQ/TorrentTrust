@@ -8,9 +8,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import java.io.StringReader;
-
-import static org.junit.Assert.*;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author davix
@@ -23,5 +22,8 @@ public class StateParserTest {
         unmarshaller.setProperty(UnmarshallerProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
         StreamSource jsonStream =
                 new StreamSource(StateParserTest.class.getResourceAsStream("initial_state.json"));
+        State state = unmarshaller.unmarshal(jsonStream, State.class).getValue();
+
+        fail("unimplemented");
     }
 }

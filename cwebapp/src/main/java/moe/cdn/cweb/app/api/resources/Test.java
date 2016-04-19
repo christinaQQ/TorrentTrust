@@ -1,4 +1,4 @@
-package moe.cdn.cweb.app;
+package moe.cdn.cweb.app.api.resources;
 
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.app.dto.UserRef;

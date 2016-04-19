@@ -1,6 +1,7 @@
 package moe.cdn.cweb.app;
 
 import com.google.inject.servlet.ServletModule;
+import moe.cdn.cweb.app.api.CwebApiConfig;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.glassfish.jersey.servlet.ServletContainer;
 

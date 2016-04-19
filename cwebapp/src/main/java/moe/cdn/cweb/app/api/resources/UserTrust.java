@@ -1,6 +1,7 @@
-package moe.cdn.cweb.app;
+package moe.cdn.cweb.app.api.resources;
 
 import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.dto.UserRef;
 
 import javax.ws.rs.Consumes;

@@ -1,6 +1,7 @@
-package moe.cdn.cweb.app;
+package moe.cdn.cweb.app.api;
 
-import moe.cdn.cweb.app.exceptions.handlers.NoSuchThingExceptionMapper;
+import moe.cdn.cweb.app.api.exceptions.mappers.ConflictExceptionMapper;
+import moe.cdn.cweb.app.api.exceptions.mappers.NoSuchThingExceptionMapper;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
@@ -15,9 +16,10 @@ public class CwebApiConfig extends ResourceConfig {
 
         register(UriConnegFilter.class);
 
+        register(ConflictExceptionMapper.class);
         register(NoSuchThingExceptionMapper.class);
 
-        packages("moe.cdn.cweb.app.api");
+        packages("moe.cdn.cweb.app.api.resources");
     }
 
 }
