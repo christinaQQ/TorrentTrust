@@ -60,7 +60,7 @@
     "publicKey": "60b725f15727cd6de42",
     "privateKey": "360b725f15727cd6de42"
   },
-  "torrents": {
+  "objects": {
     "60b725f15727cd6de42": [
       {
         "hash": "c12fe1c06bba254a9dc9f519b335aa7c1367a88adn",
