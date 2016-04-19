@@ -16,18 +16,18 @@ module.exports = React.createClass({
       this.dispatchAction(actions.setLoading(true));
       $.ajax({
         url: `/api/object/${hash}/${this.state.current_trust_algorithm.id}`,
-        type: 'GET',
-        error(_, e) {
-          this.dispatchAction(actions.setErrorMessage(`Error: ${e}`));
-        },
-        statusCode: {
-          200({rating}) {
-            callback(rating);
-          },
-          400() {
-            this.dispatchAction(actions.setErrorMessage(`Error: no object exists with hash ${hash}.`));
-          }
+        type: 'GET'
+      })
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
         }
+        callback(data.rating);
+        return jqXHR;
+      })
+      .fail(jqXHR => {
+        const err = jqXHR.responseText || jqXHR.statusText;
+        this.dispatchAction(actions.setErrorMessage(`Error: ${err}!`));
       })
       .always(() => this.dispatchAction(actions.setLoading(false)));
     }

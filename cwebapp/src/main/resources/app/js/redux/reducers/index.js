@@ -27,9 +27,11 @@ var mainReducer = function (state, action) {
       const {name, pubKey} = action;
       const user_identities = state.user_identities.slice(0);
       const torrent_lists = Object.assign({}, state.torrent_lists);
+      const trusted_identities = Object.assign({}, state.trusted_identities);
       user_identities.push({name, pubKey});
       torrent_lists[pubKey] = [];
-      return Object.assign({}, state, {user_identities, torrent_lists});
+      trusted_identities[pubKey] = [];
+      return Object.assign({}, state, {user_identities, torrent_lists, trusted_identities});
     }
     case 'SET_INFO_MESSAGE': {
       const {newMessage} = action;

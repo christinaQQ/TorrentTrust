@@ -4,10 +4,15 @@ const magnet = require('magnet-uri');
 
 var actions;
 var persistState = function (state) {
+  const newState = Object.assign({}, state, {
+    error_message: null,
+    info_message: null,
+    loading: false
+  });
   return $.ajax({
     url: 'api/setState',
     type: 'POST',
-    data: JSON.stringify(state),
+    data: JSON.stringify(newState, null, '\t'),
     processData: false,
     contentType: 'application/json'
   });
@@ -19,63 +24,57 @@ module.exports = actions = {
       const {xt, dn} = magnet.decode(magnetLink || '');
       const {pubKey} = getState().current_identity;
       if (!xt) {
-        dispatch(this.setErrorMessage('Invalid magnet link.'));
+        dispatch(actions.setErrorMessage('Invalid magnet link.'));
       } else {
         const hash = xt.split(':').pop();
         dispatch(this.setLoading(true));
         dispatch(this._addToUserTorrentList({hash, pubKey, displayName: dn}));
-        this.persistState(getState())
-          .fail(() => dispatch(this.setErrorMessage('Failed to persist state.')))
-          .always(() => dispatch(this.setLoading(false)));
+        persistState(getState())
+        .fail(() => dispatch(this.setErrorMessage('Failed to persist state.')))
+        .always(() => dispatch(this.setLoading(false)));
       }
     };
   },
   upvote({hash}) {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
-      const actions = this;
       $.ajax({
         url: `/api/object/${hash}/up`,
-        type: 'POST',
-        error(_, __, e) {
-          dispatch(actions.setErrorMessage(`Error: ${e}`));
-        },
-        statusCode: {
-          400() {
-            dispatch(actions.setErrorMessage(`Error: no object exists with hash ${hash}.`));
-          }
-        }
+        type: 'POST'
       })
-        .done(() => {
-          dispatch(actions._setUpvoted({hash}));
-          return persistState(getState())
-            .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
-        })
-        .always(() => dispatch(actions.setLoading(false)));
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        dispatch(actions._setUpvoted({hash}));
+        return persistState(getState());
+      })
+      .fail(jqXHR => {
+        const err = jqXHR.responseText || jqXHR.statusText;
+        dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
+      })
+      .always(() => dispatch(actions.setLoading(false)));
     };
   },
   downvote({hash}) {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
-      const actions = this;
       $.ajax({
         url: `/api/object/${hash}/down`,
-        type: 'POST',
-        error(_, __, e) {
-          dispatch(actions.setErrorMessage(`Error: ${e}`));
-        },
-        statusCode: {
-          400() {
-            dispatch(actions.setErrorMessage(`Error: no object exists with hash ${hash}.`));
-          }
-        }
+        type: 'POST'
       })
-        .done(() => {
-          dispatch(actions._setDownvoted({hash}));
-          return persistState(getState())
-            .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
-        })
-        .always(() => dispatch(actions.setLoading(false)));
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        dispatch(actions._setDownvoted({hash}));
+        return persistState(getState());
+      })
+      .fail(jqXHR => {
+        const err = jqXHR.responseText || jqXHR.statusText;
+        dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
+      })
+      .always(() => dispatch(actions.setLoading(false)));
     };
   },
   _setUpvoted({hash}) {
@@ -90,65 +89,78 @@ module.exports = actions = {
   addTrustedKey({name, pubKey}) {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
-      const actions = this;
       $.ajax({
-        url: '/api/user/trust/',
+        url: '/api/user/trust',
         type: 'POST',
         data: pubKey,
         processData: false,
-        contentType: 'text/plain',
-        error(_, __, e) {
-          dispatch(actions.setErrorMessage(`Error: ${e}`));
-        },
-        statusCode: {
-          400() {
-            dispatch(actions.setErrorMessage(`Error: no user exists with key ${pubKey}.`));
-          }
-        }
+        contentType: 'text/plain'
       })
-        .done(() => {
-          dispatch({type: 'ADD_TRUSTED_IDENTITY', name, pubKey});
-          return persistState(getState())
-            .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
-        })
-        .always(() => dispatch(actions.setLoading(false)));
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        dispatch({type: 'ADD_TRUSTED_IDENTITY', name, pubKey});
+        return persistState(getState());
+      })
+      .done(() =>
+        dispatch(actions.setInfoMessage(`${name} added to trusted keys.`))
+      )
+      .fail(jqXHR => {
+        const err = jqXHR.responseText || jqXHR.statusText;
+        dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
+      })
+      .always(() => dispatch(actions.setLoading(false)));
     };
   },
   deleteTrustedIdentity(pubKey) {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
-      const actions = this;
       $.ajax({
         url: '/api/user/trust/',
         type: 'DELETE',
         data: pubKey,
         processData: false,
-        contentType: 'text/plain',
-        error(_, __, e) {
-          dispatch(actions.setErrorMessage(`Error: ${e}`));
-        },
-        statusCode: {
-          400() {
-            dispatch(actions.setErrorMessage(`Error: no user exists with key ${pubKey}.`));
-          }
-        }
+        contentType: 'text/plain'
       })
-        .done(() => {
-          dispatch({type: 'DELETE_TRUSTED_IDENTITY', pubKey});
-          return persistState(getState())
-            .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
-        })
-        .always(() => dispatch(actions.setLoading(false)));
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        dispatch({type: 'DELETE_TRUSTED_IDENTITY', pubKey});
+        return persistState(getState());
+      })
+      .done(
+        () => dispatch(actions.setInfoMessage('Deleted key.'))
+      )
+      .fail(
+        () => dispatch(actions.setErrorMessage('Failed to persist state.'))
+      )
+      .always(() => dispatch(actions.setLoading(false)));
     };
   },
   setTrustAlgorithm({name, id}) {
-    return {type: 'SET_TRUST_ALGORITHM', name, id};
+    return (dispatch, getState) => {
+      dispatch({type: 'SET_TRUST_ALGORITHM', name, id});
+      persistState(getState())
+      .done(() => dispatch(actions.setInfoMessage('Trust algorithm updated successfully.')))
+      .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
+
+    };
   },
   switchUserIdentity({name, pubKey}) {
-    return {type: 'SWITCH_USER_IDENTITY', name, pubKey};
+    return (dispatch, getState) => {
+      dispatch({type: 'SWITCH_USER_IDENTITY', name, pubKey});
+      persistState(getState())
+      .done(() => dispatch(actions.setInfoMessage('User ID updated successfully.')))
+      .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
+    };
   },
-  _addUserIdentity({name, pubKey}) {
-    return {type: 'ADD_USER_IDENTITY', name, pubKey};
+  _addUserIdentity({name, pubKey, privateKey}) {
+    return {type: 'ADD_USER_IDENTITY', name, pubKey, privateKey};
+      // return persistState(getState())
+      //   .done(() => dispatch(actions.setInfoMessage(`Identity ${name} added.`)))
+      //   .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
   },
   setInfoMessage(msg) {
     return {type: 'SET_INFO_MESSAGE', newMessage: msg};
@@ -160,13 +172,29 @@ module.exports = actions = {
     return {type: 'SET_LOADING', value};
   },
   createNewIdentity({name}) {
-    return dispatch => {
-      const pubKey = Array(36).join().split(',').map(() => '123456789abcdef'.charAt(Math.floor(Math.random() * 16))).join('');
-      dispatch(this._addUserIdentity({name, pubKey}));
-      dispatch(this.switchUserIdentity({name, pubKey}));
-      dispatch(this.setInfoMessage(`Identity "${name}" created successfully`));
-      // TODO display a success method
-      browserHistory.push('/'); // navigate back to root
+    return (dispatch, getState) => {
+      $.ajax({
+        url: '/api/identity',
+        type: 'POST'
+      })
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        const {pubKey, privateKey} = data;
+        dispatch(actions._addUserIdentity({name, pubKey, privateKey}));
+        dispatch(actions.switchUserIdentity({name, pubKey}));
+        dispatch({type: 'SWITCH_USER_IDENTITY', name, pubKey});
+        return persistState(getState());
+      })
+      .done(() => {
+        dispatch(actions.setInfoMessage(`Identity "${name}" created successfully`));
+        browserHistory.push('/');
+      })
+      .fail(jqXHR => {
+        const err = jqXHR.responseText || jqXHR.statusText;
+        dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
+      });
     };
   }
 };
