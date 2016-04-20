@@ -2,6 +2,7 @@ package moe.cdn.cweb.app;
 
 import com.google.inject.servlet.ServletModule;
 import moe.cdn.cweb.app.api.CwebApiConfig;
+import moe.cdn.cweb.app.services.CwebConfigurationException;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.glassfish.jersey.servlet.ServletContainer;
 
@@ -17,9 +18,22 @@ import java.util.Map;
  * @author davix
  */
 public class AppServletModule extends ServletModule {
-    private static Map<String, String> newInitParameters(URL resourceDirUrl) {
+    private static final boolean DEBUG = true;
+
+    private static Map<String, String> newFileServletInitParameters(URL resourceDirUrl) {
         Map<String, String> appInitParameters = new HashMap<>();
-        appInitParameters.put("resourceBase", resourceDirUrl.toExternalForm());
+        String resourceBase = resourceDirUrl.toExternalForm();
+        if (DEBUG) {
+            if (resourceBase.endsWith("build/")) {
+                resourceBase = "src/main/resources/app/build";
+            } else if (resourceBase.endsWith("static/")) {
+                resourceBase = "src/main/resources/app/static";
+            } else {
+                throw new CwebConfigurationException(
+                        "Unknown resourceBase init parameter: " + resourceBase);
+            }
+        }
+        appInitParameters.put("resourceBase", resourceBase);
         appInitParameters.put("pathInfoOnly", "true");
         appInitParameters.put("dirAllowed", "false");
         return appInitParameters;
@@ -34,7 +48,7 @@ public class AppServletModule extends ServletModule {
 
         URL appFile = App.class.getClassLoader().getResource("app/build/js/main.js");
         if (appFile == null) {
-            throw new RuntimeException("Cannot find application resources");
+            throw new CwebConfigurationException("Cannot find application resources");
         }
         URL appDirUrl;
         try {
@@ -43,11 +57,11 @@ public class AppServletModule extends ServletModule {
         } catch (MalformedURLException | URISyntaxException e) {
             throw new RuntimeException("Cannot resolve application resources", e);
         }
-        serve("/app/build/*").with(DefaultServlet.class, newInitParameters(appDirUrl));
+        serve("/app/build/*").with(new DefaultServlet(), newFileServletInitParameters(appDirUrl));
 
         URL staticFile = App.class.getClassLoader().getResource("static/giphy.gif");
         if (staticFile == null) {
-            throw new RuntimeException("Cannot find static resources");
+            throw new CwebConfigurationException("Cannot find static resources");
         }
         URL staticDirUrl;
         try {
@@ -56,7 +70,7 @@ public class AppServletModule extends ServletModule {
         } catch (URISyntaxException | MalformedURLException e) {
             throw new RuntimeException("Cannot resolve application resources", e);
         }
-        serve("/static/*").with(DefaultServlet.class, newInitParameters(staticDirUrl));
+        serve("/static/*").with(new DefaultServlet(), newFileServletInitParameters(staticDirUrl));
         serve("/*").with(IndexServlet.class);
     }
 }

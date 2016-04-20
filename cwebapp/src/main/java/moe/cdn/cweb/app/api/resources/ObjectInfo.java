@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.ByteString;
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TrustApi;
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.dto.TrustRating;
 
@@ -33,7 +34,14 @@ public class ObjectInfo extends CwebApiEndPoint {
             InterruptedException {
         // TODO: getTrustRating
         Optional<TorrentTrustProtos.User> user = getCwebIdentityApi().getUserIdentity().get();
-//        getCwebTrustApi().trustForObject(user, parseHash(hash), );
+
+        TrustApi.TrustMetric trustMetric;
+        try {
+            trustMetric = TrustApi.TrustMetric.valueOf(algo);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Unknown trust metric: " + algo, e);
+        }
+//        getCwebTrustApi().trustForObject(user, TorrentTrustProtos.Vote.Assertion.newBuilder().setContentProperty(DEFAULT_CONTENT_PROPERTY).build(),parseHash(hash), trustMetric);
         return new TrustRating(new Random().nextDouble(), "rand");
     }
 

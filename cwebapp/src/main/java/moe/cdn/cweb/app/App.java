@@ -73,11 +73,7 @@ public class App {
 
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         ServletHolder defaultServletHolder = new ServletHolder(new DefaultServlet());
-        if (DEBUG) {
-            String debugResourceBase = "src/main/resources";
-            logger.warn("Running in debug mode (reloading from {})", debugResourceBase);
-            defaultServletHolder.setInitParameter("resourceBase", debugResourceBase);
-        }
+
         servletHandler.addServlet(defaultServletHolder, "/");
         servletHandler.addEventListener(new CwebGuiceServletConfig());
         servletHandler.addEventListener(new CwebApiService());
