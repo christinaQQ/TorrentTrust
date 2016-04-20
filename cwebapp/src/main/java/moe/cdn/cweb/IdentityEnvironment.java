@@ -106,16 +106,16 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
         }
     }
 
-    public void switchIdentity(Hash publicKeyHash) {
+    public boolean switchIdentity(Hash publicKeyHash) {
         for (KeyPair keyPair : identities.keySet()) {
             if (keyPair.getPublicKey().getHash().equals(publicKeyHash)) {
                 logger.info("Found identity with hash {}. Switching.",
                         Representations.asString(publicKeyHash));
                 currentIdentity = Optional.of(keyPair);
-                return;
+                return true;
             }
         }
-        throw new RuntimeException("Provided identity hash that was unknown.");
+        return false;
     }
 
     public Iterator<KeyPair> iterator() {

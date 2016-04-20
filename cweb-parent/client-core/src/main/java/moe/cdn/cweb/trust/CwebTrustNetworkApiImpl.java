@@ -5,6 +5,8 @@ import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
@@ -94,6 +96,20 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
                         return Futures.immediateFuture(false);
                     }
                 });
+    }
+
+    @Override
+    public ListenableFuture<Boolean> addUserAsTrusted(Hash publicKey) {
+        return Futures.transform(keyLookupService.findKey(publicKey),
+                (AsyncFunction<Optional<Key>, Boolean>) key -> key.isPresent()
+                        ? addUserAsTrusted(key.get()) : Futures.immediateFuture(false));
+    }
+
+    @Override
+    public ListenableFuture<Boolean> removeUserAsTrusted(Hash publicKey) {
+        return Futures.transform(keyLookupService.findKey(publicKey),
+                (AsyncFunction<Optional<Key>, Boolean>) key -> key.isPresent()
+                        ? removeUserAsTrusted(key.get()) : Futures.immediateFuture(false));
     }
 
     @Override

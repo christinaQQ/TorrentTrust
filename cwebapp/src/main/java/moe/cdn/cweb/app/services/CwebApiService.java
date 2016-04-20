@@ -1,20 +1,5 @@
 package moe.cdn.cweb.app.services;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import moe.cdn.cweb.*;
-import moe.cdn.cweb.app.App;
-import moe.cdn.cweb.app.AppModule;
-import moe.cdn.cweb.dht.DhtModuleService;
-import moe.cdn.cweb.dht.ManagedPeer;
-import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.security.utils.KeyUtils;
-import moe.cdn.cweb.trust.CwebTrustNetworkApi;
-import moe.cdn.cweb.vote.CwebVoteApi;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +9,29 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+
+import moe.cdn.cweb.CwebApi;
+import moe.cdn.cweb.CwebModuleService;
+import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.IdentityEnvironment;
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.TrustGenerator;
+import moe.cdn.cweb.app.App;
+import moe.cdn.cweb.app.AppModule;
+import moe.cdn.cweb.dht.DhtModuleService;
+import moe.cdn.cweb.dht.ManagedPeer;
+import moe.cdn.cweb.dht.annotations.DhtNodeController;
+import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.trust.CwebIdentityApi;
+import moe.cdn.cweb.trust.CwebTrustNetworkApi;
+import moe.cdn.cweb.vote.CwebVoteApi;
 
 /**
  * @author davix
@@ -113,6 +121,9 @@ public class CwebApiService implements ServletContextListener {
 
         CwebTrustNetworkApi trustNetwork = injector.getInstance(CwebTrustNetworkApi.class);
         sce.getServletContext().setAttribute(CwebTrustNetworkApi.class.getName(), trustNetwork);
+        
+        CwebIdentityApi identityApi = injector.getInstance(CwebIdentityApi.class);
+        sce.getServletContext().setAttribute(CwebIdentityApi.class.getName(), identityApi);
 
         CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
         sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);

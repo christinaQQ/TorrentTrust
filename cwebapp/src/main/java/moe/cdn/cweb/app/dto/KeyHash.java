@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.app.util.Base64KeyAdapter;
+import moe.cdn.cweb.app.util.ShaHashKeyAdapter;
 
 /**
  * @author davix
@@ -15,10 +15,10 @@ import moe.cdn.cweb.app.util.Base64KeyAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class KeyHash {
-    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
+    @XmlJavaTypeAdapter(ShaHashKeyAdapter.class)
     private Hash publicKeyHash;
 
-    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
+    @XmlJavaTypeAdapter(ShaHashKeyAdapter.class)
     private Hash privateKeyHash;
 
     public KeyHash() {}

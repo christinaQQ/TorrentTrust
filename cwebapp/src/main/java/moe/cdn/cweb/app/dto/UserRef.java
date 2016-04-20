@@ -1,12 +1,12 @@
 package moe.cdn.cweb.app.dto;
 
-import moe.cdn.cweb.SecurityProtos;
-import moe.cdn.cweb.app.util.Base64KeyAdapter;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.app.util.ShaHashKeyAdapter;
 
 /**
  * @author davix
@@ -14,21 +14,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserRef {
-    @XmlJavaTypeAdapter(Base64KeyAdapter.class)
-    private SecurityProtos.Key publicKey;
+    @XmlJavaTypeAdapter(ShaHashKeyAdapter.class)
+    private Hash publicKey;
 
     public UserRef() {
     }
 
-    public UserRef(SecurityProtos.Key publicKey) {
+    public UserRef(Hash publicKey) {
         this.publicKey = publicKey;
     }
 
-    public SecurityProtos.Key getPublicKey() {
+    public Hash getPublicKey() {
         return publicKey;
     }
 
-    public void setPublicKey(SecurityProtos.Key publicKey) {
+    public void setPublicKey(Hash publicKey) {
         this.publicKey = publicKey;
     }
 }

@@ -1,5 +1,6 @@
 package moe.cdn.cweb.app.api.exceptions;
 
+import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.security.utils.Representations;
 
@@ -7,11 +8,14 @@ public class NoSuchUserException extends NoSuchThingException {
 
     private static final long serialVersionUID = 6904854389758454782L;
 
-    public NoSuchUserException() {
+    public NoSuchUserException() {}
+
+    public NoSuchUserException(Hash publicKey) {
+        this(String.format("No such user %s", Representations.asString(publicKey)));
     }
 
     public NoSuchUserException(Key publicKey) {
-        this("No such user: " + Representations.asString(publicKey));
+        this(String.format("No such user %s", Representations.asString(publicKey)));
     }
 
     public NoSuchUserException(String message) {
@@ -27,9 +31,9 @@ public class NoSuchUserException extends NoSuchThingException {
     }
 
     public NoSuchUserException(String message,
-                               Throwable cause,
-                               boolean enableSuppression,
-                               boolean writableStackTrace) {
+            Throwable cause,
+            boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
