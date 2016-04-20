@@ -1,9 +1,6 @@
 package moe.cdn.cweb.app.api;
 
-import moe.cdn.cweb.CwebApi;
-import moe.cdn.cweb.GlobalEnvironment;
-import moe.cdn.cweb.IdentityEnvironment;
-import moe.cdn.cweb.TrustGenerator;
+import moe.cdn.cweb.*;
 import moe.cdn.cweb.app.services.CwebApiService;
 import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
@@ -52,5 +49,9 @@ public abstract class CwebApiEndPoint {
 
     protected TrustGenerator getCwebTrustGenerator() {
         return (TrustGenerator) servletContext.getAttribute(TrustGenerator.class.getName());
+    }
+
+    protected TrustApi getCwebTrustApi() {
+        return (TrustApi) servletContext.getAttribute(TrustApi.class.getName());
     }
 }

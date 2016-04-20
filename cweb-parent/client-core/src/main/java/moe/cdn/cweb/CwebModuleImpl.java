@@ -18,6 +18,7 @@ public class CwebModuleImpl extends CwebModule {
 
         bind(CwebApi.class).to(CwebApiImpl.class);
         bind(TrustGenerator.class).to(TrustGeneratorImpl.class);
+        bind(TrustApi.class).to(TrustApiImpl.class);
     }
 
 }

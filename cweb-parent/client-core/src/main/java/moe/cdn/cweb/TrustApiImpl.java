@@ -27,7 +27,7 @@ public class TrustApiImpl implements TrustApi {
     }
 
     @Override
-    public double TrustForObject(TorrentTrustProtos.User user,
+    public double trustForObject(TorrentTrustProtos.User user,
                                  TorrentTrustProtos.Vote.Assertion assertion,
                                  SecurityProtos.Hash objectHash, TrustMetric trustMetric)
                                 throws CwebApiException, ExecutionException, InterruptedException {
