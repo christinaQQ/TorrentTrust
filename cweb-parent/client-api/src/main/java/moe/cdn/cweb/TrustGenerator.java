@@ -17,6 +17,16 @@ public interface TrustGenerator {
      */
     double correlationCoefficient(User a, User b);
 
+
+    /**
+     *
+     * @param a the user making this call
+     * @param b the user being evaluated
+     * @param trustMetric the type of trust employed by user
+     * @return a double representing the trust
+     */
+    double trustCoefficient(User a, User b, TrustApi.TrustMetric trustMetric);
+
     /**
      * Determines whether a user is in the calling user's direct network (1
      * degree away).
