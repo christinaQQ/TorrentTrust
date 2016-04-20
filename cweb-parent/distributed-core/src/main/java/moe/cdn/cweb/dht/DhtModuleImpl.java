@@ -58,6 +58,15 @@ public class DhtModuleImpl extends DhtModule {
     }
 
     @Provides
+    @KeyLookup
+    @Singleton
+    static ManagedDhtNode<SignedUser> provideKeyLookupSignedUserDhtNode(
+            DhtNodeFactory factory, @KeyLookup ManagedPeerDhtPeer self, @UserDomain String
+            domainKey) {
+        return factory.create(self, domainKey, SignedUser.PARSER);
+    }
+
+    @Provides
     @Singleton
     static ManagedDhtNode<SignedVote> provideSignedVoteDhtNode(DhtNodeFactory factory,
                                                                ManagedPeerDhtPeer self,
@@ -108,9 +117,24 @@ public class DhtModuleImpl extends DhtModule {
     @Singleton
     @KeyLookup
     static CwebMultiMap<SignedUser> provideKeyLookupCwebMap(
-            CwebMapFactory<SignedUser> cwebMapFactory, ManagedDhtNode<SignedUser> dhtNodeUser) {
+            CwebMapFactory<SignedUser> cwebMapFactory,
+            @KeyLookup ManagedDhtNode<SignedUser> dhtNodeUser) {
         return cwebMapFactory.create(dhtNodeUser, CwebMisc.CWEB_ID_REDUCER,
                 CwebMisc.HASH_SIGNED_USER_BI_PREDICATE);
+    }
+
+    @Provides
+    @KeyLookup
+    @Singleton
+    public static ManagedPeerDhtPeer provideKeyLookupManagedPeerDhtPeer(
+            Storage storage, PeerEnvironment peerEnvironment, ManagedPeerDhtPeer mainPeer)
+            throws IOException, ExecutionException, InterruptedException {
+        ManagedPeerDhtPeer newPeer = ManagedPeerDhtPeer.fromEnviroment2(peerEnvironment, storage);
+        logger.info("Key lookup service peer listening on {}", newPeer.getAddress());
+        logger.debug("Bootstrapping to main peer {}", mainPeer);
+        newPeer.bootstrapTo(mainPeer.getAddress()).get();
+        logger.debug("Done bootstrapping key lookup service peer.");
+        return newPeer;
     }
 
     @Provides
@@ -120,8 +144,8 @@ public class DhtModuleImpl extends DhtModule {
             throws IOException {
         // FIXME: Do not initialize a local DHT node in a Guice module
 
-        ManagedPeerDhtPeer peerDhtPeer =
-                ManagedPeerDhtPeer.fromEnviroment(peerEnvironment, storage);
+        ManagedPeerDhtPeer peerDhtPeer = ManagedPeerDhtPeer.fromEnviroment1(peerEnvironment,
+                storage);
         logger.info("Local peer listening on {}", peerDhtPeer.getAddress());
 
         logger.debug("Bootstrapping to {}", peerEnvironment.getPeerAddresses());
@@ -174,6 +198,5 @@ public class DhtModuleImpl extends DhtModule {
                 .toInstance(CwebMisc.HASH_SIGNED_VOTE_BI_PREDICATE);
         bind(new TypeLiteral<BiPredicate<Hash, SignedVoteHistory>>() {})
                 .toInstance(CwebMisc.HASH_SIGNED_VOTE_HISTORY_BI_PREDICATE);
-
     }
 }

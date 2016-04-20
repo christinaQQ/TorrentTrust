@@ -36,16 +36,8 @@ class KeyLookupServiceImpl implements KeyLookupService {
     @Override
     public ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey) {
         logger.debug("Looking up owner of key {}", Representations.asString(publicKey));
-        ListenableFuture<Collection<SignedUser>> signedUsersFuture = keyServiceCwebMapProvider.get().all(publicKey.getHash());
-        try {
-            signedUsersFuture.get();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        ListenableFuture<Collection<SignedUser>> signedUsersFuture = keyServiceCwebMapProvider.get()
+                .all(publicKey.getHash());
         return Futures.transform(signedUsersFuture,
                 (Function<Collection<SignedUser>, Optional<SignedUser>>) signedUsers -> {
                     Collection<SignedUser> records = signedUsers.stream()

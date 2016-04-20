@@ -49,7 +49,9 @@ class CwebDhtNodeFactory implements DhtNodeFactory {
 
         @Override
         public ListenableFuture<Collection<T>> getAll(CwebId key) {
-            return Futures.transform(cwebNode.all(key),
+            // TODO debugging
+            ListenableFuture<CwebGetResults<T>> all = cwebNode.all(key);
+            return Futures.transform(all,
                     (Function<? super CwebGetResults<T>, ? extends Collection<T>>)
                             CwebGetResults::all);
         }

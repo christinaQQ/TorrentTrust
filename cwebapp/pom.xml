@@ -30,6 +30,19 @@
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>moe.cdn.cweb.examples.CwebExecutable</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
             <!--
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
