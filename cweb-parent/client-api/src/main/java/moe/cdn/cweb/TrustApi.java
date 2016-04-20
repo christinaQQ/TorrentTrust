@@ -14,8 +14,9 @@ public interface TrustApi {
 
 
     enum TrustMetric {
-        IMMEDIATE,
-        NETWORK,
-        CENTRALITY
+        ONLY_FRIENDS,
+        FRIENDS_OF_FRIENDS,
+        CONNECTED_COMPONENT,
+        EIGENTRUST
     }
 }

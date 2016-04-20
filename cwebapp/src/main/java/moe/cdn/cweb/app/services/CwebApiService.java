@@ -96,8 +96,9 @@ public class CwebApiService implements ServletContextListener {
                     "\"trusted_identities\": {\"" + publicKey + "\": []},",
                     "\"possible_trust_algorithms\": [",
                     "    {\"id\":\"EIGENTRUST\",\"name\":\"Eigentrust\"},",
-                    "    {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only Friends\"},",
-                    "    {\"id\":\"FRIEND_OF_FRIEND\",\"name\":\"Friends of friends\"}", "  ],",
+                    "    {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only friends\"},",
+                    "    {\"id\":\"CONNECTED_COMPONENT\",\"name\":\"Anyone in your network\"},",
+                    "    {\"id\":\"FRIENDS_OF_FRIENDS\",\"name\":\"Friends of friends\"}", "  ],",
                     "\"current_trust_algorithm\": {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only "
                             + "Friends\"},",
                     "\"current_identity\": {\"name\":\"Default ID\",\"publicKey\":\"" + publicKey

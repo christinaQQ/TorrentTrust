@@ -43,11 +43,11 @@ class TrustGeneratorImpl implements TrustGenerator {
     @Override
     public double trustCoefficient(User a, User b, TrustApi.TrustMetric trustMetric) {
         switch (trustMetric) {
-            case IMMEDIATE :
+            case ONLY_FRIENDS :
                 return trustCoefficientDirect(a, b);
-            case NETWORK:
+            case CONNECTED_COMPONENT:
                 return trustCoefficientNetwork(a, b);
-            case CENTRALITY:
+            case EIGENTRUST:
                 return trustCoefficientCentrality(a, b);
             default:
                 return 0.0;

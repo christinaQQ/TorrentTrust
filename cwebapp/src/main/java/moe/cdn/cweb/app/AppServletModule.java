@@ -1,12 +1,15 @@
 package moe.cdn.cweb.app;
 
 import com.google.inject.servlet.ServletModule;
+
 import moe.cdn.cweb.app.api.CwebApiConfig;
 import moe.cdn.cweb.app.services.CwebConfigurationException;
+
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.inject.Singleton;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;

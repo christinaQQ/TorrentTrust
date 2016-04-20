@@ -2,7 +2,6 @@ package moe.cdn.cweb.app.data;
 
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.app.util.Base64BytesAdapter;
-import moe.cdn.cweb.app.util.Base64KeyAdapter;
 import moe.cdn.cweb.app.util.Base64PublicKeyMapAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;

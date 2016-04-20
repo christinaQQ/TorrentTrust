@@ -43,7 +43,7 @@ module.exports = actions = {
         type: 'POST'
       })
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         dispatch(actions._setUpvoted({hash}));
@@ -51,7 +51,7 @@ module.exports = actions = {
       })
       .fail(jqXHR => {
         const err = jqXHR.responseText || jqXHR.statusText;
-        dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
+        dispatch(actions.setErrorMessage(`Error during upvote: ${err}!`));
       })
       .always(() => dispatch(actions.setLoading(false)));
     };
@@ -64,7 +64,7 @@ module.exports = actions = {
         type: 'POST'
       })
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         dispatch(actions._setDownvoted({hash}));
@@ -72,7 +72,7 @@ module.exports = actions = {
       })
       .fail(jqXHR => {
         const err = jqXHR.responseText || jqXHR.statusText;
-        dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
+        dispatch(actions.setErrorMessage(`Error during downvote: ${err}!`));
       })
       .always(() => dispatch(actions.setLoading(false)));
     };
