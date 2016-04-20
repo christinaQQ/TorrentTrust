@@ -18,8 +18,10 @@ import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.api.exceptions.KeyPairRegistrationException;
+import moe.cdn.cweb.app.api.exceptions.NoSuchUserException;
 import moe.cdn.cweb.app.dto.IdentityMetadata;
 import moe.cdn.cweb.app.dto.UserName;
+import moe.cdn.cweb.app.dto.UserRef;
 
 /**
  * @author davix
@@ -83,5 +85,15 @@ public class UserIdentity extends CwebApiEndPoint {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    @POST
+    @Path("switch")
+    public IdentityMetadata switchIdentity(UserRef userRef) {
+        if (!getCwebIdentities().switchIdentity(userRef.getPublicKey())) {
+            throw new NoSuchUserException(userRef.getPublicKey());
+        }
+        KeyPair keyPair = getCwebIdentities().getKeyPair();
+        return new IdentityMetadata(getCwebIdentities().getConfiguredHandle(keyPair), keyPair);
     }
 }

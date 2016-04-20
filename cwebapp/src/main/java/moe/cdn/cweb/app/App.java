@@ -23,16 +23,15 @@ import java.util.EnumSet;
 public class App {
     public static final String DHT_PORT_INIT_PARAM = "moe.cdn.cweb.app.dht-port";
     public static final String STATE_FILE_URI_INIT_PARAM = "moe.cdn.cweb.app.data-file-path";
-
-    private static final Logger logger = LogManager.getLogger();
     private static final int DEFAULT_APP_PORT = 8080;
     private static final String DEFAULT_DATA_DIR_PATH = ".";
     private static final String DATA_FILENAME = "state.json";
 
-    private static final boolean DEBUG = true; // FIXME turn off debug mode
+    static {
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+    }
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         Options options = new Options();
         Option appPortOption =
                 Option.builder().longOpt("app-port").hasArg().type(Number.class).argName("n")
