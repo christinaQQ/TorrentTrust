@@ -1,16 +1,16 @@
 package moe.cdn.cweb.app;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
-import com.google.inject.servlet.GuiceServletContextListener;
 import moe.cdn.cweb.app.services.CwebApiService;
 import org.apache.commons.cli.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.DispatcherType;
 import java.nio.file.Path;
@@ -24,10 +24,12 @@ public class App {
     public static final String DHT_PORT_INIT_PARAM = "moe.cdn.cweb.app.dht-port";
     public static final String STATE_FILE_URI_INIT_PARAM = "moe.cdn.cweb.app.data-file-path";
 
+    private static final Logger logger = LogManager.getLogger();
     private static final int DEFAULT_APP_PORT = 8080;
     private static final String DEFAULT_DATA_DIR_PATH = ".";
     private static final String DATA_FILENAME = "state.json";
 
+    private static final boolean DEBUG = true; // FIXME turn off debug mode
 
     public static void main(String[] args) throws Exception {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
@@ -70,7 +72,13 @@ public class App {
         servletHandler.setInitParameter(DHT_PORT_INIT_PARAM, String.valueOf(1717));
 
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
-        servletHandler.addServlet(DefaultServlet.class, "/");
+        ServletHolder defaultServletHolder = new ServletHolder(new DefaultServlet());
+        if (DEBUG) {
+            String debugResourceBase = "src/main/resources";
+            logger.warn("Running in debug mode (reloading from {})", debugResourceBase);
+            defaultServletHolder.setInitParameter("resourceBase", debugResourceBase);
+        }
+        servletHandler.addServlet(defaultServletHolder, "/");
         servletHandler.addEventListener(new CwebGuiceServletConfig());
         servletHandler.addEventListener(new CwebApiService());
 

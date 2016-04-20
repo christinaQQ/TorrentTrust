@@ -1,6 +1,5 @@
 package moe.cdn.cweb;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -8,9 +7,9 @@ import java.util.concurrent.ExecutionException;
  */
 public interface TrustApi {
 
-     double TrustForObject(TorrentTrustProtos.User user,
-                                 TorrentTrustProtos.Vote.Assertion assertion,
-                                 SecurityProtos.Hash objectHash, TrustMetric trustMetric)
+    double trustForObject(TorrentTrustProtos.User user,
+                          TorrentTrustProtos.Vote.Assertion assertion,
+                          SecurityProtos.Hash objectHash, TrustMetric trustMetric)
             throws CwebApiException, ExecutionException, InterruptedException;
 
 

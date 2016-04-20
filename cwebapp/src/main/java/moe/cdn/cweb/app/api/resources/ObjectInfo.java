@@ -1,5 +1,6 @@
 package moe.cdn.cweb.app.api.resources;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.ByteString;
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.TorrentTrustProtos;
@@ -10,6 +11,7 @@ import javax.ws.rs.*;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -27,8 +29,11 @@ public class ObjectInfo extends CwebApiEndPoint {
     @GET
     @Path("{algo}")
     public TrustRating getTrustRating(@PathParam("hash") String hash,
-                                      @PathParam("algo") String algo) {
+                                      @PathParam("algo") String algo) throws ExecutionException,
+            InterruptedException {
         // TODO: getTrustRating
+        Optional<TorrentTrustProtos.User> user = getCwebIdentityApi().getUserIdentity().get();
+//        getCwebTrustApi().trustForObject(user, parseHash(hash), );
         return new TrustRating(new Random().nextDouble(), "rand");
     }
 

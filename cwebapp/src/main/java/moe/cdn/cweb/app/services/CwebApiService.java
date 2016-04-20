@@ -17,12 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 
-import moe.cdn.cweb.CwebApi;
-import moe.cdn.cweb.CwebModuleService;
-import moe.cdn.cweb.GlobalEnvironment;
-import moe.cdn.cweb.IdentityEnvironment;
-import moe.cdn.cweb.SecurityProtos;
-import moe.cdn.cweb.TrustGenerator;
+import moe.cdn.cweb.*;
 import moe.cdn.cweb.app.App;
 import moe.cdn.cweb.app.AppModule;
 import moe.cdn.cweb.dht.DhtModuleService;
@@ -133,6 +128,9 @@ public class CwebApiService implements ServletContextListener {
 
         TrustGenerator trustGenerator = injector.getInstance(TrustGenerator.class);
         sce.getServletContext().setAttribute(TrustGenerator.class.getName(), trustGenerator);
+
+        TrustApi trustApi = injector.getInstance(TrustApi.class);
+        sce.getServletContext().setAttribute(TrustApi.class.getName(), trustApi);
     }
 
     @Override
