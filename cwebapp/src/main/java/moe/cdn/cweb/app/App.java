@@ -3,9 +3,8 @@ package moe.cdn.cweb.app;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
+import com.google.inject.servlet.GuiceServletContextListener;
 import moe.cdn.cweb.app.services.CwebApiService;
-import moe.cdn.cweb.security.utils.KeyUtils;
 import org.apache.commons.cli.*;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -14,11 +13,8 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import javax.servlet.DispatcherType;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.EnumSet;
 
 /**
@@ -26,7 +22,12 @@ import java.util.EnumSet;
  */
 public class App {
     public static final String DHT_PORT_INIT_PARAM = "moe.cdn.cweb.app.dht-port";
+    public static final String STATE_FILE_URI_INIT_PARAM = "moe.cdn.cweb.app.data-file-path";
+
     private static final int DEFAULT_APP_PORT = 8080;
+    private static final String DEFAULT_DATA_DIR_PATH = ".";
+    private static final String DATA_FILENAME = "state.json";
+
 
     public static void main(String[] args) throws Exception {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
@@ -37,7 +38,7 @@ public class App {
                                 + "application.")
                         .build();
         Option flatFileOption =
-                Option.builder().longOpt("data-file").hasArg().type(String.class).argName("s")
+                Option.builder().longOpt("data-dir").hasArg().type(String.class).argName("s")
                         .desc("The file that stores the data for this users identities, votes, "
                                 + "etc.")
                         .build();
@@ -54,50 +55,24 @@ public class App {
             appPort = (int) parsedOptionValue;
         }
         Object parsedFileOptionValue = cmd.getParsedOptionValue("data-file");
-        Path settingsPath;
+        Path statePath;
         if (parsedFileOptionValue == null) {
-            settingsPath = Paths.get(System.getProperty("user.home"), ".cweb-settings");
+            statePath = Paths.get(DEFAULT_DATA_DIR_PATH, DATA_FILENAME);
         } else {
-            settingsPath = Paths.get((String) parsedFileOptionValue);
+            statePath = Paths.get((String) parsedFileOptionValue, DATA_FILENAME);
         }
-        if (!Files.exists(settingsPath)) {
-            // ok we need to create a user identity here.. no idea how to do
-            // that...
-            KeyPair keyPair = KeyUtils.generateKeyPair();
-            String pubKey = Base64.getEncoder()
-                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String privKey = Base64.getEncoder()
-                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String[] lines = {"{", "\"error_message\": null,", "\"info_message\": null,",
-                    "\"trusted_identities\": {\"" + pubKey + "\": []},",
-                    "\"possible_trust_algorithms\": [",
-                    "    {\"id\": \"EIGENTRUST\", \"name\": \"Eigentrust\"},",
-                    "    {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only Friends\"},",
-                    "    {\"id\": \"FRIEND_OF_FRIEND\", \"name\": \"Friends of friends\"}", "  ],",
-                    "\"current_trust_algorithm\": {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only "
-                            + "Friends\"},",
-                    "\"current_identity\": {\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
-                            + " \", \"privateKey\": \"" + privKey + "\"}",
-                    "\"user_identities\": [{\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
-                            + " \", \"privateKey\": \"" + privKey + "\"}]",
-                    "\"torrent_lists\": {\"" + pubKey + "\": []}", "}"
-
-            };
-
-            Files.write(settingsPath, Arrays.asList(lines));
-        }
-
-        // also we need to pass in this path to the Jetty app
-
-        Injector injector = Guice.createInjector(new AppServletModule());
 
         Server server = new Server(appPort);
 
         ServletContextHandler servletHandler = new ServletContextHandler();
 
+        servletHandler.setInitParameter(STATE_FILE_URI_INIT_PARAM, statePath.toUri().toString());
+        servletHandler.setInitParameter(DHT_PORT_INIT_PARAM, String.valueOf(1717));
+
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         servletHandler.addServlet(DefaultServlet.class, "/");
-        servletHandler.addEventListener(new CwebApiService(1717));
+        servletHandler.addEventListener(new CwebGuiceServletConfig());
+        servletHandler.addEventListener(new CwebApiService());
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] {servletHandler});
