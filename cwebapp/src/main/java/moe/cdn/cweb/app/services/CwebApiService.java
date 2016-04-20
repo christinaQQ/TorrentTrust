@@ -94,9 +94,9 @@ public class CwebApiService implements ServletContextListener {
                     "\"current_trust_algorithm\": {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only "
                             + "Friends\"},",
                     "\"current_identity\": {\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
-                            + " \", \"privateKey\": \"" + privKey + "\"}",
+                            + " \", \"privateKey\": \"" + privKey + "\"},",
                     "\"user_identities\": [{\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
-                            + " \", \"privateKey\": \"" + privKey + "\"}]",
+                            + " \", \"privateKey\": \"" + privKey + "\"}],",
                     "\"torrent_lists\": {\"" + pubKey + "\": []}", "}"};
             try {
                 Files.write(stateFilePath, Arrays.asList(lines));
