@@ -195,6 +195,7 @@ module.exports = actions = {
   createNewIdentity({name}) {
     let publicKey, privateKey;
     return (dispatch, getState) => {
+      dispatch(this.setLoading(true));
       $.ajax({
         url: '/api/identity',
         type: 'POST',
@@ -226,7 +227,8 @@ module.exports = actions = {
       .fail(jqXHR => {
         const err = jqXHR.responseText || jqXHR.statusText;
         dispatch(actions.setErrorMessage(`Error creating identity: ${err}!`));
-      });
+      })
+      .always(() => dispatch(this.setLoading(false)));
     };
   }
 };
