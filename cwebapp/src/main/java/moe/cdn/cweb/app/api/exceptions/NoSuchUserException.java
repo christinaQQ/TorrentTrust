@@ -11,7 +11,7 @@ public class NoSuchUserException extends NoSuchThingException {
     }
 
     public NoSuchUserException(Key publicKey) {
-        this(Representations.asString(publicKey));
+        this("No such user: " + Representations.asString(publicKey));
     }
 
     public NoSuchUserException(String message) {

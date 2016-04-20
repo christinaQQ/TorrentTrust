@@ -22,9 +22,10 @@ import moe.cdn.cweb.security.utils.KeyUtils;
  */
 public class AppModule extends AbstractModule {
     private final GlobalEnvironment environment;
+    private final IdentityEnvironment identities;
 
     public AppModule(int port, String... args) {
-        KeyEnvironment identityEnvironment;
+        IdentityEnvironment identityEnvironment;
         try {
             identityEnvironment = IdentityEnvironment.readFromFile(
                     new File(getClass().getClassLoader().getResource("identities.ini").toURI()));
@@ -32,8 +33,9 @@ public class AppModule extends AbstractModule {
             e.printStackTrace();
             identityEnvironment = new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default");
         }
+        identities = identityEnvironment;
         environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
-                .setId(new CwebId(new Random())).setKeyEnvironment(identityEnvironment).build();
+                .setId(new CwebId(new Random())).setKeyEnvironment(identities).build();
     }
 
     @Override
@@ -48,6 +50,10 @@ public class AppModule extends AbstractModule {
 
     public GlobalEnvironment getEnvironment() {
         return environment;
+    }
+
+    public IdentityEnvironment getIdentities() {
+        return identities;
     }
 
 }

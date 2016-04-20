@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.ini4j.Ini;
 
@@ -97,6 +98,11 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     @Override
     public KeyPair getKeyPair() {
         return keyEnvironment.getKeyPair();
+    }
+
+    @Override
+    public Iterator<KeyPair> iterator() {
+        return keyEnvironment.iterator();
     }
 
     /**

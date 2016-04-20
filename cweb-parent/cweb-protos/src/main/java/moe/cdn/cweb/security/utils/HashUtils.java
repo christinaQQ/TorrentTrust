@@ -1,23 +1,23 @@
 package moe.cdn.cweb.security.utils;
 
-import com.google.protobuf.ByteString;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.google.protobuf.ByteString;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
+
 public final class HashUtils {
     // Please don't instantiate this class
-    private HashUtils() {
-    }
+    private HashUtils() {}
 
     /**
      * Calculates the SHA1 hash of a given byte array.
      *
      * @param bytes input byte array
      * @return sha1 value of the input bytes array. Length is always 20 (160
-     * bits)
+     *         bits)
      */
     public static byte[] sha1(byte[] bytes) {
         try {
@@ -33,7 +33,7 @@ public final class HashUtils {
      *
      * @param bytes input byte array
      * @return sha1 value of the input bytes array. Length is always 20 (160
-     * bits)
+     *         bits)
      */
     public static byte[] sha256(byte[] bytes) {
         try {
@@ -86,5 +86,35 @@ public final class HashUtils {
      */
     public static Hash sha1HashOf(String str) {
         return hashOf(str.getBytes());
+    }
+
+    /**
+     * Produces a hex encoded representation of the byte array
+     * 
+     * @param bytes
+     * @return
+     */
+    public static String toHexEncoding(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(String.format("%02x", bytes[i]));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Produces a byte array from the hex encoding
+     * 
+     * @param hex
+     * @return
+     */
+    public static byte[] fromHexEncoding(String hex) {
+        int len = hex.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+                    + Character.digit(hex.charAt(i + 1), 16));
+        }
+        return data;
     }
 }

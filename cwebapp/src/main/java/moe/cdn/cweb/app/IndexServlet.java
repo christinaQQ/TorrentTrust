@@ -1,15 +1,15 @@
 package moe.cdn.cweb.app;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import moe.cdn.cweb.app.services.CwebApiService;
 
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Singleton
 public class IndexServlet extends HttpServlet {
@@ -35,7 +35,7 @@ public class IndexServlet extends HttpServlet {
                 "<script>document.write('<script src=\"http://' + (location.host || 'localhost')"
                         + ".split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')"
                         + "</script>");
-        // writer.print(this.getHydrationScript());
+         writer.print(getHydrationScript());
         for (String script : scripts) {
             writer.print(String.format(scriptTemplate, script));
         }
@@ -45,8 +45,9 @@ public class IndexServlet extends HttpServlet {
     }
 
     private String getHydrationScript() throws IOException {
-        String stateFilePath = this.getInitParameter("stateFilePath");
-        String initialStateJSON = Files.toString(new File(stateFilePath), Charsets.UTF_8);
-        return "<script>window.INITIAL_APP_STATE = " + initialStateJSON + "</script>";
+        Path stateFilePath = (Path) getServletContext().getAttribute(
+                CwebApiService.STATE_FILE_PATH_ATTRIBUTE);
+        String initialStateJson = new String(Files.readAllBytes(stateFilePath));
+        return "<script>window.INITIAL_APP_STATE = " + initialStateJson + "</script>";
     }
 }

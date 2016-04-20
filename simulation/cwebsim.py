@@ -31,7 +31,7 @@ def calculateTrustMetric(u, v, trust_metric, cutoff = 2):
     return _eigentrust_values[v]
 
 def calculateEigentrustMetric(u, eigentrust, cutoff = .001):
-  return eigentrust[u] > cutoff
+  return eigentrust[u] > 0
 
 
 def calculateEigentrust(users, iterations):
