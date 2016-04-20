@@ -13,126 +13,53 @@ import java.util.*;
 class TrustGeneratorImpl implements TrustGenerator {
 
     private final CwebApi api;
+    private Map<User, Double> centralityCache;
 
     @Inject
     public TrustGeneratorImpl(CwebApi api) {
         this.api = api;
-    }
-
-    private static int ratingToIntValue(Vote.Assertion.Rating rating) {
-        switch (rating) {
-            case BAD:
-                return -1;
-            case GOOD:
-                return 1;
-            case UNRECOGNIZED:
-                return 0;
-            default:
-                throw new IllegalStateException("missing enum branch");
-        }
+        centralityCache = null;
     }
 
     @Override
-    public double correlationCoefficient(User a, User b) {
-        Set<VoteWrapperObject> A_votes = new HashSet<>();
-        Set<VoteWrapperObject> B_votes = new HashSet<>();
-        HashMap<VoteWrapperObject, VoteWrapperObject> overlappingVotes = new HashMap<>();
+    public double correlationCoefficient(User a, User b) throws CwebApiException {
+        // build the vectors
+        Map<SecurityProtos.Hash, Vote> voteVectorA = new HashMap<>();
 
-        try {
-            for (Vote v : api.getVotesForUser(a)) {
-                A_votes.add(new VoteWrapperObject(v));
-            }
-            for (Vote v : api.getVotesForUser(b)) {
-                B_votes.add(new VoteWrapperObject(v));
-            }
-        } catch (CwebApiException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return 0;
+        double score = 0;
+        for (Vote v : api.getVotesForUser(a)) {
+            voteVectorA.put(v.getContentHash(), v);
         }
-
-        Set<VoteWrapperObject> overlapping_content = new HashSet<>(A_votes);
-        overlapping_content.retainAll(B_votes);
-        for (VoteWrapperObject v : overlapping_content) {
-            overlappingVotes.put(v, null);
-        }
-
-        // FIXME
-        for (VoteWrapperObject v : B_votes) {
-            if (overlappingVotes.containsKey(v)) {
-                overlappingVotes.put(v, v);
+        for (Vote v : api.getVotesForUser(b)) {
+            // only handle overlapping content
+            if (voteVectorA.containsKey(v.getContentHash())) {
+                score += voteVectorA.get(v.getContentHash()).getAssertion(0).getRatingValue() *
+                        v.getAssertion(0).getRatingValue();
             }
         }
+        return score;
+    }
 
-        double positive_a = 0;
-        double positive_b = 0;
-        double positive_both = 0;
-
-        double total_assertions_a = 0;
-        double total_assertions_b = 0;
-        double total_assertions_both = 0;
-
-        // calculate positive a
-        for (VoteWrapperObject v : A_votes) {
-            for (Vote.Assertion assertion : v.vote.getAssertionList()) {
-                if (assertion.getRating() == Vote.Assertion.Rating.GOOD) {
-                    positive_a++;
-                }
-                total_assertions_a++;
-            }
+    @Override
+    public double trustCoefficient(User a, User b, TrustApi.TrustMetric trustMetric) {
+        switch (trustMetric) {
+            case IMMEDIATE :
+                return trustCoefficientDirect(a, b);
+            case NETWORK:
+                return trustCoefficientNetwork(a, b);
+            case CENTRALITY:
+                return trustCoefficientCentrality(a, b);
+            default:
+                return 0.0;
         }
-
-        // calculate positive b
-        for (VoteWrapperObject v : B_votes) {
-            for (Vote.Assertion assertion : v.vote.getAssertionList()) {
-                if (assertion.getRating() == Vote.Assertion.Rating.GOOD) {
-                    positive_b++;
-                }
-                total_assertions_b++;
-            }
-        }
-
-        // calculate positive both
-        for (VoteWrapperObject v : overlappingVotes.keySet()) {
-            List<Vote.Assertion> A_assertions = v.vote.getAssertionList();
-            List<Vote.Assertion> B_assertions = overlappingVotes.get(v).vote.getAssertionList();
-            // okay screw sets, let's do it with lists for something working and
-            // make efficient
-            // later
-            // Set<Vote.Assertion> A_assertions = new
-            // HashSet<>(A_vote.vote.getAssertionList());
-            // Set<Vote.Assertion> B_assertions = new
-            // HashSet<>(B_vote.vote.getAssertionList());
-
-            for (Vote.Assertion a_assertion : A_assertions) {
-                for (Vote.Assertion b_assertion : B_assertions) {
-                    if (a_assertion.getContentProperty() == b_assertion.getContentProperty()) {
-                        total_assertions_both++;
-                        if (a_assertion.getRating() == b_assertion.getRating()
-                                && a_assertion.getRating() == Vote.Assertion.Rating.GOOD) {
-                            positive_both++;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        positive_a = positive_a / total_assertions_a;
-        positive_b = positive_b / total_assertions_b;
-        positive_both = positive_both / total_assertions_both;
-
-        double theta = (positive_both - positive_a * positive_b)
-                / Math.sqrt(positive_a * (1 - positive_a) * positive_b * (1 - positive_b));
-        return theta;
     }
 
     // first iteration: Trust only users connected to A.
     @Override
     public double trustCoefficientDirect(User a, User b) {
-        List<User> trustedUsers;
+        Set<User> trustedUsers;
         try {
-            trustedUsers = api.getTrustedUsersForUser(a);
+            trustedUsers = new HashSet<>(api.getTrustedUsersForUser(a));
             return trustedUsers.contains(b) ? 1 : 0;
         } catch (CwebApiException e) {
             // TODO Auto-generated catch block
@@ -184,30 +111,13 @@ class TrustGeneratorImpl implements TrustGenerator {
         return 0;
     }
 
-    private class VoteWrapperObject {
-        Vote vote;
-
-        private VoteWrapperObject(Vote v) {
-            this.vote = v;
+    @Override
+    public double trustCoefficientCentrality(User src, User tgt) {
+        //arbitrarily say run 10 iterations of eigenvector centrality
+        if (centralityCache != null) {
+            return centralityCache.get(tgt);
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            }
-
-            if (!(o instanceof VoteWrapperObject)) {
-                return false;
-            }
-
-            VoteWrapperObject otherVote = (VoteWrapperObject) o;
-            return (this.vote.getContentHash().equals(otherVote.vote.getContentHash()));
-        }
-
-        @Override
-        public int hashCode() {
-            return this.vote.getContentHash().hashCode();
-        }
+        return 0.0;
     }
+
 }

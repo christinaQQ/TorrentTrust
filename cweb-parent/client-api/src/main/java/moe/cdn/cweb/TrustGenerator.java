@@ -15,7 +15,17 @@ public interface TrustGenerator {
      * @param b the user being queried
      * @return a double representing the amount of correlation between tahem
      */
-    double correlationCoefficient(User a, User b);
+    double correlationCoefficient(User a, User b) throws CwebApiException;
+
+
+    /**
+     *
+     * @param a the user making this call
+     * @param b the user being evaluated
+     * @param trustMetric the type of trust employed by user
+     * @return a double representing the trust
+     */
+    double trustCoefficient(User a, User b, TrustApi.TrustMetric trustMetric);
 
     /**
      * Determines whether a user is in the calling user's direct network (1
@@ -50,5 +60,9 @@ public interface TrustGenerator {
      * src}'s network; otherwise 0
      */
     double trustCoefficientNumSteps(User src, User tgt, int numHops);
+
+    //TODO: include parameter for number of iterations
+    double trustCoefficientCentrality(User src, User tgt);
+
 
 }
