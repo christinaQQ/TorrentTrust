@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,17 +32,20 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private final int udpPort;
     private final CwebId myId;
     private final KeyEnvironment keyEnvironment;
+    private final URI keyEnvironmentConfigPath;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
             int tcpPort,
             int udpPort,
             CwebId myId,
-            KeyEnvironment identityEnvironment) {
+            KeyEnvironment identityEnvironment,
+            URI keyEnvironmentConfigPath) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;
         this.myId = myId;
         this.keyEnvironment = checkNotNull(identityEnvironment);
+        this.keyEnvironmentConfigPath = checkNotNull(keyEnvironmentConfigPath);
     }
 
     public static Builder newBuilder() {
@@ -69,8 +73,12 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     }
 
     public static Builder newBuilderFromConfigFile(File configFile) throws IOException {
-        Ini config = new Ini(configFile);
-        // TODO actually read the config
+        Ini config = new Ini();
+        config.getConfig().setMultiSection(true);
+        config.load(configFile);
+        
+        
+        
         Builder builder = newBuilder();
         return builder;
     }
@@ -105,6 +113,10 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         return keyEnvironment.iterator();
     }
 
+    public URI getKeyEnvironmentConfigPath() {
+        return keyEnvironmentConfigPath;
+    }
+
     /**
      * Builder for {@link GlobalEnvironment}.
      *
@@ -116,6 +128,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         private int udpPort;
         private CwebId myId;
         private KeyEnvironment keyEnvironment;
+        private URI keyEnvironmentConfigPath;
 
         public Builder() {
             idAndAddresses = new ArrayList<>();
@@ -157,8 +170,14 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
             return this;
         }
 
+        public Builder setKeyEnvironmentConfigPath(URI keyEnvironmentConfigPath) {
+            this.keyEnvironmentConfigPath = checkNotNull(keyEnvironmentConfigPath);
+            return this;
+        }
+
         public GlobalEnvironment build() {
-            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyEnvironment);
+            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyEnvironment,
+                    keyEnvironmentConfigPath);
         }
     }
 }

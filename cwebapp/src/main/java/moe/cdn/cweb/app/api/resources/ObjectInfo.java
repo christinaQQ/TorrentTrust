@@ -1,21 +1,31 @@
 package moe.cdn.cweb.app.api.resources;
 
+import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
 import com.google.protobuf.ByteString;
+
 import moe.cdn.cweb.CwebApiException;
 import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.TrustApi;
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.api.exceptions.NoSuchUserException;
 import moe.cdn.cweb.app.dto.TrustRating;
-
-import javax.ws.rs.*;
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author davix
@@ -53,37 +63,48 @@ public class ObjectInfo extends CwebApiEndPoint {
         throw new NoSuchUserException("Current user does not exist in the network");
     }
 
+    @GET
+    public List<Vote> getVoteHistory(@PathParam("hash") String hash) throws SignatureException,
+            InvalidKeyException, ExecutionException, InterruptedException {
+        return getCwebVoteApi()
+                .getAllVotes(Hash.newBuilder().setAlgorithm(HashAlgorithm.TORRENT)
+                        .setHashValue(parseHash(hash)).build())
+                .get().stream().collect(Collectors.toList());
+    }
+
     @POST
     @Path("up")
-    public boolean upVote(@PathParam("hash") String hash) throws SignatureException,
+    public void upVote(@PathParam("hash") String hash) throws SignatureException,
             InvalidKeyException, ExecutionException, InterruptedException {
-        getCwebVoteApi()
+        if (!getCwebVoteApi()
                 .castVote(TorrentTrustProtos.Vote.newBuilder()
                         .addAssertion(TorrentTrustProtos.Vote.Assertion.newBuilder()
                                 .setContentProperty(DEFAULT_CONTENT_PROPERTY)
                                 .setRating(TorrentTrustProtos.Vote.Assertion.Rating.GOOD))
-                        .setContentHash(SecurityProtos.Hash.newBuilder()
-                                .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.SHA_1)
-                                .setHashValue(parseHash(hash)))
-                        .build())
-                .get();
-        return true;
+                .setContentHash(SecurityProtos.Hash.newBuilder()
+                        .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.TORRENT)
+                        .setHashValue(parseHash(hash)))
+                .setOwnerPublicKey(getCwebIdentities().getKeyPair().getPublicKey()).build())
+                .get()) {
+            throw new RuntimeException("Didn't work!");
+        }
     }
 
     @POST
     @Path("down")
-    public boolean downVote(@PathParam("hash") String hash) throws SignatureException,
+    public void downVote(@PathParam("hash") String hash) throws SignatureException,
             InvalidKeyException, ExecutionException, InterruptedException {
-        getCwebVoteApi()
+        if (!getCwebVoteApi()
                 .castVote(TorrentTrustProtos.Vote.newBuilder()
                         .addAssertion(TorrentTrustProtos.Vote.Assertion.newBuilder()
                                 .setContentProperty(DEFAULT_CONTENT_PROPERTY)
                                 .setRating(TorrentTrustProtos.Vote.Assertion.Rating.BAD))
-                        .setContentHash(SecurityProtos.Hash.newBuilder()
-                                .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.SHA_1)
-                                .setHashValue(parseHash(hash)))
-                        .build())
-                .get();
-        return true;
+                .setContentHash(SecurityProtos.Hash.newBuilder()
+                        .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.TORRENT)
+                        .setHashValue(parseHash(hash)))
+                .setOwnerPublicKey(getCwebIdentities().getKeyPair().getPublicKey()).build())
+                .get()) {
+            throw new RuntimeException("Didn't work!");
+        }
     }
 }
