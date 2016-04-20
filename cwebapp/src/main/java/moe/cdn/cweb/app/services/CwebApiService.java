@@ -83,15 +83,15 @@ public class CwebApiService implements ServletContextListener {
                     "\"info_message\": null,",
                     "\"trusted_identities\": {\"" + publicKey + "\": []},",
                     "\"possible_trust_algorithms\": [",
-                    "    {\"id\": \"EIGENTRUST\", \"name\": \"Eigentrust\"},",
-                    "    {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only Friends\"},",
-                    "    {\"id\": \"FRIEND_OF_FRIEND\", \"name\": \"Friends of friends\"}", "  ],",
-                    "\"current_trust_algorithm\": {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only "
+                    "    {\"id\":\"EIGENTRUST\",\"name\":\"Eigentrust\"},",
+                    "    {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only Friends\"},",
+                    "    {\"id\":\"FRIEND_OF_FRIEND\",\"name\":\"Friends of friends\"}", "  ],",
+                    "\"current_trust_algorithm\": {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only "
                             + "Friends\"},",
-                    "\"current_identity\": {\"name\": \"Default ID\", \"publicKey\": \" " + publicKey
-                            + " \", \"privateKey\": \"" + privateKey + "\"},",
-                    "\"user_identities\": [{\"name\": \"Default ID\", \"publicKey\": \" " + publicKey
-                            + " \", \"privateKey\": \"" + privateKey + "\"}],",
+                    "\"current_identity\": {\"name\":\"Default ID\",\"publicKey\":\"" + publicKey
+                            + "\",\"privateKey\":\"" + privateKey + "\"},",
+                    "\"user_identities\": [{\"name\":\"Default ID\",\"publicKey\":\"" + publicKey
+                            + "\",\"privateKey\":\"" + privateKey + "\"}],",
                     "\"torrent_lists\": {\"" + publicKey + "\": []}", "}"};
             try {
                 Files.write(stateFilePath, Arrays.asList(lines));

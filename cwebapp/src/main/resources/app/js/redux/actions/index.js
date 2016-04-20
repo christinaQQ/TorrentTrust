@@ -14,7 +14,7 @@ var persistState = function (state) {
     type: 'POST',
     data: JSON.stringify(newState, null, '\t'),
     processData: false,
-    contentType: 'application/json'
+    contentType: 'text/plain'
   });
 };
 
