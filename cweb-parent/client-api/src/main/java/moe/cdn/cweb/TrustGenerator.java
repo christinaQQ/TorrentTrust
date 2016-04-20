@@ -15,7 +15,7 @@ public interface TrustGenerator {
      * @param b the user being queried
      * @return a double representing the amount of correlation between tahem
      */
-    double correlationCoefficient(User a, User b);
+    double correlationCoefficient(User a, User b) throws CwebApiException;
 
 
     /**
@@ -60,5 +60,9 @@ public interface TrustGenerator {
      * src}'s network; otherwise 0
      */
     double trustCoefficientNumSteps(User src, User tgt, int numHops);
+
+    //TODO: include parameter for number of iterations
+    double trustCoefficientCentrality(User src, User tgt);
+
 
 }
