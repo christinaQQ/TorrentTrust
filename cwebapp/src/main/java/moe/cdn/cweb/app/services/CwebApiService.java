@@ -3,10 +3,7 @@ package moe.cdn.cweb.app.services;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import moe.cdn.cweb.CwebApi;
-import moe.cdn.cweb.CwebModuleService;
-import moe.cdn.cweb.GlobalEnvironment;
-import moe.cdn.cweb.IdentityEnvironment;
+import moe.cdn.cweb.*;
 import moe.cdn.cweb.app.App;
 import moe.cdn.cweb.app.AppModule;
 import moe.cdn.cweb.dht.DhtModuleService;
@@ -108,6 +105,9 @@ public class CwebApiService implements ServletContextListener {
 
         peerDht = injector.getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
 
+        sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(),
+                appModule.getEnvironment());
+
         CwebApi cwebApi = injector.getInstance(CwebApi.class);
         sce.getServletContext().setAttribute(CwebApi.class.getName(), cwebApi);
 
@@ -117,10 +117,11 @@ public class CwebApiService implements ServletContextListener {
         CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
         sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);
 
-        sce.getServletContext().setAttribute(IdentityEnvironment.class.getName(), appModule.getIdentities());
-        
-        sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(),
-                appModule.getEnvironment());
+        sce.getServletContext().setAttribute(IdentityEnvironment.class.getName(), appModule
+                .getIdentities());
+
+        TrustGenerator trustGenerator = injector.getInstance(TrustGenerator.class);
+        sce.getServletContext().setAttribute(TrustGenerator.class.getName(), trustGenerator);
     }
 
     @Override

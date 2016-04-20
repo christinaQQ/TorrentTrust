@@ -3,6 +3,8 @@ package moe.cdn.cweb.app.api;
 import moe.cdn.cweb.CwebApi;
 import moe.cdn.cweb.GlobalEnvironment;
 import moe.cdn.cweb.IdentityEnvironment;
+import moe.cdn.cweb.TrustGenerator;
+import moe.cdn.cweb.app.services.CwebApiService;
 import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
@@ -18,6 +20,14 @@ public abstract class CwebApiEndPoint {
     @Context
     ServletContext servletContext;
 
+    protected Path getStateFilePath() {
+        return (Path) servletContext.getAttribute(CwebApiService.STATE_FILE_PATH_ATTRIBUTE);
+    }
+
+    protected GlobalEnvironment getCwebEnvironment() {
+        return (GlobalEnvironment) servletContext.getAttribute(GlobalEnvironment.class.getName());
+    }
+
     protected CwebApi getCwebApi() {
         return (CwebApi) servletContext.getAttribute(CwebApi.class.getName());
     }
@@ -31,14 +41,6 @@ public abstract class CwebApiEndPoint {
         return (CwebVoteApi) servletContext.getAttribute(CwebVoteApi.class.getName());
     }
 
-    protected GlobalEnvironment getCwebEnvironment() {
-        return (GlobalEnvironment) servletContext.getAttribute(GlobalEnvironment.class.getName());
-    }
-
-    protected Path getStateFilePath() {
-        return (Path) servletContext.getAttribute(CwebApiService.STATE_FILE_PATH_ATTRIBUTE);
-    }
-
     protected IdentityEnvironment getCwebIdentities() {
         return (IdentityEnvironment) servletContext
                 .getAttribute(IdentityEnvironment.class.getName());
@@ -46,5 +48,9 @@ public abstract class CwebApiEndPoint {
 
     protected CwebIdentityApi getCwebIdentityApi() {
         return (CwebIdentityApi) servletContext.getAttribute(CwebIdentityApi.class.getName());
+    }
+
+    protected TrustGenerator getCwebTrustGenerator() {
+        return (TrustGenerator) servletContext.getAttribute(TrustGenerator.class.getName());
     }
 }
