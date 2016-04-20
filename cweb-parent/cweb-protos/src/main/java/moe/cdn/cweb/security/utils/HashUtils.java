@@ -1,23 +1,23 @@
 package moe.cdn.cweb.security.utils;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import com.google.protobuf.ByteString;
-
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public final class HashUtils {
     // Please don't instantiate this class
-    private HashUtils() {}
+    private HashUtils() {
+    }
 
     /**
      * Calculates the SHA1 hash of a given byte array.
      *
      * @param bytes input byte array
      * @return sha1 value of the input bytes array. Length is always 20 (160
-     *         bits)
+     * bits)
      */
     public static byte[] sha1(byte[] bytes) {
         try {
@@ -33,7 +33,7 @@ public final class HashUtils {
      *
      * @param bytes input byte array
      * @return sha1 value of the input bytes array. Length is always 20 (160
-     *         bits)
+     * bits)
      */
     public static byte[] sha256(byte[] bytes) {
         try {
@@ -52,8 +52,10 @@ public final class HashUtils {
      * @return sha256 value of the input bytes array packaged as such.
      */
     public static Hash hashOf(byte[] bytes) {
-        return Hash.newBuilder().setAlgorithm(HashAlgorithm.SHA_256)
-                .setHashValue(ByteString.copyFrom(sha256(bytes))).build();
+        return Hash.newBuilder()
+                .setAlgorithm(HashAlgorithm.SHA_256)
+                .setHashValue(ByteString.copyFrom(sha256(bytes)))
+                .build();
     }
 
     /**
@@ -90,7 +92,7 @@ public final class HashUtils {
 
     /**
      * Produces a hex encoded representation of the byte array
-     * 
+     *
      * @param bytes
      * @return
      */
@@ -104,7 +106,7 @@ public final class HashUtils {
 
     /**
      * Produces a byte array from the hex encoding
-     * 
+     *
      * @param hex
      * @return
      */
@@ -116,5 +118,9 @@ public final class HashUtils {
                     + Character.digit(hex.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    public static Hash hashOf(ByteString byteString) {
+        return hashOf(byteString.toByteArray());
     }
 }

@@ -33,15 +33,12 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String UNNAMED = "Unnamed";
-    private static final Comparator<KeyPair> KEY_PAIR_COMPARATOR = new Comparator<KeyPair>() {
-        @Override
-        public int compare(KeyPair a, KeyPair b) {
+    private static final Comparator<KeyPair> KEY_PAIR_COMPARATOR = (a, b) -> {
             BigInteger aValue =
                     new BigInteger(1, a.getPublicKey().getHash().getHashValue().toByteArray());
             BigInteger bValue =
                     new BigInteger(1, b.getPublicKey().getHash().getHashValue().toByteArray());
             return aValue.compareTo(bValue);
-        }
     };
 
     private final SortedMap<KeyPair, String> identities;
@@ -64,79 +61,22 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
         currentIdentity = Optional.of(keyPair);
     }
 
-    @Override
-    public KeyPair getKeyPair() {
-        return currentIdentity.get();
-    }
-
-    /**
-     * Gets the handle that was configured in the config file. This should be
-     * the same as the one in the DHT but is not necessarily the case.
-     * 
-     * @return the handle or null if the identity was not part of the
-     *         configuration
-     */
-    public String getConfiguredHandle(KeyPair identity) {
-        return identities.get(identity);
-    }
-
-    /**
-     * Adds an identity to the environment. Note that just doing add does not
-     * save this identity.
-     * 
-     * @param keyPair key pair
-     * @param handle handle used
-     */
-    public void addIdentity(KeyPair keyPair, String handle) {
-        logger.info("Adding identity with handle {} and public key {}", handle,
-                Representations.asString(keyPair.getPublicKey()));
-        identities.put(keyPair, handle);
-    }
-
-    public void switchIdentity(KeyPair keyPair) {
-        if (identities.containsKey(keyPair)) {
-            currentIdentity = Optional.of(keyPair);
-        } else if (keyPair != null && keyPair.hasPrivateKey() && keyPair.hasPublicKey()) {
-            logger.warn("Identity we want to switch to was not in our identity table. Adding {}.",
-                    Representations.asString(keyPair.getPublicKey()));
-            identities.put(keyPair, UNNAMED);
-            currentIdentity = Optional.of(keyPair);
-        } else {
-            throw new RuntimeException("Attempted to invalid keypair.");
-        }
-    }
-
-    public boolean switchIdentity(Hash publicKeyHash) {
-        for (KeyPair keyPair : identities.keySet()) {
-            if (keyPair.getPublicKey().getHash().equals(publicKeyHash)) {
-                logger.info("Found identity with hash {}. Switching.",
-                        Representations.asString(publicKeyHash));
-                currentIdentity = Optional.of(keyPair);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Iterator<KeyPair> iterator() {
-        return identities.keySet().iterator();
-    }
-
     private static KeyPair readKeyPair(Section keyPairSection) {
         byte[] decodedKey = Base64.getDecoder().decode(keyPairSection.get("privateKey"));
-        Key privateKey =
-                Key.newBuilder().setType(KeyType.PRIVATE).setRaw(ByteString.copyFrom(decodedKey))
+        Key privateKey = Key.newBuilder()
+                .setType(KeyType.PRIVATE)
+                .setRaw(ByteString.copyFrom(decodedKey))
                         .setHash(HashUtils.hashOf(decodedKey)).build();
+        ByteString publicKeyRaw = ByteString.copyFrom(
+                Base64.getDecoder().decode(keyPairSection.get("publicKey").getBytes()));
         Key publicKey = keyPairSection.containsKey("publicKey")
                 ? Key.newBuilder().setType(KeyType.PUBLIC)
-                        .setRaw(ByteString.copyFrom(Base64.getDecoder()
-                                .decode(keyPairSection.get("publicKey").getBytes())))
-                .setHash(HashUtils
-                        .hashOf(Base64.getDecoder().decode(keyPairSection.get("publicKey"))))
+                                .setRaw(publicKeyRaw)
+                                .setHash(HashUtils.hashOf(publicKeyRaw))
                 .build()
-                : KeyUtils.fromKey(KeyUtils.toPublicKey(KeyUtils.importPrivateKey(privateKey)));
-        logger.info("Loaded key pair with public portion being {}",
-                Representations.asString(publicKey));
+                        : KeyUtils.fromKey(KeyUtils.toPublicKey(KeyUtils.importPrivateKey
+                (privateKey)));
+        logger.info("Loaded key pair with public portion {}", Representations.asString(publicKey));
         return KeyPair.newBuilder().setPrivateKey(privateKey).setPublicKey(publicKey).build();
     }
 
@@ -150,7 +90,7 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
         if (iniFile.containsKey("identity")) {
             for (Section identity : iniFile.getAll("identity")) {
                 if (!identity.containsKey("privateKey")) {
-                    // TODO Log error
+                    logger.warn("No `privateKey' key in [identity] section");
                     continue;
                 }
                 KeyPair keyPair = readKeyPair(identity);
@@ -169,7 +109,8 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
                 KeyPair defaultKey = readKeyPair(defaultSection);
                 if (!identityEnvironment.identities.containsKey(defaultKey)) {
                     identityEnvironment.addIdentity(defaultKey, defaultSection.containsKey("handle")
-                            ? defaultSection.get("handle") : "default");
+                                                                ? defaultSection.get("handle") :
+                                                                "default");
                 }
                 identityEnvironment.currentIdentity = Optional.of(defaultKey);
             } else if (defaultSection.containsKey("handle")) {
@@ -199,9 +140,78 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
         return identityEnvironment;
     }
 
-    public static void writeToFile(File configFile, IdentityEnvironment identityEnvironment) {
+    public static void writeToFile(File configFile, IdentityEnvironment identityEnvironment)
+            throws IOException {
         if (!configFile.exists() || !configFile.isFile() || !configFile.canWrite()) {
             throw new RuntimeException("Cannot write to location");
         }
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public KeyPair getKeyPair() {
+        return currentIdentity.get();
+    }
+
+    /**
+     * Gets the handle that was configured in the config file. This should be
+     * the same as the one in the DHT but is not necessarily the case.
+     *
+     * @return the handle or null if the identity was not part of the
+     * configuration
+     */
+    public String getConfiguredHandle(KeyPair identity) {
+        return identities.get(identity);
+    }
+
+    /**
+     * Adds an identity to the environment. Note that just doing add does not
+     * save this identity.
+     *
+     * @param keyPair key pair
+     * @param handle  handle used
+     */
+    public void addIdentity(KeyPair keyPair, String handle) {
+        identities.put(keyPair, handle);
+        logger.info("Added identity with handle {} and public key {}", handle,
+                Representations.asString(keyPair.getPublicKey()));
+    }
+
+    public boolean switchIdentity(KeyPair keyPair) {
+        if (identities.containsKey(keyPair)) {
+            currentIdentity = Optional.of(keyPair);
+            return true;
+        }
+        if (keyPair != null && keyPair.hasPrivateKey() && keyPair.hasPublicKey()) {
+            identities.put(keyPair, UNNAMED);
+            currentIdentity = Optional.of(keyPair);
+            logger.warn("Requested to switch to an identity with a previously unseen key pair. "
+                            + "Added key pair with public key {}",
+                    Representations.asString(keyPair.getPublicKey()));
+            return true;
+        }
+        if (keyPair != null) {
+            logger.error("Cannot switch to invalid key pair {}", Representations.asString(keyPair
+                    .getPublicKey()));
+        }
+        return false;
+    }
+
+    public boolean switchIdentity(Hash publicKeyHash) {
+        for (KeyPair keyPair : identities.keySet()) {
+            if (keyPair.getPublicKey().getHash().equals(publicKeyHash)) {
+                logger.info("Switching to identity with public key hash {}",
+                        Representations.asString(publicKeyHash));
+                currentIdentity = Optional.of(keyPair);
+                return true;
+            }
+        }
+        logger.error("No known identity with public key hash {}", publicKeyHash);
+        return false;
+    }
+
+    @Override
+    public Iterator<KeyPair> iterator() {
+        return identities.keySet().iterator();
     }
 }
