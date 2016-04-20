@@ -21,7 +21,7 @@ public class ExampleModule extends AbstractModule {
     private final GlobalEnvironment environment;
 
     public ExampleModule(int port, String... args) {
-        environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
+        environment = GlobalEnvironment.newBuilderFromArgs(args).setPort1(port)
                 .setId(new CwebId(new Random()))
                 .setKeyEnvironment(new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default"))
                 .setKeyEnvironmentConfigPath(URI.create("identities.ini"))

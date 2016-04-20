@@ -6,8 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Random;
 
-import org.eclipse.persistence.internal.oxm.record.UnmappedContentHandlerWrapper;
-
 import com.google.inject.AbstractModule;
 
 import moe.cdn.cweb.GlobalEnvironment;
@@ -27,7 +25,7 @@ public class AppModule extends AbstractModule {
     private final GlobalEnvironment environment;
     private final IdentityEnvironment identities;
 
-    public AppModule(int port, String... args) {
+    public AppModule(int port1, int port2, String... args) {
         IdentityEnvironment identityEnvironment;
         URI identityUri;
         try {
@@ -39,7 +37,9 @@ public class AppModule extends AbstractModule {
             identityEnvironment = new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default");
         }
         identities = identityEnvironment;
-        environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
+        environment = GlobalEnvironment.newBuilderFromArgs(args)
+                .setPort1(port1)
+                .setPort2(port2)
                 .setId(new CwebId(new Random())).setKeyEnvironment(identities)
                 .setKeyEnvironmentConfigPath(identityUri).build();
     }

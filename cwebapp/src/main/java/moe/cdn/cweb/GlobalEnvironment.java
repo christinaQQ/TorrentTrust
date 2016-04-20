@@ -28,21 +28,27 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     private static final int DEFAULT_PORT = 1717;
 
     private final Collection<DhtPeerAddress> idAndAddresses;
-    private final int tcpPort;
-    private final int udpPort;
+    private final int tcpPort1;
+    private final int udpPort1;
     private final CwebId myId;
     private final KeyEnvironment keyEnvironment;
     private final URI keyEnvironmentConfigPath;
+    private final int udpPort2;
+    private final int tcpPort2;
 
     private GlobalEnvironment(Collection<DhtPeerAddress> idAndAddresses,
-            int tcpPort,
-            int udpPort,
+            int tcpPort1,
+            int udpPort1,
+                              int tcpPort2,
+                              int udpPort2,
             CwebId myId,
             KeyEnvironment identityEnvironment,
             URI keyEnvironmentConfigPath) {
         this.idAndAddresses = checkNotNull(idAndAddresses);
-        this.tcpPort = tcpPort;
-        this.udpPort = udpPort;
+        this.tcpPort1 = tcpPort1;
+        this.udpPort1 = udpPort1;
+        this.tcpPort2 = tcpPort2;
+        this.udpPort2 = udpPort2;
         this.myId = myId;
         this.keyEnvironment = checkNotNull(identityEnvironment);
         this.keyEnvironmentConfigPath = checkNotNull(keyEnvironmentConfigPath);
@@ -76,7 +82,7 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         Ini config = new Ini();
         config.getConfig().setMultiSection(true);
         config.load(configFile);
-        
+        // TODO: newBuilderFromConfigFile
         
         
         Builder builder = newBuilder();
@@ -90,12 +96,22 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
 
     @Override
     public int getLocalTcpPort1() {
-        return tcpPort;
+        return tcpPort1;
     }
 
     @Override
     public int getLocalUdpPort1() {
-        return udpPort;
+        return udpPort1;
+    }
+
+    @Override
+    public int getLocalTcpPort2() {
+        return tcpPort2;
+    }
+
+    @Override
+    public int getLocalUdpPort2() {
+        return udpPort2;
     }
 
     @Override
@@ -124,32 +140,50 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
      */
     public static class Builder {
         private final ArrayList<DhtPeerAddress> idAndAddresses;
-        private int tcpPort;
-        private int udpPort;
+        private int tcpPort1;
+        private int udpPort1;
         private CwebId myId;
         private KeyEnvironment keyEnvironment;
         private URI keyEnvironmentConfigPath;
+        private int tcpPort2;
+        private int udpPort2;
 
         public Builder() {
             idAndAddresses = new ArrayList<>();
         }
 
-        public Builder setTcpPort(int port) {
-            tcpPort = port;
+        public Builder setTcpPort1(int port) {
+            tcpPort1 = port;
             return this;
         }
 
-        public Builder setUdpPort(int port) {
-            udpPort = port;
+        public Builder setUdpPort1(int port) {
+            udpPort1 = port;
+            return this;
+        }      
+        
+        public Builder setTcpPort2(int port) {
+            tcpPort2 = port;
             return this;
         }
 
-        public Builder setPort(int port) {
-            setTcpPort(port);
-            setUdpPort(port);
+        public Builder setUdpPort2(int port) {
+            udpPort2 = port;
             return this;
         }
 
+        public Builder setPort1(int port) {
+            setTcpPort1(port);
+            setUdpPort1(port);
+            return this;
+        }
+        
+        public Builder setPort2(int port) {
+            setTcpPort2(port);
+            setUdpPort2(port);
+            return this;
+        }
+        
         public Builder addIdAndAddress(CwebId id, HostAndPort hostAndPort) {
             idAndAddresses.add(new DhtPeerAddress(id, hostAndPort));
             return this;
@@ -176,8 +210,8 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
         }
 
         public GlobalEnvironment build() {
-            return new GlobalEnvironment(idAndAddresses, tcpPort, udpPort, myId, keyEnvironment,
-                    keyEnvironmentConfigPath);
+            return new GlobalEnvironment(idAndAddresses, tcpPort1, udpPort1, tcpPort2, udpPort2,
+                    myId, keyEnvironment, keyEnvironmentConfigPath);
         }
     }
 }

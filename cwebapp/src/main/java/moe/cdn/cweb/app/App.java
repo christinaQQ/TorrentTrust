@@ -3,8 +3,6 @@ package moe.cdn.cweb.app;
 import com.google.inject.servlet.GuiceFilter;
 import moe.cdn.cweb.app.services.CwebApiService;
 import org.apache.commons.cli.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -21,7 +19,8 @@ import java.util.EnumSet;
  * @author davix
  */
 public class App {
-    public static final String DHT_PORT_INIT_PARAM = "moe.cdn.cweb.app.dht-port";
+    public static final String DHT_PORT_1_INIT_PARAM = "moe.cdn.cweb.app.dht-port-1";
+    public static final String DHT_PORT_2_INIT_PARAM = "moe.cdn.cweb.app.dht-port-2";
     public static final String STATE_FILE_URI_INIT_PARAM = "moe.cdn.cweb.app.data-file-path";
     private static final int DEFAULT_APP_PORT = 8080;
     private static final String DEFAULT_DATA_DIR_PATH = ".";
@@ -68,7 +67,8 @@ public class App {
         ServletContextHandler servletHandler = new ServletContextHandler();
 
         servletHandler.setInitParameter(STATE_FILE_URI_INIT_PARAM, statePath.toUri().toString());
-        servletHandler.setInitParameter(DHT_PORT_INIT_PARAM, String.valueOf(1717));
+        servletHandler.setInitParameter(DHT_PORT_1_INIT_PARAM, String.valueOf(1717));
+        servletHandler.setInitParameter(DHT_PORT_2_INIT_PARAM, String.valueOf(1718));
 
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         ServletHolder defaultServletHolder = new ServletHolder(new DefaultServlet());

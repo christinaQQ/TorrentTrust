@@ -34,9 +34,11 @@ import moe.cdn.cweb.vote.CwebVoteApi;
 public class CwebApiService implements ServletContextListener {
     public static final String STATE_FILE_PATH_ATTRIBUTE =
             "moe.cdn.cweb.app.services.state-file-path";
-    private static final int DEFAULT_DHT_PORT = 1717;
+    private static final int DEFAULT_DHT_PORT_1 = 1717;
+    private static final int DEFAULT_DHT_PORT_2 = 1718;
 
-    private int dhtPort = DEFAULT_DHT_PORT;
+    private int dhtPort1 = DEFAULT_DHT_PORT_1;
+    private int dhtPort2 = DEFAULT_DHT_PORT_2;
     private String[] args;
     private ManagedPeer peerDht;
 
@@ -44,22 +46,32 @@ public class CwebApiService implements ServletContextListener {
         this.args = new String[0];
     }
 
-    public CwebApiService(int dhtPort, String... args) {
-        this.dhtPort = dhtPort;
+    public CwebApiService(int dhtPort1, String... args) {
+        this.dhtPort1 = dhtPort1;
         this.args = args;
     }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        String dhtPortString = sce.getServletContext().getInitParameter(App.DHT_PORT_INIT_PARAM);
-        if (dhtPortString != null) {
+        String dhtPort1String = sce.getServletContext().getInitParameter(App.DHT_PORT_1_INIT_PARAM);
+        if (dhtPort1String != null) {
             int i;
             try {
-                i = Integer.parseInt(dhtPortString);
+                i = Integer.parseInt(dhtPort1String);
             } catch (NumberFormatException e) {
                 throw new CwebConfigurationException("DHT port must be an integer", e);
             }
-            dhtPort = i;
+            dhtPort1 = i;
+        }
+        String dhtPort2String = sce.getServletContext().getInitParameter(App.DHT_PORT_2_INIT_PARAM);
+        if (dhtPort2String != null) {
+            int i;
+            try {
+                i = Integer.parseInt(dhtPort2String);
+            } catch (NumberFormatException e) {
+                throw new CwebConfigurationException("DHT port must be an integer", e);
+            }
+            dhtPort1 = i;
         }
 
         String dataFileUriString =
@@ -102,7 +114,7 @@ public class CwebApiService implements ServletContextListener {
         sce.getServletContext().setAttribute(STATE_FILE_PATH_ATTRIBUTE, stateFilePath);
 
         // Initialize Guice modules
-        AppModule appModule = new AppModule(dhtPort, args);
+        AppModule appModule = new AppModule(dhtPort1, dhtPort2, args);
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
                 CwebModuleService.getInstance().getCwebModule(), appModule);
 
