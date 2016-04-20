@@ -158,14 +158,15 @@ class TrustGeneratorImpl implements TrustGenerator {
             v.put(u, 1.0 / reachable.size());
             v_t.put(u, 0.0);
         }
-
-
+        
         for (int i = 0; i < 17 ; i++) {
             for (User u : reachable) {
                 try {
                     List<User> trusted = api.getTrustedUsersForUser(u);
                     for (User neighbor : trusted) {
-                        v_t.put(neighbor, v.get(u) /trusted.size());
+                        double new_value = v_t.get(neighbor) +
+                                v.get(u) / api.getTrustedUsersForUser(neighbor).size();
+                        v_t.put(neighbor, new_value);
                     }
                 } catch (CwebApiException e) {
                     e.printStackTrace();
