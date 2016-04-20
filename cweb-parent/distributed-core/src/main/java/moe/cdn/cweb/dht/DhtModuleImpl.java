@@ -3,6 +3,7 @@ package moe.cdn.cweb.dht;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
@@ -16,6 +17,8 @@ import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.CwebMisc;
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number160;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -175,5 +178,16 @@ public class DhtModuleImpl extends DhtModule {
         bind(new TypeLiteral<BiPredicate<Hash, SignedVoteHistory>>() {})
                 .toInstance(CwebMisc.HASH_SIGNED_VOTE_HISTORY_BI_PREDICATE);
 
+        bindInterceptor(Matchers.inSubpackage("moe.cdn.cweb"),
+                Matchers.any(),
+                new MethodInterceptor() {
+                    @Override
+                    public Object invoke(MethodInvocation invocation) throws Throwable {
+                        Logger logger = LogManager.getLogger(invocation.getMethod()
+                                .getDeclaringClass());
+                        logger.entry(invocation.getArguments());
+                        return logger.exit(invocation.proceed());
+                    }
+                });
     }
 }
