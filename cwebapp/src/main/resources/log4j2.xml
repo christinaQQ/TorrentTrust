@@ -26,8 +26,8 @@
         <Logger name="io.netty" level="info"/>
         <Logger name="javax.management" level="warn"/>
         <Logger name="net.tomp2p" level="info"/>
-        <Logger name="org.eclipse.jetty" level="trace"/>
-        <Logger name="org.eclipse.jetty.server.Server" level="trace"/>
+        <Logger name="org.eclipse.jetty" level="info"/>
+        <Logger name="org.eclipse.jetty.server.Server" level="debug"/>
         <Logger name="org.jvnet.hk2" level="info"/>
         <Logger name="org.glassfish.jersey" level="debug"/>
     </Loggers>

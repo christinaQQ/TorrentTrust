@@ -155,7 +155,8 @@ module.exports = actions = {
         type: 'POST',
         data: JSON.stringify({publicKey}),
         processData: false,
-        contentType: 'application/json'
+        contentType: 'application/json',
+        dataType: 'json'
       })
     );
   },
@@ -199,7 +200,8 @@ module.exports = actions = {
         type: 'POST',
         data: JSON.stringify({name}),
         processData: false,
-        contentType: 'application/json'
+        contentType: 'application/json',
+        dataType: 'json'
       })
       .then((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
