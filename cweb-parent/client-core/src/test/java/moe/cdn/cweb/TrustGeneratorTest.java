@@ -82,7 +82,7 @@ public class TrustGeneratorTest {
     public void testTrustCoefficientNetwork() {
         trustGenerator.trustCoefficientNetwork(a, b);
         assertEquals("simple connection", 1, trustGenerator.trustCoefficientNetwork(a, b), .001);
-        assertEquals("not direct connection network", 2.0,
+        assertEquals("not direct connection network", 1.0,
                 trustGenerator.trustCoefficientNetwork(a, c), .001);
 
         assertEquals("no connection", 0, trustGenerator.trustCoefficientNetwork(a, d), .001);
@@ -99,49 +99,9 @@ public class TrustGeneratorTest {
     }
 
     @Test
-    public void testPerfectVoteCorrelation() throws Exception {
-        Vote vote_o1 = makeVote("ian", Arrays.asList(goodAssertion));
-        Vote vote_o2 = makeVote("davix", Arrays.asList(badAssertion));
-        Vote vote_o3 = makeVote("fifi", Arrays.asList(badAssertion));
-
-        userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
-        userVotes.put(b, Arrays.asList(vote_o1, vote_o2, vote_o3));
-
-        assertEquals("very close correlation", 1.0, trustGenerator.correlationCoefficient(a, b),
-                .001);
+    public void testFriendsofFriends() {
+        
     }
 
-    @Test
-    public void testOppositeVoteCorrelation() throws Exception {
-        Vote vote_o1 = makeVote("ian", Arrays.asList(goodAssertion));
-        Vote vote_o2 = makeVote("davix", Arrays.asList(goodAssertion));
-        Vote vote_o3 = makeVote("fifi", Arrays.asList(badAssertion));
-
-        Vote vote_o1_rev = makeVote("ian", Arrays.asList(badAssertion));
-        Vote vote_o2_rev = makeVote("davix", Arrays.asList(badAssertion));
-        Vote vote_o3_rev = makeVote("fifi", Arrays.asList(goodAssertion));
-
-        userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
-        userVotes.put(b, Arrays.asList(vote_o1_rev, vote_o2_rev, vote_o3_rev));
-
-        assertEquals("very close correlation", -1.0, trustGenerator.correlationCoefficient(a, b),
-                .001);
-    }
-
-    @Test
-    public void testSomeCorrelation() throws Exception {
-        Vote vote_o1 = makeVote("ian", Arrays.asList(goodAssertion));
-        Vote vote_o2 = makeVote("davix", Arrays.asList(goodAssertion));
-        Vote vote_o3 = makeVote("fifi", Arrays.asList(badAssertion));
-
-        Vote vote_o1_rev = makeVote("ian", Arrays.asList(goodAssertion));
-        Vote vote_o2_rev = makeVote("davix", Arrays.asList(badAssertion));
-        Vote vote_o3_rev = makeVote("fifi", Arrays.asList(badAssertion));
-
-        userVotes.put(a, Arrays.asList(vote_o1, vote_o2, vote_o3));
-        userVotes.put(b, Arrays.asList(vote_o1_rev, vote_o2_rev, vote_o3_rev));
-
-        assertEquals("some correlation", 0.5, trustGenerator.correlationCoefficient(a, b), .001);
-    }
 }
 

@@ -13,12 +13,10 @@ import java.util.*;
 class TrustGeneratorImpl implements TrustGenerator {
 
     private final CwebApi api;
-    private Map<User, Double> centralityCache;
 
     @Inject
     public TrustGeneratorImpl(CwebApi api) {
         this.api = api;
-        centralityCache = null;
     }
 
     @Override
@@ -45,6 +43,8 @@ class TrustGeneratorImpl implements TrustGenerator {
         switch (trustMetric) {
             case ONLY_FRIENDS :
                 return trustCoefficientDirect(a, b);
+            case FRIENDS_OF_FRIENDS:
+                return trustCoefficientNumSteps(a, b, 2);
             case CONNECTED_COMPONENT:
                 return trustCoefficientNetwork(a, b);
             case EIGENTRUST:
@@ -69,9 +69,41 @@ class TrustGeneratorImpl implements TrustGenerator {
     }
 
     // second iteration: Trust any user in A's connected component
+    // this should probably be cached
     @Override
     public double trustCoefficientNetwork(User a, User b) {
-        return trustCoefficientNumSteps(a, b, Integer.MAX_VALUE);
+        Set<User> reachable = bfs(a, b);
+        return (reachable.contains(b)) ? 1.0 : 0.0;
+    }
+
+
+    /**
+     *
+     * @param a
+     * @param b
+     * @return the set of users reachable from a bfs from a
+     */
+    private Set<User> bfs(User a, User b) {
+        Queue<User> q = new ArrayDeque<>();
+        HashSet<User> seen = new HashSet<>();
+        q.offer(a);
+        while (!q.isEmpty()) {
+            User u = q.poll();
+            if (seen.contains(u)) {
+                continue;
+            }
+            seen.add(u);
+            try {
+                for (User n : api.getTrustedUsersForUser(u)) {
+                    q.offer(n);
+                }
+            } catch (CwebApiException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return seen;
     }
 
     // third iteration: Measure trust on number of steps
@@ -113,11 +145,39 @@ class TrustGeneratorImpl implements TrustGenerator {
 
     @Override
     public double trustCoefficientCentrality(User src, User tgt) {
-        //arbitrarily say run 10 iterations of eigenvector centrality
-        if (centralityCache != null) {
-            return centralityCache.get(tgt);
+        //arbitrarily say run 17 iterations of eigenvector centrality
+        Set<User> reachable = bfs(src, tgt);
+        Map<User, Double> v = new HashMap<User, Double>();
+        Map<User, Double> v_t = new HashMap<User, Double>();
+
+        if (!reachable.contains(tgt)) {
+            return 0.0;
         }
-        return 0.0;
+
+        for (User u : reachable) {
+            v.put(u, 1.0 / reachable.size());
+            v_t.put(u, 0.0);
+        }
+
+
+        for (int i = 0; i < 17 ; i++) {
+            for (User u : reachable) {
+                try {
+                    List<User> trusted = api.getTrustedUsersForUser(u);
+                    for (User neighbor : trusted) {
+                        v_t.put(neighbor, v.get(u) /trusted.size());
+                    }
+                } catch (CwebApiException e) {
+                    e.printStackTrace();
+                }
+            }
+            v = v_t;
+            v_t = new HashMap<User, Double>();
+            for (User u : reachable) {
+                v_t.put(u, 0.0);
+            }
+        }
+        return v.get(tgt);
     }
 
 }
