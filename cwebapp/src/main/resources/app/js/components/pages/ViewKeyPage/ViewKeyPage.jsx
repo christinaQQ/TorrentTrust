@@ -9,11 +9,11 @@ module.exports = React.createClass({
     return (
       <div className="row view-key-page">
         <div className="col-sm-6 col-sm-offset-3">
-          <textarea readOnly="true" value={this.state.current_identity.pubKey}>
+          <textarea readOnly="true" value={this.state.current_identity.publicKey}>
           </textarea>
         </div>
         <div className="col-sm-6 col-sm-offset-3">
-          <CopyToClipboard text={this.state.current_identity.pubKey}>
+          <CopyToClipboard text={this.state.current_identity.publicKey}>
             <a href="#" className="pull-right btn">Copy to Clipboard</a>
           </CopyToClipboard>
         </div>

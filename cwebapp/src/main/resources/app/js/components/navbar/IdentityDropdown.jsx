@@ -8,13 +8,13 @@ module.exports = React.createClass({
     userIdentities: React.PropTypes.array.isRequired,
     switchUserIdentity: React.PropTypes.func.isRequired
   },
-  onIdentityClick(pubKey, name) {
+  onIdentityClick(publicKey, name) {
     return (() =>
-      this.props.switchUserIdentity({pubKey, name})
+      this.props.switchUserIdentity({publicKey, name})
     );
   },
   render() {
-    const {name: currentName, pubKey: currentPubKey} = this.props.currentIdentity;
+    const {name: currentName, publicKey: currentpublicKey} = this.props.currentIdentity;
     return (
       <li className="dropdown">
         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -23,9 +23,9 @@ module.exports = React.createClass({
         <ul className="dropdown-menu">
           {
             this.props.userIdentities
-            .filter(({pubKey}) => (pubKey !== currentPubKey))
-            .map(({name, pubKey}) =>
-              <li key={pubKey} data-pubkey={pubKey} data-name={name} onClick={this.onIdentityClick(pubKey, name)}>
+            .filter(({publicKey}) => (publicKey !== currentpublicKey))
+            .map(({name, publicKey}) =>
+              <li key={publicKey} data-public-key={publicKey} data-name={name} onClick={this.onIdentityClick(publicKey, name)}>
                 <a href="#">{name}</a>
               </li>
           )}

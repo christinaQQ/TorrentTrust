@@ -8,8 +8,8 @@ const actions = require('../../redux/actions/index.js');
 
 module.exports = React.createClass({
   mixins: [SubscribeToStateChangesMixin, DispatchMixin],
-  switchUserIdentity({name, pubKey}) {
-    this.dispatchAction(actions.switchUserIdentity({name, pubKey}));
+  switchUserIdentity({name, publicKey}) {
+    this.dispatchAction(actions.switchUserIdentity({name, publicKey}));
   },
   render() {
     return (

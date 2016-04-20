@@ -6,15 +6,15 @@
     "60b725f15727cd6de42": [
       {
         "name": "John Cena",
-        "pubKey": "60b725f15727cd6de42"
+        "publicKey": "60b725f15727cd6de42"
       },
       {
         "name": "Arnold Shwarzenegger",
-        "pubKey": "3b5d5c377cd6de42"
+        "publicKey": "3b5d5c377cd6de42"
       },
       {
         "name": "Mickey Mouse",
-        "pubKey": "2cd6ee2cd6de42"
+        "publicKey": "2cd6ee2cd6de42"
       }
     ],
     "3b5d5c377cd6de42": [],
@@ -37,38 +37,37 @@
     }
   ],
   "current_trust_algorithm": {
-    "name": "Eigentrust",
-    "id": "EIGENTRUST"
+    "name": "Friends of friends",
+    "id": "FRIEND_OF_FRIEND"
   },
   "user_identities": [
     {
       "name": "John Nash",
-      "pubKey": "60b725f15727cd6de42",
+      "publicKey": "60b725f15727cd6de42",
       "privateKey": "360b725f15727cd6de42"
     },
     {
       "name": "T.S. Elliott",
-      "pubKey": "3b5d5c377cd6de42",
+      "publicKey": "3b5d5c377cd6de42",
       "privateKey": "3360b725f15727cd6de42"
     },
     {
       "name": "Sergey Brin",
-      "pubKey": "2cd6ee2cd6de42",
+      "publicKey": "2cd6ee2cd6de42",
       "privateKey": "32cd6ee2cd6de42"
     },
     {
       "name": "TOTINO THE PIZZA BOY",
-      "pubKey": "0.5146956997923553"
+      "publicKey": "0.5146956997923553"
     },
     {
       "name": "PIZZA TOTINO'S BOY",
-      "pubKey": "0.8183994798455387"
+      "publicKey": "0.8183994798455387"
     }
   ],
   "current_identity": {
-    "name": "John Nash",
-    "pubKey": "60b725f15727cd6de42",
-    "privateKey": "360b725f15727cd6de42"
+    "name": "TOTINO THE PIZZA BOY",
+    "publicKey": "0.5146956997923553"
   },
   "torrent_lists": {
     "60b725f15727cd6de42": [
@@ -99,6 +98,12 @@
         "displayName": "Artificial Intelligence A Modern Approach 3rd Edition.pdf",
         "upvoted": false,
         "downvoted": true
+      },
+      {
+        "hash": "c7f6c5937a422ea4f4955d6d80d52726dc318c50",
+        "displayName": "Seven Samurai",
+        "upvoted": true,
+        "downvoted": false
       }
     ],
     "0.8183994798455387": []

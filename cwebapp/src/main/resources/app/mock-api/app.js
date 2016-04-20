@@ -42,7 +42,7 @@ apiRouter.post('/object/:hash/down', (req, res) => {
 });
 
 // apiRouter.post('/generate-key-pair', (req, res) => {
-//   const keyPair = {pubKey: Math.random(), privateKey: Math.random()};
+//   const keyPair = {publicKey: Math.random(), privateKey: Math.random()};
 //   return Math.random() > ERR_PROB ? res.status(200).send(keyPair) : res.status(500).send('hash table error');
 // });
 
@@ -51,16 +51,24 @@ apiRouter.route('/identity')
   res.json(currentState().user_identities);
 })
 .post((req, res) => {
-  const keyPair = {pubKey: '' + Math.random(), privateKey: '' + Math.random()};
+  const keyPair = {name: req.body.name, publicKey: '' + Math.random(), privateKey: '' + Math.random()};
   return Math.random() > ERR_PROB ? res.status(200).json(keyPair) : res.status(500).send('big meaty err');
 });
 apiRouter.post('/setState', (req, res) => {
   const state = req.body;
-  console.log(state);
   fs.writeFile(statePath, JSON.stringify(state, null, '  '), 'utf8', (err) => {
     res.status(err ? 500 : 200).send(err ? err.message : 'success');
   });
 });
+
+apiRouter.route('/identity/switch')
+.post((req, res) => {
+  console.log(req.body);
+  console.log('switching identities to ' + req.body.publicKey);
+  return Math.random() > ERR_PROB ? res.status(200).json({}) : res.status(404).send('id not found?');
+
+});
+
 app.use('/api', apiRouter);
 
 app.get('*', (req, res) =>

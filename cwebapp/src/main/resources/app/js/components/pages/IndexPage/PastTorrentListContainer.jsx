@@ -14,7 +14,7 @@ module.exports = React.createClass({
   render() {
     return (
       <PastTorrentList
-        torrentList={this.state.torrent_lists[this.state.current_identity.pubKey]}
+        torrentList={this.state.torrent_lists[this.state.current_identity.publicKey]}
         onUpvote={this.onUpvote}
         onDownvote={this.onDownvote}
       />

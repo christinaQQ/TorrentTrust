@@ -4,9 +4,9 @@
 //   loading: false,
 //   trusted_identities: {
 //     '60b725f15727cd6de42': [
-//       {name: 'John Cena', pubKey: '60b725f15727cd6de42'},
-//       {name: 'Arnold Shwarzenegger', pubKey: '3b5d5c377cd6de42'},
-//       {name: 'Mickey Mouse', pubKey: '2cd6ee2cd6de42'}
+//       {name: 'John Cena', publicKey: '60b725f15727cd6de42'},
+//       {name: 'Arnold Shwarzenegger', publicKey: '3b5d5c377cd6de42'},
+//       {name: 'Mickey Mouse', publicKey: '2cd6ee2cd6de42'}
 //     ],
 //     '3b5d5c377cd6de42': [],
 //     '2cd6ee2cd6de42': []
@@ -18,11 +18,11 @@
 //   ],
 //   current_trust_algorithm: {id: 'ONLY_FRIENDS', name: 'Only Friends'},
 //   user_identities: [
-//     {name: 'John Nash', pubKey: '60b725f15727cd6de42', privateKey: '360b725f15727cd6de42'},
-//     {name: 'T.S. Elliott', pubKey: '3b5d5c377cd6de42', privateKey: '3360b725f15727cd6de42'},
-//     {name: 'Sergey Brin', pubKey: '2cd6ee2cd6de42', privateKey: '32cd6ee2cd6de42'}
+//     {name: 'John Nash', publicKey: '60b725f15727cd6de42', privateKey: '360b725f15727cd6de42'},
+//     {name: 'T.S. Elliott', publicKey: '3b5d5c377cd6de42', privateKey: '3360b725f15727cd6de42'},
+//     {name: 'Sergey Brin', publicKey: '2cd6ee2cd6de42', privateKey: '32cd6ee2cd6de42'}
 //   ],
-//   current_identity: {name: 'John Nash', pubKey: '60b725f15727cd6de42', privateKey: '360b725f15727cd6de42'},
+//   current_identity: {name: 'John Nash', publicKey: '60b725f15727cd6de42', privateKey: '360b725f15727cd6de42'},
 //   torrent_lists:
 //   {
 //     '60b725f15727cd6de42': [

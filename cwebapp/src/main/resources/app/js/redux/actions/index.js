@@ -22,13 +22,13 @@ module.exports = actions = {
   addToTorrentList({magnetLink}) {
     return (dispatch, getState) => {
       const {xt, dn} = magnet.decode(magnetLink || '');
-      const {pubKey} = getState().current_identity;
+      const {publicKey} = getState().current_identity;
       if (!xt) {
         dispatch(actions.setErrorMessage('Invalid magnet link.'));
       } else {
         const hash = xt.split(':').pop();
         dispatch(this.setLoading(true));
-        dispatch(this._addToUserTorrentList({hash, pubKey, displayName: dn}));
+        dispatch(this._addToUserTorrentList({hash, publicKey, displayName: dn}));
         persistState(getState())
         .fail(() => dispatch(this.setErrorMessage('Failed to persist state.')))
         .always(() => dispatch(this.setLoading(false)));
@@ -83,24 +83,24 @@ module.exports = actions = {
   _setDownvoted({hash}) {
     return {type: 'SET_DOWNVOTED', hash};
   },
-  _addToUserTorrentList({hash, displayName, pubKey}) {
-    return {type: 'ADD_TO_TORRENT_LIST', hash, displayName, pubKey};
+  _addToUserTorrentList({hash, displayName, publicKey}) {
+    return {type: 'ADD_TO_TORRENT_LIST', hash, displayName, publicKey};
   },
-  addTrustedKey({name, pubKey}) {
+  addTrustedKey({name, publicKey}) {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
       $.ajax({
         url: '/api/user/trust',
         type: 'POST',
-        data: pubKey,
+        data: JSON.stringify({publicKey}),
         processData: false,
-        contentType: 'text/plain'
+        contentType: 'application/json'
       })
       .then((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
           return $.Deferred().reject(jqXHR);
         }
-        dispatch({type: 'ADD_TRUSTED_IDENTITY', name, pubKey});
+        dispatch({type: 'ADD_TRUSTED_IDENTITY', name, publicKey});
         return persistState(getState());
       })
       .done(() =>
@@ -113,21 +113,21 @@ module.exports = actions = {
       .always(() => dispatch(actions.setLoading(false)));
     };
   },
-  deleteTrustedIdentity(pubKey) {
+  deleteTrustedIdentity(publicKey) {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
       $.ajax({
         url: '/api/user/trust/',
         type: 'DELETE',
-        data: pubKey,
+        data: JSON.stringify({publicKey}),
         processData: false,
-        contentType: 'text/plain'
+        contentType: 'application/json'
       })
       .then((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
           return $.Deferred().reject(jqXHR);
         }
-        dispatch({type: 'DELETE_TRUSTED_IDENTITY', pubKey});
+        dispatch({type: 'DELETE_TRUSTED_IDENTITY', publicKey});
         return persistState(getState());
       })
       .done(
@@ -148,16 +148,36 @@ module.exports = actions = {
 
     };
   },
-  switchUserIdentity({name, pubKey}) {
+  _serversideSwitchUserIdentity({name, publicKey}) {
+    return ((dispatch, getState) =>
+      $.ajax({
+        url: '/api/identity/switch',
+        type: 'POST',
+        data: JSON.stringify({publicKey}),
+        processData: false,
+        contentType: 'application/json'
+      })
+    );
+  },
+  switchUserIdentity({name, publicKey}) {
     return (dispatch, getState) => {
-      dispatch({type: 'SWITCH_USER_IDENTITY', name, pubKey});
-      persistState(getState())
+      dispatch(actions._serversideSwitchUserIdentity({name, publicKey}))
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        dispatch({type: 'SWITCH_USER_IDENTITY', name, publicKey});
+        return persistState(getState());
+      })
       .done(() => dispatch(actions.setInfoMessage('User ID updated successfully.')))
-      .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
+      .fail(jqXHR => {
+        const err = jqXHR.responseText || jqXHR.statusText;
+        dispatch(actions.setErrorMessage(`Error switching identity: ${err}!`));
+      });
     };
   },
-  _addUserIdentity({name, pubKey, privateKey}) {
-    return {type: 'ADD_USER_IDENTITY', name, pubKey, privateKey};
+  _addUserIdentity({name, publicKey, privateKey}) {
+    return {type: 'ADD_USER_IDENTITY', name, publicKey, privateKey};
       // return persistState(getState())
       //   .done(() => dispatch(actions.setInfoMessage(`Identity ${name} added.`)))
       //   .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
@@ -172,19 +192,29 @@ module.exports = actions = {
     return {type: 'SET_LOADING', value};
   },
   createNewIdentity({name}) {
+    let publicKey, privateKey;
     return (dispatch, getState) => {
       $.ajax({
         url: '/api/identity',
-        type: 'POST'
+        type: 'POST',
+        data: JSON.stringify({name}),
+        processData: false,
+        contentType: 'application/json'
       })
       .then((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
           return $.Deferred().reject(jqXHR);
         }
-        const {pubKey, privateKey} = data;
-        dispatch(actions._addUserIdentity({name, pubKey, privateKey}));
-        dispatch(actions.switchUserIdentity({name, pubKey}));
-        dispatch({type: 'SWITCH_USER_IDENTITY', name, pubKey});
+        publicKey = data.publicKey;
+        privateKey = data.privateKey;
+        dispatch(actions._addUserIdentity({name, publicKey, privateKey}));
+        return dispatch(actions._serversideSwitchUserIdentity({name, publicKey}));
+      })
+      .then((data, textStatus, jqXHR) => {
+        if (jqXHR.status !== 200) {
+          return $.Deferred().reject(jqXHR);
+        }
+        dispatch({type: 'SWITCH_USER_IDENTITY', name, publicKey});
         return persistState(getState());
       })
       .done(() => {

@@ -7,9 +7,9 @@ const actions = require('../redux/actions');
 module.exports = React.createClass({
   mixins: [SubscribeToStateChangesMixin, DispatchMixin],
   addTrustedKey() {
-    const pubKey = this._textarea.value;
+    const publicKey = this._textarea.value;
     const name = window.prompt('What nickname should we use for this key?');
-    this.dispatchAction(actions.addTrustedKey({name, pubKey}));
+    this.dispatchAction(actions.addTrustedKey({name, publicKey}));
   },
   onTextAreaKeyUp(e) {
     if (e.which === 13) {
@@ -19,9 +19,9 @@ module.exports = React.createClass({
     }
   },
   render() {
-    const {pubKey} = this.state.current_identity;
-    const buttons = this.state.trusted_identities[pubKey].map(({name, pubKey}) =>
-      <TrustedIdentityButton name={name} pubKey={pubKey} key={pubKey}/>
+    const {publicKey} = this.state.current_identity;
+    const buttons = this.state.trusted_identities[publicKey].map(({name, publicKey}) =>
+      <TrustedIdentityButton name={name} publicKey={publicKey} key={publicKey}/>
     );
     return (
       <div className="row trust-management">
