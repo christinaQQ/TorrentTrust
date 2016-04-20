@@ -13,6 +13,7 @@ import java.util.NavigableMap;
  */
 class IncomingValidatedStorageWrapper extends StorageWrapper {
     private final IncomingDataValidator incomingDataValidator;
+    // FIXME: IMPORTANT: provide custom implementation of tomp2p storagelayer
 
     public IncomingValidatedStorageWrapper(Storage storage,
                                            IncomingDataValidator incomingDataValidator) {

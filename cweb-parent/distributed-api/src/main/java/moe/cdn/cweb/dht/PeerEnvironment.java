@@ -25,7 +25,7 @@ public interface PeerEnvironment {
      *
      * @return integer in range 0-65535
      */
-    int getLocalTcpPort();
+    int getLocalTcpPort1();
 
     /**
      * Returns an integer specifying the incoming port used for UDP connections
@@ -33,7 +33,23 @@ public interface PeerEnvironment {
      *
      * @return integer in range 0-65535
      */
-    int getLocalUdpPort();
+    int getLocalUdpPort1();
+
+    /**
+     * Returns an integer specifying the incoming port used for TCP connections
+     * to the DHT
+     *
+     * @return integer in range 0-65535
+     */
+    int getLocalTcpPort2();
+
+    /**
+     * Returns an integer specifying the incoming port used for UDP connections
+     * to the DHT
+     *
+     * @return integer in range 0-65535
+     */
+    int getLocalUdpPort2();
 
     /**
      * Returns a {@link CwebId} that represents the identifier that the current

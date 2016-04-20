@@ -53,11 +53,20 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
      * @return a ManagedDhtPeer
      * @throws IOException
      */
-    public static ManagedPeerDhtPeer fromEnviroment(PeerEnvironment peerEnvironment,
-                                                    Storage storage) throws IOException {
+    public static ManagedPeerDhtPeer fromEnviroment1(PeerEnvironment peerEnvironment,
+                                                     Storage storage) throws IOException {
         Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
-                .tcpPort(peerEnvironment.getLocalTcpPort())
-                .udpPort(peerEnvironment.getLocalUdpPort()).start();
+                .tcpPort(peerEnvironment.getLocalTcpPort1())
+                .udpPort(peerEnvironment.getLocalUdpPort1()).start();
+        PeerDHT peerDht = new PeerBuilderDHT(peer).storage(storage).start();
+        return new ManagedPeerDhtPeer(peerDht);
+    }
+
+    public static ManagedPeerDhtPeer fromEnviroment2(PeerEnvironment peerEnvironment,
+                                                     Storage storage) throws IOException {
+        Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
+                .tcpPort(peerEnvironment.getLocalTcpPort2())
+                .udpPort(peerEnvironment.getLocalUdpPort2()).start();
         PeerDHT peerDht = new PeerBuilderDHT(peer).storage(storage).start();
         return new ManagedPeerDhtPeer(peerDht);
     }

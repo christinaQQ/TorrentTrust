@@ -89,12 +89,12 @@ public class GlobalEnvironment implements PeerEnvironment, KeyEnvironment {
     }
 
     @Override
-    public int getLocalTcpPort() {
+    public int getLocalTcpPort1() {
         return tcpPort;
     }
 
     @Override
-    public int getLocalUdpPort() {
+    public int getLocalUdpPort1() {
         return udpPort;
     }
 

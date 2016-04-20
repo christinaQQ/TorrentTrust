@@ -18,6 +18,7 @@ import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
@@ -45,6 +46,12 @@ public class CwebNode<T extends Message> implements Shutdownable {
 
     public ListenableFuture<CwebGetResults<T>> all(CwebId key) {
         FutureGetWrapper f = new FutureGetWrapper(startAllData(Number160s.fromCwebId(key)));
+        try {
+            f.get();
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO debugging
+            e.printStackTrace();
+        }
         return Futures.transform(f,
                 (Function<GetResponse, CwebGetResultsImpl<T>>) r -> new CwebGetResultsImpl<T>(
                         messageParser, r),

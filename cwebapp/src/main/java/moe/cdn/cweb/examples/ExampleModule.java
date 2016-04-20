@@ -11,6 +11,7 @@ import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.utils.KeyUtils;
 
+import java.net.URI;
 import java.util.Random;
 
 /**
@@ -23,6 +24,7 @@ public class ExampleModule extends AbstractModule {
         environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
                 .setId(new CwebId(new Random()))
                 .setKeyEnvironment(new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default"))
+                .setKeyEnvironmentConfigPath(URI.create("identities.ini"))
                 .build();
     }
 

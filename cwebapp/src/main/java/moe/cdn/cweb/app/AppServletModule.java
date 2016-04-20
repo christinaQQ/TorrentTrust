@@ -55,7 +55,7 @@ public class AppServletModule extends ServletModule {
             URI appDir = appFile.toURI().resolve("../").normalize();
             appDirUrl = appDir.toURL();
         } catch (MalformedURLException | URISyntaxException e) {
-            throw new RuntimeException("Cannot resolve application resources", e);
+            throw new CwebConfigurationException("Cannot resolve application resources", e);
         }
         serve("/app/build/*").with(new DefaultServlet(), newFileServletInitParameters(appDirUrl));
 
@@ -68,7 +68,7 @@ public class AppServletModule extends ServletModule {
             URI staticDir = staticFile.toURI().resolve("./").normalize();
             staticDirUrl = staticDir.toURL();
         } catch (URISyntaxException | MalformedURLException e) {
-            throw new RuntimeException("Cannot resolve application resources", e);
+            throw new CwebConfigurationException("Cannot resolve application resources", e);
         }
         serve("/static/*").with(new DefaultServlet(), newFileServletInitParameters(staticDirUrl));
         serve("/*").with(IndexServlet.class);
