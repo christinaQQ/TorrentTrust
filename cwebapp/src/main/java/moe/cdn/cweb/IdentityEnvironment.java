@@ -67,21 +67,25 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
                 .setType(KeyType.PRIVATE)
                 .setRaw(ByteString.copyFrom(decodedKey))
                         .setHash(HashUtils.hashOf(decodedKey)).build();
-        ByteString publicKeyRaw = ByteString.copyFrom(
-                Base64.getDecoder().decode(keyPairSection.get("publicKey").getBytes()));
-        Key publicKey = keyPairSection.containsKey("publicKey")
-                ? Key.newBuilder().setType(KeyType.PUBLIC)
-                                .setRaw(publicKeyRaw)
-                                .setHash(HashUtils.hashOf(publicKeyRaw))
-                .build()
-                        : KeyUtils.fromKey(KeyUtils.toPublicKey(KeyUtils.importPrivateKey
-                (privateKey)));
+        String publicKeyBase64 = keyPairSection.get("publicKey");
+        Key publicKey;
+        if (publicKeyBase64 == null) {
+            // no public key; generate the public key from the private key
+            publicKey = KeyUtils.fromKey(KeyUtils.toPublicKey(
+                    KeyUtils.importPrivateKey(privateKey)));
+        } else {
+            ByteString publicKeyRaw = ByteString.copyFrom(
+                    Base64.getDecoder().decode(publicKeyBase64.getBytes()));
+            publicKey = Key.newBuilder().setType(KeyType.PUBLIC)
+                    .setRaw(publicKeyRaw)
+                    .setHash(HashUtils.hashOf(publicKeyRaw))
+                    .build();
+        }
         logger.info("Loaded key pair with public portion {}", Representations.asString(publicKey));
         return KeyPair.newBuilder().setPrivateKey(privateKey).setPublicKey(publicKey).build();
     }
 
-    public static IdentityEnvironment readFromFile(File configFile)
-            throws InvalidFileFormatException, IOException {
+    public static IdentityEnvironment readFromFile(File configFile) throws IOException {
         IdentityEnvironment identityEnvironment = new IdentityEnvironment();
 
         Ini iniFile = new Ini();
