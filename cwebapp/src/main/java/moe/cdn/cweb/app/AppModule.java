@@ -2,8 +2,11 @@ package moe.cdn.cweb.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Random;
+
+import org.eclipse.persistence.internal.oxm.record.UnmappedContentHandlerWrapper;
 
 import com.google.inject.AbstractModule;
 
@@ -26,16 +29,19 @@ public class AppModule extends AbstractModule {
 
     public AppModule(int port, String... args) {
         IdentityEnvironment identityEnvironment;
+        URI identityUri;
         try {
-            identityEnvironment = IdentityEnvironment.readFromFile(
-                    new File(getClass().getClassLoader().getResource("identities.ini").toURI()));
+            identityUri = getClass().getClassLoader().getResource("identities.ini").toURI();
+            identityEnvironment = IdentityEnvironment.readFromFile(new File(identityUri));
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
+            identityUri = URI.create("~/.cweb/identities.ini");
             identityEnvironment = new IdentityEnvironment(KeyUtils.generateKeyPair(), "Default");
         }
         identities = identityEnvironment;
         environment = GlobalEnvironment.newBuilderFromArgs(args).setPort(port)
-                .setId(new CwebId(new Random())).setKeyEnvironment(identities).build();
+                .setId(new CwebId(new Random())).setKeyEnvironment(identities)
+                .setKeyEnvironmentConfigPath(identityUri).build();
     }
 
     @Override

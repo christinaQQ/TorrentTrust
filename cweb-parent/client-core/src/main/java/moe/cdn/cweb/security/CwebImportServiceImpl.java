@@ -35,10 +35,9 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Inject
     public CwebImportServiceImpl(KeyEnvironment keyEnvironment,
-                                 @UserDomain CwebMultiMap<SignedUser> userMap,
-                                 @VoteDomain CwebMultiMap<SignedVote> voteMap,
-                                 @VoteHistoryDomain CwebMultiMap<SignedVoteHistory>
-                                         voteHistoryMap) {
+            @UserDomain CwebMultiMap<SignedUser> userMap,
+            @VoteDomain CwebMultiMap<SignedVote> voteMap,
+            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
 
         this.keyEnvironment = checkNotNull(keyEnvironment);
         this.userMap = checkNotNull(userMap);
@@ -55,10 +54,8 @@ public class CwebImportServiceImpl implements CwebImportService {
     private ListenableFuture<VoteHistory> ensureVoteHistory(Key userPublicKey) {
         return Futures.transform(voteHistoryMap.get(userPublicKey.getHash()),
                 (Function<SignedVoteHistory, VoteHistory>) history -> history == null
-                                                                      ? VoteHistory.newBuilder()
-                                                                              .setOwnerPublicKey
-                                                                                      (userPublicKey).build()
-                                                                      : history.getHistory());
+                        ? VoteHistory.newBuilder().setOwnerPublicKey(userPublicKey).build()
+                        : history.getHistory());
     }
 
     @Override
@@ -102,10 +99,8 @@ public class CwebImportServiceImpl implements CwebImportService {
         return Futures
                 .transform(voteHistoryFuture,
                         (AsyncFunction<Boolean, Boolean>) success -> success
-                                                                     ? importSignature(vote, sign
-                                (vote))
-                                                                     : Futures.immediateFuture
-                                (false));
+                                ? importSignature(vote, sign(vote))
+                                : Futures.immediateFuture(false));
     }
 
     @Override

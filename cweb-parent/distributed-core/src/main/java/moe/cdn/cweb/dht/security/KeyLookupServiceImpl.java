@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Provider;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -35,7 +36,17 @@ class KeyLookupServiceImpl implements KeyLookupService {
     @Override
     public ListenableFuture<Optional<SignedUser>> findOwner(Key publicKey) {
         logger.debug("Looking up owner of key {}", Representations.asString(publicKey));
-        return Futures.transform(keyServiceCwebMapProvider.get().all(publicKey.getHash()),
+        ListenableFuture<Collection<SignedUser>> signedUsersFuture = keyServiceCwebMapProvider.get().all(publicKey.getHash());
+        try {
+            signedUsersFuture.get();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return Futures.transform(signedUsersFuture,
                 (Function<Collection<SignedUser>, Optional<SignedUser>>) signedUsers -> {
                     Collection<SignedUser> records = signedUsers.stream()
                             .filter(u -> u.getUser().getPublicKey().equals(publicKey))

@@ -1,6 +1,5 @@
 package moe.cdn.cweb.app.api.resources;
 
-import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.List;
@@ -35,7 +34,7 @@ public class ObjectInfo extends CwebApiEndPoint {
     private static final String DEFAULT_CONTENT_PROPERTY = "appraisal";
 
     private static ByteString parseHash(String hash) throws BadRequestException {
-        return ByteString.copyFrom(new BigInteger(hash, 16).toByteArray());
+        return ByteString.copyFrom(hash.getBytes());
     }
 
     @GET
@@ -56,7 +55,7 @@ public class ObjectInfo extends CwebApiEndPoint {
                             .setContentProperty(DEFAULT_CONTENT_PROPERTY).build(),
                     SecurityProtos.Hash.newBuilder()
                             .setHashValue(parseHash(hash))
-                            .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.SHA_1)
+                            .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.TORRENT)
                             .build(),
                     trustMetric), trustMetric.name());
         }
@@ -64,12 +63,12 @@ public class ObjectInfo extends CwebApiEndPoint {
     }
 
     @GET
-    public List<Vote> getVoteHistory(@PathParam("hash") String hash) throws SignatureException,
+    public String getVoteHistory(@PathParam("hash") String hash) throws SignatureException,
             InvalidKeyException, ExecutionException, InterruptedException {
         return getCwebVoteApi()
                 .getAllVotes(Hash.newBuilder().setAlgorithm(HashAlgorithm.TORRENT)
                         .setHashValue(parseHash(hash)).build())
-                .get().stream().collect(Collectors.toList());
+                .get().stream().map(Vote::toString).collect(Collectors.toList()).toString();
     }
 
     @POST
