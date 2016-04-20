@@ -99,7 +99,7 @@ public class TrustGeneratorTest {
     }
 
     @Test
-    public void testPerfectVoteCorrelation() {
+    public void testPerfectVoteCorrelation() throws Exception {
         Vote vote_o1 = makeVote("ian", Arrays.asList(goodAssertion));
         Vote vote_o2 = makeVote("davix", Arrays.asList(badAssertion));
         Vote vote_o3 = makeVote("fifi", Arrays.asList(badAssertion));
@@ -112,7 +112,7 @@ public class TrustGeneratorTest {
     }
 
     @Test
-    public void testOppositeVoteCorrelation() {
+    public void testOppositeVoteCorrelation() throws Exception {
         Vote vote_o1 = makeVote("ian", Arrays.asList(goodAssertion));
         Vote vote_o2 = makeVote("davix", Arrays.asList(goodAssertion));
         Vote vote_o3 = makeVote("fifi", Arrays.asList(badAssertion));
@@ -129,7 +129,7 @@ public class TrustGeneratorTest {
     }
 
     @Test
-    public void testSomeCorrelation() {
+    public void testSomeCorrelation() throws Exception {
         Vote vote_o1 = makeVote("ian", Arrays.asList(goodAssertion));
         Vote vote_o2 = makeVote("davix", Arrays.asList(goodAssertion));
         Vote vote_o3 = makeVote("fifi", Arrays.asList(badAssertion));
