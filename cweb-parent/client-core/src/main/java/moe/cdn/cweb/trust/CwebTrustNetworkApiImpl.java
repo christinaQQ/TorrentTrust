@@ -17,6 +17,8 @@ import moe.cdn.cweb.dht.security.KeyLookupService;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
+import moe.cdn.cweb.security.utils.SignatureUtils;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
+class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
 
     private static final Logger logger = LogManager.getLogger();
     private final KeyLookupService keyLookupService;
@@ -37,9 +39,9 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
 
     @Inject
     public CwebTrustNetworkApiImpl(KeyLookupService userKeyService,
-                                   CwebSignatureValidationService signatureValidationService,
-                                   CwebImportService importService,
-                                   KeyEnvironment keyEnvironment) {
+            CwebSignatureValidationService signatureValidationService,
+            CwebImportService importService,
+            KeyEnvironment keyEnvironment) {
         this.keyLookupService = checkNotNull(userKeyService);
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
@@ -97,11 +99,16 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
 
     @Override
     public ListenableFuture<Optional<User>> getUserIdentity() {
-        return Futures.transform(
-                keyLookupService.findOwner(keyEnvironment.getKeyPair().getPublicKey()),
+        return getUserIdentity(keyEnvironment.getKeyPair().getPublicKey());
+    }
+
+    @Override
+    public ListenableFuture<Optional<User>> getUserIdentity(Key publicKey) {
+        return Futures.transform(keyLookupService.findOwner(publicKey),
                 (Function<Optional<SignedUser>, Optional<User>>) o -> o.map(SignedUser::getUser));
     }
 
+    @Override
     public ListenableFuture<Optional<KeyPair>> registerNewUserIdentity(String handle) {
         KeyPair keyPair = KeyUtils.generateKeyPair();
         try {
@@ -115,4 +122,16 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi {
             return Futures.immediateFailedFuture(e);
         }
     }
+
+    @Override
+    public ListenableFuture<Boolean> registerExistingUserIdentity(String handle, KeyPair keyPair) {
+        User user =
+                User.newBuilder().setHandle(handle).setPublicKey(keyPair.getPublicKey()).build();
+        try {
+            return importService.importSignature(user, SignatureUtils.signMessage(keyPair, user));
+        } catch (InvalidKeyException | SignatureException e) {
+            return Futures.immediateFuture(false);
+        }
+    }
+
 }

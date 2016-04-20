@@ -17,12 +17,12 @@ public class Identity {
     @XmlJavaTypeAdapter(Base64CwebIdAdapter.class)
     private CwebId id;
     private String handle;
-    private KeyPairBase64 keyPair;
+    private KeyHash keyPair;
 
     public Identity() {
     }
 
-    public Identity(CwebId id, String handle, KeyPairBase64 keyPair) {
+    public Identity(CwebId id, String handle, KeyHash keyPair) {
         this.id = id;
         this.handle = handle;
         this.keyPair = keyPair;
@@ -44,11 +44,11 @@ public class Identity {
         this.handle = handle;
     }
 
-    public KeyPairBase64 getKeyPair() {
+    public KeyHash getKeyPair() {
         return keyPair;
     }
 
-    public void setKeyPair(KeyPairBase64 keyPair) {
+    public void setKeyPair(KeyHash keyPair) {
         this.keyPair = keyPair;
     }
 }
