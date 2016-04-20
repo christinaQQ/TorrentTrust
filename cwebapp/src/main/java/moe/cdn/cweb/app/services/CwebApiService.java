@@ -79,25 +79,25 @@ public class CwebApiService implements ServletContextListener {
             // ok we need to create a user identity here.. no idea how to do
             // that...
             SecurityProtos.KeyPair keyPair = KeyUtils.generateKeyPair();
-            String pubKey = Base64.getEncoder()
+            String publicKey = Base64.getEncoder()
                     .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String privKey = Base64.getEncoder()
+            String privateKey = Base64.getEncoder()
                     .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
             String[] lines = {"{",
                     "\"error_message\": null,",
                     "\"info_message\": null,",
-                    "\"trusted_identities\": {\"" + pubKey + "\": []},",
+                    "\"trusted_identities\": {\"" + publicKey + "\": []},",
                     "\"possible_trust_algorithms\": [",
                     "    {\"id\": \"EIGENTRUST\", \"name\": \"Eigentrust\"},",
                     "    {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only Friends\"},",
                     "    {\"id\": \"FRIEND_OF_FRIEND\", \"name\": \"Friends of friends\"}", "  ],",
                     "\"current_trust_algorithm\": {\"id\": \"ONLY_FRIENDS\", \"name\": \"Only "
                             + "Friends\"},",
-                    "\"current_identity\": {\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
-                            + " \", \"privateKey\": \"" + privKey + "\"},",
-                    "\"user_identities\": [{\"name\": \"Default ID\", \"pubKey\": \" " + pubKey
-                            + " \", \"privateKey\": \"" + privKey + "\"}],",
-                    "\"torrent_lists\": {\"" + pubKey + "\": []}", "}"};
+                    "\"current_identity\": {\"name\": \"Default ID\", \"publicKey\": \" " + publicKey
+                            + " \", \"privateKey\": \"" + privateKey + "\"},",
+                    "\"user_identities\": [{\"name\": \"Default ID\", \"publicKey\": \" " + publicKey
+                            + " \", \"privateKey\": \"" + privateKey + "\"}],",
+                    "\"torrent_lists\": {\"" + publicKey + "\": []}", "}"};
             try {
                 Files.write(stateFilePath, Arrays.asList(lines));
             } catch (IOException e) {
