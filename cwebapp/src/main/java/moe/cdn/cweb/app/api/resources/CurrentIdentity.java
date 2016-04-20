@@ -20,7 +20,6 @@ public class CurrentIdentity extends CwebApiEndPoint {
         KeyPair keyPair = getCwebEnvironment().getKeyPair();
         Optional<User> current = getCwebTrustNetworkApi().getUserIdentity().get();
         if (!current.isPresent()) {
-            // TODO
             throw new NoSuchUserException(keyPair.getPublicKey());
         }
         return new IdentityMetadata(current.get().getHandle(), keyPair);

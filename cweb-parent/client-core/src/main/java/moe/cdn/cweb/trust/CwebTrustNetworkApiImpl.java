@@ -18,7 +18,6 @@ import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,9 +38,9 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
 
     @Inject
     public CwebTrustNetworkApiImpl(KeyLookupService userKeyService,
-            CwebSignatureValidationService signatureValidationService,
-            CwebImportService importService,
-            KeyEnvironment keyEnvironment) {
+                                   CwebSignatureValidationService signatureValidationService,
+                                   CwebImportService importService,
+                                   KeyEnvironment keyEnvironment) {
         this.keyLookupService = checkNotNull(userKeyService);
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
@@ -113,11 +112,11 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
         KeyPair keyPair = KeyUtils.generateKeyPair();
         try {
             return Futures.transform(
-                    importService.importUser(User.newBuilder().setHandle(handle)
+                    importService.importUser(User.newBuilder()
+                            .setHandle(handle)
                             .setPublicKey(keyPair.getPublicKey()).build()),
-                    (Function<Boolean, Optional<KeyPair>>) success -> {
-                        return success ? Optional.of(keyPair) : Optional.empty();
-                    });
+                    (Function<Boolean, Optional<KeyPair>>) ok ->
+                            ok ? Optional.of(keyPair) : Optional.empty());
         } catch (InvalidKeyException | SignatureException e) {
             return Futures.immediateFailedFuture(e);
         }

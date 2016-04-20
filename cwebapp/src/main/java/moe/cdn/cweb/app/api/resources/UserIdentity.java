@@ -7,7 +7,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
-import moe.cdn.cweb.app.api.exceptions.KeyPairConflictException;
+import moe.cdn.cweb.app.api.exceptions.KeyPairRegistrationException;
 import moe.cdn.cweb.app.dto.IdentityMetadata;
 import moe.cdn.cweb.app.dto.KeyHash;
 import moe.cdn.cweb.app.dto.UserName;
@@ -31,16 +31,15 @@ public class UserIdentity extends CwebApiEndPoint {
     public KeyHash newIdentity(UserName userName) throws InterruptedException, ExecutionException {
         Optional<KeyPair> keyPair =
                 getCwebTrustNetworkApi().registerNewUserIdentity(userName.getName()).get();
-
         if (keyPair.isPresent()) {
             return KeyHash.fromKeyPair(keyPair.get());
-        } else {
-            throw new KeyPairConflictException();
         }
+        throw new KeyPairRegistrationException(
+                "Cannot register a new identity for " + userName.getName());
     }
 
-    private ListenableFuture<Optional<IdentityMetadata>> registerExistingIdentity(String handle,
-                                                                                  KeyPair keyPair) {
+    private ListenableFuture<Optional<IdentityMetadata>> registerExistingIdentity(
+            String handle, KeyPair keyPair) {
         return Futures.transform(getCwebIdentityApi().registerExistingUserIdentity(handle, keyPair),
                 (Function<Boolean, Optional<IdentityMetadata>>) ok -> {
                     if (ok) {

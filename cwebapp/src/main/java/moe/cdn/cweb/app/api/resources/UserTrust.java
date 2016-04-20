@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutionException;
 public class UserTrust extends CwebApiEndPoint {
 
     @POST
-    @Consumes({"application/json"})
     public boolean trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         SecurityProtos.Key publicKey = userRef.getPublicKey();
         return getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
