@@ -1,11 +1,12 @@
 package moe.cdn.cweb.app.api.resources;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.ByteString;
+import moe.cdn.cweb.CwebApiException;
 import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.TorrentTrustProtos;
 import moe.cdn.cweb.TrustApi;
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
+import moe.cdn.cweb.app.api.exceptions.NoSuchUserException;
 import moe.cdn.cweb.app.dto.TrustRating;
 
 import javax.ws.rs.*;
@@ -31,18 +32,25 @@ public class ObjectInfo extends CwebApiEndPoint {
     @Path("{algo}")
     public TrustRating getTrustRating(@PathParam("hash") String hash,
                                       @PathParam("algo") String algo) throws ExecutionException,
-            InterruptedException {
-        // TODO: getTrustRating
+            InterruptedException, CwebApiException {
         Optional<TorrentTrustProtos.User> user = getCwebIdentityApi().getUserIdentity().get();
-
         TrustApi.TrustMetric trustMetric;
         try {
             trustMetric = TrustApi.TrustMetric.valueOf(algo);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Unknown trust metric: " + algo, e);
         }
-//        getCwebTrustApi().trustForObject(user, TorrentTrustProtos.Vote.Assertion.newBuilder().setContentProperty(DEFAULT_CONTENT_PROPERTY).build(),parseHash(hash), trustMetric);
-        return new TrustRating(new Random().nextDouble(), "rand");
+        if (user.isPresent()) {
+            new TrustRating(getCwebTrustApi().trustForObject(user.get(),
+                    TorrentTrustProtos.Vote.Assertion.newBuilder()
+                            .setContentProperty(DEFAULT_CONTENT_PROPERTY).build(),
+                    SecurityProtos.Hash.newBuilder()
+                            .setHashValue(parseHash(hash))
+                            .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.SHA_1)
+                            .build(),
+                    trustMetric), trustMetric.name());
+        }
+        throw new NoSuchUserException("Current user does not exist in the network");
     }
 
     @POST
