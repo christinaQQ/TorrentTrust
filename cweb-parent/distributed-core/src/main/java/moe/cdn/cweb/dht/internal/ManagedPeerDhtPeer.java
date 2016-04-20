@@ -7,11 +7,11 @@ import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.PeerEnvironment;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.BaseFutureAsListenableFuture;
+import moe.cdn.cweb.dht.storage.ValidatedStorageLayer;
 import moe.cdn.cweb.dht.util.Number160s;
 import moe.cdn.cweb.security.CwebId;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.dht.Storage;
 import net.tomp2p.futures.BaseFuture;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.p2p.Peer;
@@ -49,25 +49,27 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
      * peers.
      *
      * @param peerEnvironment environment containing parameters to build to
-     * @param storage         storage validator
+     * @param storageLayer    vlaidated storage layer
      * @return a ManagedDhtPeer
      * @throws IOException
      */
     public static ManagedPeerDhtPeer fromEnviroment1(PeerEnvironment peerEnvironment,
-                                                     Storage storage) throws IOException {
+                                                     ValidatedStorageLayer storageLayer) throws
+            IOException {
         Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
                 .tcpPort(peerEnvironment.getLocalTcpPort1())
                 .udpPort(peerEnvironment.getLocalUdpPort1()).start();
-        PeerDHT peerDht = new PeerBuilderDHT(peer).storage(storage).start();
+        PeerDHT peerDht = new PeerBuilderDHT(peer).storageLayer(storageLayer).start();
         return new ManagedPeerDhtPeer(peerDht);
     }
 
     public static ManagedPeerDhtPeer fromEnviroment2(PeerEnvironment peerEnvironment,
-                                                     Storage storage) throws IOException {
+                                                     ValidatedStorageLayer storageLayer)
+            throws IOException {
         Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
                 .tcpPort(peerEnvironment.getLocalTcpPort2())
                 .udpPort(peerEnvironment.getLocalUdpPort2()).start();
-        PeerDHT peerDht = new PeerBuilderDHT(peer).storage(storage).start();
+        PeerDHT peerDht = new PeerBuilderDHT(peer).storageLayer(storageLayer).start();
         return new ManagedPeerDhtPeer(peerDht);
     }
 

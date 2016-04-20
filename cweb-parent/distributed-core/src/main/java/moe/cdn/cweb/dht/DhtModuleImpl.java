@@ -12,6 +12,7 @@ import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.dht.security.DhtSecurityModule;
 import moe.cdn.cweb.dht.spi.DhtModule;
 import moe.cdn.cweb.dht.storage.StorageModule;
+import moe.cdn.cweb.dht.storage.ValidatedStorageLayer;
 import moe.cdn.cweb.security.CwebId;
 import moe.cdn.cweb.security.CwebMisc;
 import net.tomp2p.dht.Storage;
@@ -19,6 +20,7 @@ import net.tomp2p.peers.Number160;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -127,9 +129,11 @@ public class DhtModuleImpl extends DhtModule {
     @KeyLookup
     @Singleton
     public static ManagedPeerDhtPeer provideKeyLookupManagedPeerDhtPeer(
-            Storage storage, PeerEnvironment peerEnvironment, ManagedPeerDhtPeer mainPeer)
+            ValidatedStorageLayer storageLayer, PeerEnvironment peerEnvironment,
+            ManagedPeerDhtPeer mainPeer)
             throws IOException, ExecutionException, InterruptedException {
-        ManagedPeerDhtPeer newPeer = ManagedPeerDhtPeer.fromEnviroment2(peerEnvironment, storage);
+        ManagedPeerDhtPeer newPeer = ManagedPeerDhtPeer.fromEnviroment2(peerEnvironment,
+                storageLayer);
         logger.info("Key lookup service peer listening on {}", newPeer.getAddress());
         logger.debug("Bootstrapping to main peer {}", mainPeer);
         newPeer.bootstrapTo(mainPeer.getAddress()).get();
@@ -139,13 +143,13 @@ public class DhtModuleImpl extends DhtModule {
 
     @Provides
     @Singleton
-    public static ManagedPeerDhtPeer provideManagedPeerDhtPeer(Storage storage,
-                                                               PeerEnvironment peerEnvironment)
+    public static ManagedPeerDhtPeer provideManagedPeerDhtPeer(
+            Provider<ValidatedStorageLayer> storageLayer, PeerEnvironment peerEnvironment)
             throws IOException {
         // FIXME: Do not initialize a local DHT node in a Guice module
 
         ManagedPeerDhtPeer peerDhtPeer = ManagedPeerDhtPeer.fromEnviroment1(peerEnvironment,
-                storage);
+                storageLayer.get());
         logger.info("Local peer listening on {}", peerDhtPeer.getAddress());
 
         logger.debug("Bootstrapping to {}", peerEnvironment.getPeerAddresses());
