@@ -19,9 +19,7 @@ import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.api.exceptions.KeyPairRegistrationException;
 import moe.cdn.cweb.app.dto.IdentityMetadata;
-import moe.cdn.cweb.app.dto.KeyHash;
 import moe.cdn.cweb.app.dto.UserName;
-import moe.cdn.cweb.app.dto.UserRef;
 
 /**
  * @author davix

@@ -37,10 +37,6 @@ public class IdentityMetadata {
         this.handle = handle;
     }
 
-    public static KeyHash fromKeyPair(KeyPair keyPair) {
-        return new KeyHash(keyPair.getPublicKey().getHash(), keyPair.getPrivateKey().getHash());
-    }
-
     public Hash getPrivateKeyHash() {
         return privateKey;
     }
