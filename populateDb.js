@@ -6,7 +6,11 @@ const magnet = require('magnet-uri');
 
 var magnetLinks = require('./magnetLinks.json');
 
-async.map(_.range(100), (i, callback) => {
+// request ({
+    // url: 'http://localhost:8080/'
+// })
+
+async.map(_.range(50), (i, callback) => {
   najax({
     url: 'http://localhost:8080/api/identity',
     type: 'POST',
@@ -17,8 +21,10 @@ async.map(_.range(100), (i, callback) => {
   })
   .done(data => callback(null, data))
   .fail(e => callback(e));
-}, identities => {
+}, (err, identities) => {
+  console.log(identities);
   async.eachSeries(identities, (identity, callback) => {
+    console.log('processing identity ' + identity);
     const {publicKey, privateKey} = identity;
     najax({
       url: 'http://localhost:8080/api/identity/switch',
@@ -29,7 +35,7 @@ async.map(_.range(100), (i, callback) => {
       dataType: 'json'
     }).fail(e => callback(e))
     .done(data => {
-      async.map(_.range(40), (i, cb) => {
+      async.map(_.range(50), (i, cb) => {
         var toTrust = identities[Math.floor(Math.random() * identities.length)];
         najax({
           url: 'http://localhost:8080/api/user/trust',
@@ -43,17 +49,17 @@ async.map(_.range(100), (i, callback) => {
         if (e) {
           callback(e);
         }
-        async.map(_.range(40), (i, cb) => {
+        async.map(_.range(18), (i, cb) => {
           var magnetLink = magnetLinks[Math.floor(Math.random() * magnetLinks.length)];
           const {xt, dn} = magnet.decode(magnetLink);
           var vote = Math.random() > 0.8 ? 'down' : 'up';
           najax({
-            url: `/api/object/${xt}/${vote}`,
-            type: 'POST'
+            url: `http://localhost:8080/api/object/${xt}/${vote}`,
+            type: 'POST',
           }).fail(e => cb(e))
           .done(data => cb(null, data));
         }, callback);
       });
     });
-  }, e => console.log(e));
+  }, e => console.log(e || 'done seeding'));
 });
