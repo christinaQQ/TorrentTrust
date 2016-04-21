@@ -104,7 +104,7 @@ public class CwebApiService implements ServletContextListener {
             String[] lines = {"{",
                     "\"error_message\": null,",
                     "\"info_message\": null,",
-                    "\"trusted_identities\": {\"" + publicKey + "\": []},",
+                    "\"trusted_identities\": {},",
                     "\"possible_trust_algorithms\": [",
                     "    {\"id\":\"EIGENTRUST\",\"name\":\"Eigentrust\"},",
                     "    {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only friends\"},",
@@ -112,11 +112,10 @@ public class CwebApiService implements ServletContextListener {
                     "    {\"id\":\"FRIENDS_OF_FRIENDS\",\"name\":\"Friends of friends\"}", "  ],",
                     "\"current_trust_algorithm\": {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only "
                             + "Friends\"},",
-                    "\"current_identity\": {\"name\":\"Default ID\",\"publicKey\":\"" + publicKey
-                            + "\",\"privateKey\":\"" + privateKey + "\"},",
-                    "\"user_identities\": [{\"name\":\"Default ID\",\"publicKey\":\"" + publicKey
-                            + "\",\"privateKey\":\"" + privateKey + "\"}],",
-                    "\"torrent_lists\": {\"" + publicKey + "\": []}", "}"};
+                    "\"current_identity\": null,",
+                    "\"user_identities\": [],",
+                    "\"torrent_lists\": {}", 
+                    "}"};
             try {
                 Files.write(stateFilePath, Arrays.asList(lines));
             } catch (IOException e) {
