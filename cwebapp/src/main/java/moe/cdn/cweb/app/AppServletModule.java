@@ -21,21 +21,10 @@ import moe.cdn.cweb.app.services.CwebConfigurationException;
  * @author davix
  */
 public class AppServletModule extends ServletModule {
-//    private static final boolean DEVELOPMENT = true;
 
     private static Map<String, String> newFileServletInitParameters(URL resourceDirUrl) {
         Map<String, String> appInitParameters = new HashMap<>();
         String resourceBase = resourceDirUrl.toExternalForm();
-//        if (DEVELOPMENT) {
-//            if (resourceBase.endsWith("build/")) {
-//                resourceBase = "src/main/resources/app/build/";
-//            } else if (resourceBase.endsWith("static/")) {
-//                resourceBase = "src/main/resources/app/static/";
-//            } else {
-//                throw new CwebConfigurationException(
-//                        "Unknown resourceBase init parameter: " + resourceBase);
-//            }
-//        }
         appInitParameters.put("resourceBase", resourceBase);
         appInitParameters.put("pathInfoOnly", "true");
         appInitParameters.put("dirAllowed", "false");
@@ -50,31 +39,17 @@ public class AppServletModule extends ServletModule {
 
         serve("/api/*").with(new ServletContainer(new CwebApiConfig()));
 
-        URL appFile = App.class.getClassLoader().getResource("app/build/js/main.js");
-        if (appFile == null) {
+        URL appDirUrl = getClass().getResource("/app/build/");
+        if (appDirUrl == null) {
             throw new CwebConfigurationException("Cannot find application resources");
         }
-        URL appDirUrl;
-        try {
-            URI appDir = appFile.toURI().resolve("../").normalize();
-            appDirUrl = appDir.toURL();
-        } catch (MalformedURLException | URISyntaxException e) {
-            throw new CwebConfigurationException("Cannot resolve application resources", e);
-        }
-        serve("/app/build/*").with(new DefaultServlet(), newFileServletInitParameters(appDirUrl));
+        serve("/app/build/*").with(DefaultServlet.class, newFileServletInitParameters(appDirUrl));
 
-        URL staticFile = App.class.getClassLoader().getResource("static/giphy.gif");
-        if (staticFile == null) {
+        URL staticDirUrl = getClass().getResource("/static/");
+        if (staticDirUrl == null) {
             throw new CwebConfigurationException("Cannot find static resources");
         }
-        URL staticDirUrl;
-        try {
-            URI staticDir = staticFile.toURI().resolve("./").normalize();
-            staticDirUrl = staticDir.toURL();
-        } catch (URISyntaxException | MalformedURLException e) {
-            throw new CwebConfigurationException("Cannot resolve application resources", e);
-        }
-        serve("/static/*").with(new DefaultServlet(), newFileServletInitParameters(staticDirUrl));
+        serve("/static/*").with(DefaultServlet.class, newFileServletInitParameters(staticDirUrl));
         serve("/hydration.js").with(HydrationServlet.class);
         serve("/*").with(IndexServlet.class);
     }

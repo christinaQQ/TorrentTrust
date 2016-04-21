@@ -126,7 +126,12 @@ public class CwebApiService implements ServletContextListener {
         sce.getServletContext().setAttribute(STATE_FILE_PATH_ATTRIBUTE, stateFilePath);
 
         // Initialize Guice modules
-        AppModule appModule = new AppModule(dhtPort1, dhtPort2, args);
+        AppModule appModule = null;
+        try {
+            appModule = new AppModule(dhtPort1, dhtPort2, args);
+        } catch (IOException e) {
+            throw new CwebConfigurationException(e);
+        }
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
                 CwebModuleService.getInstance().getCwebModule(), appModule);
 
