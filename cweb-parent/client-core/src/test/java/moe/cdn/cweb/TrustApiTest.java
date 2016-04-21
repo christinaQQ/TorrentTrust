@@ -536,8 +536,51 @@ public class TrustApiTest {
 
         trustApi = new TrustApiImpl(api, keyLookupService, trustGenerator);
 
-        double trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.FRIENDS_OF_FRIENDS);
+        double trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.CONNECTED_COMPONENT);
         assertEquals(2.0, trust, .001); //c is outside our network
+    }
+
+    @Test
+    public void testTrustNetwork() throws CwebApiException, ExecutionException, InterruptedException {
+        userGraph.put(a, Arrays.asList(b));
+        userGraph.put(b, Arrays.asList(c));
+        userGraph.put(c, Arrays.asList(d));
+
+        userVotes = new HashMap<>();
+        Map<Hash, List<Vote>> userObjVotes = new HashMap<>();
+
+        // user 1 votes good on object 1
+        // user 2 votes good on object 1
+        Vote aVote = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(a.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object1"))).build();
+        Vote bVote = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(b.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object1"))).build();
+        Vote cVote = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(c.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object1"))).build();
+
+        // users also vote on object 3
+        Vote aVote3 = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(a.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object3"))).build();
+        Vote bVote3 = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(b.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object3"))).build();
+        Vote cVote3 = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(c.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object3"))).build();
+
+        // users 2 and 3 also votes good on object 2
+        Vote bVote2 = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(b.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object2"))).build();
+        Vote cVote2 = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(c.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object2"))).build();
+
+        userVotes.put(a, Arrays.asList(aVote, aVote3));
+        userVotes.put(b, Arrays.asList(bVote, bVote2, bVote3));
+        userVotes.put(c, Arrays.asList(cVote, cVote2, cVote3));
+
+        userObjVotes.put(object, Arrays.asList(aVote, bVote, cVote));
+        userObjVotes.put(object2, Arrays.asList(bVote2, cVote2));
+        userObjVotes.put(object3, Arrays.asList(aVote3, bVote3, cVote3));
+
+
+        CwebApi api = new CwebApiFakeImpl(userVotes, userGraph, userObjVotes);
+        trustGenerator = new TrustGeneratorImpl(api);
+        KeyLookupService keyLookupService = new FakeKeyLookupServiceImpl(Arrays.asList(a_signed, b_signed, c_signed, d_signed));
+
+        trustApi = new TrustApiImpl(api, keyLookupService, trustGenerator);
+
+        double trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.CONNECTED_COMPONENT);
+        assertEquals(4.0, trust, .001); //c is outside our network
     }
 
     class FakeKeyLookupServiceImpl implements KeyLookupService {

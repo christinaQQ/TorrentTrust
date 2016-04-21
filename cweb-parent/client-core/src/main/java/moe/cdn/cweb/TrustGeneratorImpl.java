@@ -41,7 +41,7 @@ class TrustGeneratorImpl implements TrustGenerator {
         List<Vote> aVotes = api.getVotesForUser(a);
         List<Vote> bVotes = api.getVotesForUser(b);
         if (aVotes == null || bVotes == null) {
-            return 0.0;
+            return 1.0;
         }
 
         double score = 0;
