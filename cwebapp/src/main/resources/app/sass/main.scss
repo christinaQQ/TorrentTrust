@@ -161,22 +161,64 @@ textarea, textarea.form-control {
 }
 
 .index-page {
-  .vote-buttons {
-    margin-left: 1rem;
-    display: inline-block;
-    .vote-icon {
-      color: #CCC;
-      &.upvote.active {
-        color: #ed1c24;
-      }
-      &.downvote.active {
-        color: #11ccdd;
-      }
-    }
-  }
   .torrent-search-form {
     a.btn {
       margin-right: 10px;
     }
   }
+  ul.past-torrents {
+    list-style-type: none;
+    padding-left: 0;
+    li {
+      height: 2em;
+      display: block;
+      &:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+      }
+      .display-name {
+        vertical-align: middle;
+        display: inline-block;
+      }
+      .vote-buttons {
+        margin-left: 1rem;
+        br {
+          line-height: 5px;
+        }
+        display: inline-block;
+        vertical-align: middle;
+        .separator {
+          margin-bottom: -1px;
+        }
+        .vote-icon {
+          color: #CCC;
+          &.upvote.active {
+            color: #11cc55;
+          }
+          &.downvote.active {
+            color: #ed1c24;
+          }
+        }
+      }
+    }
+
+    .button {
+      display:inline-block;
+      height:100%;
+      vertical-align:middle;
+    }
+    .button:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+    }
+    .Centered{
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
+
 }
