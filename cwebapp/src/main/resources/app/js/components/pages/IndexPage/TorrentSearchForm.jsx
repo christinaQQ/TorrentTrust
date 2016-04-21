@@ -23,7 +23,7 @@ module.exports = React.createClass({
     this.setState({
       dirty: true,
       magnetLink: this._textarea.value,
-      rating: null
+      rating: undefined
     });
   },
   render() {
@@ -38,7 +38,7 @@ module.exports = React.createClass({
         ></textarea>
       </div>
       <div className="form-group">
-        <span className="rating">Rating: {this.state.rating || 'N/A'}</span>
+        <span className="rating">Rating: {this.state.rating !== undefined ? this.state.rating : 'N/A'}</span>
       </div>
       <a className="btn" href="#" onClick={this.onGetRatingClick} disabled={!this.state.magnetLink}>Get Rating</a>
       <a className="btn" href="#" onClick={this.addToTorrentList} disabled={!this.state.magnetLink}>Add to Torrents</a>

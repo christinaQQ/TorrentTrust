@@ -16,13 +16,16 @@ module.exports = React.createClass({
       this.dispatchAction(actions.setLoading(true));
       $.ajax({
         url: `/api/object/${hash}/${this.state.current_trust_algorithm.id}`,
-        type: 'GET'
+        type: 'GET',
+        contentType: 'application/json',
+        dataType: 'json'
       })
       .then((data, textStatus, jqXHR) => {
-        console.log(jqXHR);
         if (jqXHR.status !== 200) {
           return $.Deferred().reject(jqXHR);
         }
+        console.log(data);
+        console.log(callback);
         callback(data.rating);
         return jqXHR;
       })
