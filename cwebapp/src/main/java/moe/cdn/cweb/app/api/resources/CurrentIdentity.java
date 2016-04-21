@@ -8,12 +8,14 @@ import moe.cdn.cweb.app.dto.IdentityMetadata;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @Path("me")
+@Produces("application/json")
 public class CurrentIdentity extends CwebApiEndPoint {
-    
+
     @GET
     public IdentityMetadata getCurrentIdentity() throws InterruptedException, ExecutionException {
         KeyPair keyPair = getCwebEnvironment().getKeyPair();

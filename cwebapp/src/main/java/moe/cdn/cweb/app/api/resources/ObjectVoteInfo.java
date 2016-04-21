@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * @author davix
  */
 @Path("object/{hash}")
+@Produces("application/json")
 public class ObjectVoteInfo extends CwebApiEndPoint {
     private static final String DEFAULT_CONTENT_PROPERTY = "appraisal";
 
@@ -68,13 +69,13 @@ public class ObjectVoteInfo extends CwebApiEndPoint {
             InvalidKeyException, ExecutionException, InterruptedException {
         if (!getCwebVoteApi()
                 .castVote(TorrentTrustProtos.Vote.newBuilder()
-                                .addAssertion(TorrentTrustProtos.Vote.Assertion.newBuilder()
-                                        .setContentProperty(DEFAULT_CONTENT_PROPERTY)
-                                        .setRating(TorrentTrustProtos.Vote.Assertion.Rating.GOOD))
-                                .setContentHash(SecurityProtos.Hash.newBuilder()
-                                        .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.TORRENT)
-                                        .setHashValue(parseHash(hash)))
-                .setOwnerPublicKey(getCwebIdentities().getKeyPair().getPublicKey()).build())
+                        .addAssertion(TorrentTrustProtos.Vote.Assertion.newBuilder()
+                                .setContentProperty(DEFAULT_CONTENT_PROPERTY)
+                                .setRating(TorrentTrustProtos.Vote.Assertion.Rating.GOOD))
+                        .setContentHash(SecurityProtos.Hash.newBuilder()
+                                .setAlgorithm(SecurityProtos.Hash.HashAlgorithm.TORRENT)
+                                .setHashValue(parseHash(hash)))
+                        .setOwnerPublicKey(getCwebIdentities().getKeyPair().getPublicKey()).build())
                 .get()) {
             throw new RuntimeException("Didn't work!");
         }

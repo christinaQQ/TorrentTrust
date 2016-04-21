@@ -7,10 +7,12 @@ import java.nio.file.Files;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import moe.cdn.cweb.app.api.CwebApiEndPoint;
 
 @Path("setState")
+@Produces("application/json")
 public class State extends CwebApiEndPoint {
     @POST
     @Consumes({"text/plain"})

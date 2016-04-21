@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
@@ -22,6 +23,7 @@ import moe.cdn.cweb.app.dto.UserRef;
  * @author davix
  */
 @Path("user/trust")
+@Produces("application/json")
 public class UserTrust extends CwebApiEndPoint {
 
     @GET

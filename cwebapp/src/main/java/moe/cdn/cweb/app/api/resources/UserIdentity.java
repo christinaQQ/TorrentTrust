@@ -16,6 +16,7 @@ import moe.cdn.cweb.app.dto.UserRef;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  * @author davix
  */
 @Path("identity")
+@Produces("application/json")
 public class UserIdentity extends CwebApiEndPoint {
     // TODO: should the "current" user really be stored in the backend?
 
