@@ -36,6 +36,9 @@ public class TrustApiImpl implements TrustApi {
         } catch (CwebApiException e) {
             return 0.0;
         }
+        if (votesOnObject == null) {
+            return 0.0;
+        }
         // get the users who voted on the object
         double  score = 0.0;
         for (TorrentTrustProtos.Vote v : votesOnObject) {
@@ -56,6 +59,7 @@ public class TrustApiImpl implements TrustApi {
             }
             double agreement = (v.getAssertion(0).getRatingValue() == assertion.getRatingValue()) ? 1.0 : -1.0;
             score = score + userCorrelation * trustScore * agreement;
+            System.out.println("score = " + score);
         }
 
 

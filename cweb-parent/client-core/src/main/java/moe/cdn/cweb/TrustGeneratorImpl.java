@@ -31,12 +31,17 @@ class TrustGeneratorImpl implements TrustGenerator {
     public double correlationCoefficient(User a, User b) throws CwebApiException {
         // build the vectors
         Map<SecurityProtos.Hash, Vote> voteVectorA = new HashMap<>();
+        List<Vote> aVotes = api.getVotesForUser(a);
+        List<Vote> bVotes = api.getVotesForUser(a);
+        if (aVotes == null || bVotes == null) {
+            return 0.0;
+        }
 
         double score = 0;
-        for (Vote v : api.getVotesForUser(a)) {
+        for (Vote v : aVotes) {
             voteVectorA.put(v.getContentHash(), v);
         }
-        for (Vote v : api.getVotesForUser(b)) {
+        for (Vote v : bVotes) {
             // only handle overlapping content
             if (voteVectorA.containsKey(v.getContentHash())) {
                 score += voteVectorA.get(v.getContentHash()).getAssertion(0).getRatingValue() *

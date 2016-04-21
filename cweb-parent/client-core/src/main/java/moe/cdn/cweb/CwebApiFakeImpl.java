@@ -13,11 +13,11 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
 class CwebApiFakeImpl implements CwebApi {
     Map<User, List<Vote>> userVotes;
     Map<User, List<User>> trustedGraph;
-    Map<String, List<Vote>> userObjVotes;
+    Map<Hash, List<Vote>> userObjVotes;
 
     public CwebApiFakeImpl(Map<User, List<Vote>> userVotes,
                            Map<User, List<User>> trustedGraph,
-                           Map<String, List<Vote>> userObjVotes) {
+                           Map<Hash, List<Vote>> userObjVotes) {
         this.userVotes = userVotes;
         this.trustedGraph = trustedGraph;
         this.userObjVotes = userObjVotes;
