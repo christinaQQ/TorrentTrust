@@ -8,7 +8,7 @@ var magnetLinks = require('./magnetLinks.json');
 
 async.map(_.range(100), (i, callback) => {
   najax({
-    url: '/api/identity',
+    url: 'http://localhost:8080/api/identity',
     type: 'POST',
     data: JSON.stringify({name: `${Math.random()}`}),
     processData: false,
@@ -21,7 +21,7 @@ async.map(_.range(100), (i, callback) => {
   async.eachSeries(identities, (identity, callback) => {
     const {publicKey, privateKey} = identity;
     najax({
-      url: '/api/identity/switch',
+      url: 'http://localhost:8080/api/identity/switch',
       type: 'POST',
       data: JSON.stringify({publicKey}),
       processData: false,
@@ -32,7 +32,7 @@ async.map(_.range(100), (i, callback) => {
       async.map(_.range(40), (i, cb) => {
         var toTrust = identities[Math.floor(Math.random() * identities.length)];
         najax({
-          url: '/api/user/trust',
+          url: 'http://localhost:8080/api/user/trust',
           type: 'POST',
           data: JSON.stringify({publicKey: toTrust.publicKey}),
           processData: false,
