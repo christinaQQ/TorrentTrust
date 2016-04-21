@@ -9,6 +9,9 @@ const SettingsPage = require('./components/SettingsPage.jsx');
 const NotFoundPage = require('./components/NotFoundPage.jsx');
 const CreateIdentityPage = require('./components/pages/CreateIdentityPage');
 const ViewKeyPage = require('./components/pages/ViewKeyPage');
+const store = require('./redux/store.js');
+
+browserHistory.listen(e => store.dispatch({type: 'PAGE_RELOAD'}));
 
 ReactDOM.render((
   <Router history={browserHistory}>

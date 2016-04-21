@@ -66,6 +66,9 @@ var mainReducer = function (state, action) {
       torrent_lists[publicKey].filter(torrent => torrent.hash === hash)[0].downvoted = true;
       return Object.assign({}, state, {torrent_lists});
     }
+    case 'PAGE_RELOAD': {
+      return Object.assign({}, state, {error_message: null, info_message: null, loading: false});
+    }
   }
   return state;
 };
