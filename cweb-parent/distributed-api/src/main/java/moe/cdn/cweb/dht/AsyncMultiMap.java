@@ -55,4 +55,6 @@ public interface AsyncMultiMap<K, V> {
      * added
      */
     ListenableFuture<Boolean> add(K key, V value);
+
+    ListenableFuture<Boolean> remove(K key);
 }

@@ -11,6 +11,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 
+import moe.cdn.cweb.SecurityProtos;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.security.CwebId;
 
@@ -67,6 +68,11 @@ class CwebMultiMapImpl<V extends Message> implements CwebMultiMap<V> {
     @Override
     public ListenableFuture<Boolean> add(Hash key, V value) {
         return collection.add(keyReducer.apply(key), value);
+    }
+
+    @Override
+    public ListenableFuture<Boolean> remove(Hash key) {
+        return collection.remove(keyReducer.apply(key));
     }
 
     @Override
