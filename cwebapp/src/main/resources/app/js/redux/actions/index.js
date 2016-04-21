@@ -117,8 +117,8 @@ module.exports = actions = {
     return (dispatch, getState) => {
       dispatch(this.setLoading(true));
       $.ajax({
-        url: '/api/user/trust/',
-        type: 'DELETE',
+        url: '/api/user/trust/delete',
+        type: 'POST',
         data: JSON.stringify({publicKey}),
         processData: false,
         contentType: 'application/json'
