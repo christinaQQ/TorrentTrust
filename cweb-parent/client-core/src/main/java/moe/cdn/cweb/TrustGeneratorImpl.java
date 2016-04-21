@@ -58,7 +58,7 @@ class TrustGeneratorImpl implements TrustGenerator {
             case EIGENTRUST:
                 return trustCoefficientCentrality(a, b);
             default:
-                return 0.0;
+                throw new IllegalStateException("Invalid trust metric");
         }
     }
 

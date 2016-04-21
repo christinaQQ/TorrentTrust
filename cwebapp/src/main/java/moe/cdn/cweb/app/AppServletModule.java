@@ -44,6 +44,7 @@ public class AppServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
+        bind(HydrationServlet.class).in(Singleton.class);
         bind(DefaultServlet.class).in(Singleton.class);
         bind(ServletContainer.class).in(Singleton.class);
 
@@ -74,6 +75,7 @@ public class AppServletModule extends ServletModule {
             throw new CwebConfigurationException("Cannot resolve application resources", e);
         }
         serve("/static/*").with(new DefaultServlet(), newFileServletInitParameters(staticDirUrl));
+        serve("/hydration.js").with(HydrationServlet.class);
         serve("/*").with(IndexServlet.class);
     }
 }

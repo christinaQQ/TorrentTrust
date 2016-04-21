@@ -2,18 +2,17 @@ package moe.cdn.cweb.app;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import moe.cdn.cweb.app.services.CwebApiService;
-
 @Singleton
 public class IndexServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 3479495663967760480L;
+
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("text/html");
@@ -36,19 +35,12 @@ public class IndexServlet extends HttpServlet {
                 "<script>document.write('<script src=\"http://' + (location.host || 'localhost')"
                         + ".split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')"
                         + "</script>");
-         writer.print(getHydrationScript());
+        writer.print("<script src=\"/hydration.js\"/>");
         for (String script : scripts) {
             writer.print(String.format(scriptTemplate, script));
         }
         writer.print("</body>");
         writer.print("</html>");
         writer.flush();
-    }
-
-    private String getHydrationScript() throws IOException {
-        Path stateFilePath = (Path) getServletContext().getAttribute(
-                CwebApiService.STATE_FILE_PATH_ATTRIBUTE);
-        String initialStateJson = new String(Files.readAllBytes(stateFilePath));
-        return "<script>window.INITIAL_APP_STATE = " + initialStateJson + "</script>";
     }
 }
