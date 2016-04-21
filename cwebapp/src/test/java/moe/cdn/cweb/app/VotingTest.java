@@ -2,18 +2,15 @@ package moe.cdn.cweb.app;
 
 import moe.cdn.cweb.app.dto.IdentityMetadata;
 import moe.cdn.cweb.app.dto.TrustRating;
-import moe.cdn.cweb.app.dto.UserName;
-import moe.cdn.cweb.app.dto.UserRef;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class VotingTest extends CwebTest {
+public class VotingTest extends CwebApiTest {
     IdentityMetadata totino;
     IdentityMetadata johnCena;
 
@@ -21,48 +18,25 @@ public class VotingTest extends CwebTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        totino = target("identity").request().post(
-                Entity.json(new UserName("totino")), IdentityMetadata.class);
-        johnCena = target("identity").request().post(
-                Entity.json(new UserName("johnCena")), IdentityMetadata.class);
+        totino = newIdentity("totino");
+        johnCena = newIdentity("john_cena");
 
-        Response switchToTotino = target("identity/switch").request().post(
-                Entity.entity(new UserRef(totino.getPublicKeyHash()),
-                        MediaType.APPLICATION_JSON_TYPE));
-        assertThat(switchToTotino.getStatusInfo().getFamily())
-                .isEqualTo(Response.Status.Family.SUCCESSFUL);
+        switchTo(totino);
+        trust(johnCena);
 
-        Response trustJohnCena = target("user/trust").request().post(
-                Entity.json(new UserRef(johnCena.getPublicKeyHash())));
-        assertThat(trustJohnCena.getStatusInfo().getFamily())
-                .isEqualTo(Response.Status.Family.SUCCESSFUL);
-
-        Response switchToJohnCena = target("identity/switch").request().post(
-                Entity.json(new UserRef(johnCena.getPublicKeyHash())));
-        assertThat(switchToJohnCena.getStatusInfo().getFamily())
-                .isEqualTo(Response.Status.Family.SUCCESSFUL);
-
-        Response trustTotino = target("user/trust").request().post(
-                Entity.json(new UserRef(totino.getPublicKeyHash())));
-        assertThat(trustTotino.getStatusInfo().getFamily())
-                .isEqualTo(Response.Status.Family.SUCCESSFUL);
+        switchTo(johnCena);
+        trust(totino);
     }
 
     @Test
     public void testUpVoteByOneIdentityIsSeenByOther() throws Exception {
-        Response switchToTotino = target("identity/switch").request().post(
-                Entity.json(new UserRef(totino.getPublicKeyHash())));
-        assertThat(switchToTotino.getStatusInfo().getFamily())
-                .isEqualTo(Response.Status.Family.SUCCESSFUL);
+        switchTo(totino);
 
         Response upVoteQQQQ = target("object/QQQQ/up").request().post(Entity.json(null));
         assertThat(upVoteQQQQ.getStatusInfo().getFamily())
                 .isEqualTo(Response.Status.Family.SUCCESSFUL);
 
-        Response switchToJohnCena = target("identity/switch").request().post(
-                Entity.json(new UserRef(johnCena.getPublicKeyHash())));
-        assertThat(switchToJohnCena.getStatusInfo().getFamily())
-                .isEqualTo(Response.Status.Family.SUCCESSFUL);
+        switchTo(johnCena);
 
         TrustRating rating = target("object/QQQQ/ONLY_FRIENDS").request().get(TrustRating.class);
         assertThat(rating.getAlgorithmName()).isEqualTo("ONLY_FRIENDS");
