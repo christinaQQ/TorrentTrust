@@ -29,7 +29,7 @@ import moe.cdn.cweb.app.dto.TrustRating;
  * @author davix
  */
 @Path("object/{hash}")
-public class ObjectInfo extends CwebApiEndPoint {
+public class ObjectVoteInfo extends CwebApiEndPoint {
     private static final String DEFAULT_CONTENT_PROPERTY = "appraisal";
 
     private static ByteString parseHash(String hash) throws BadRequestException {
@@ -39,8 +39,13 @@ public class ObjectInfo extends CwebApiEndPoint {
     @GET
     @Path("{algo}")
     public TrustRating getTrustRating(@PathParam("hash") String hash,
+<<<<<<< 41917f6e32d4f2880fb754d862733c0c057ab959:cwebapp/src/main/java/moe/cdn/cweb/app/api/resources/ObjectInfo.java
             @PathParam("algo") String algo)
                     throws ExecutionException, InterruptedException, CwebApiException {
+=======
+                                      @PathParam("algo") String algo)
+            throws ExecutionException, InterruptedException, CwebApiException {
+>>>>>>> Commit failing voting test:cwebapp/src/main/java/moe/cdn/cweb/app/api/resources/ObjectVoteInfo.java
         Optional<TorrentTrustProtos.User> user = getCwebIdentityApi().getUserIdentity().get();
         TrustApi.TrustMetric trustMetric;
         try {

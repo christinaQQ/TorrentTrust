@@ -3,7 +3,6 @@ package moe.cdn.cweb.app;
 import static com.google.common.truth.Truth.assertThat;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 
@@ -19,15 +18,14 @@ public class UserIdentityTest extends CwebTest {
     @Test
     public void testIdentityExists() {
         IdentityMetadata identity = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("totino")), IdentityMetadata.class);
         assertThat(identity).isNotNull();
     }
 
     @Test
     public void testIdentityHasFields() {
         IdentityMetadata identity = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
+                Entity.json(new UserName("totino")),
                 IdentityMetadata.class);
         assertThat(identity.getHandle()).isEqualTo("totino");
         assertThat(identity.getPrivateKeyHash()).isNotNull();
@@ -37,11 +35,9 @@ public class UserIdentityTest extends CwebTest {
     @Test
     public void testDuplicateIdentity() {
         IdentityMetadata original = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("totino")), IdentityMetadata.class);
         IdentityMetadata duplicate = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("totino")), IdentityMetadata.class);
 
         assertThat(original).isNotNull();
         assertThat(duplicate).isNotNull();
@@ -61,48 +57,36 @@ public class UserIdentityTest extends CwebTest {
     @Test
     public void testSwitchSameIdentity() throws Exception {
         IdentityMetadata totino = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("totino")), IdentityMetadata.class);
         IdentityMetadata totino2 = target("identity/switch").request().post(
-                Entity.entity(new UserRef(totino.getPublicKeyHash()),
-                        MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserRef(totino.getPublicKeyHash())), IdentityMetadata.class);
         assertThat(totino).isEqualTo(totino2);
     }
 
     @Test
     public void testSwitchIdentity() throws Exception {
         IdentityMetadata totino = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("totino")), IdentityMetadata.class);
         IdentityMetadata johnCena = target("identity").request().post(
-                Entity.entity(new UserName("johncena"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("johncena")), IdentityMetadata.class);
 
         IdentityMetadata totino2 = target("identity/switch").request().post(
-                Entity.entity(new UserRef(totino.getPublicKeyHash()),
-                        MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserRef(totino.getPublicKeyHash())), IdentityMetadata.class);
         assertThat(totino).isEqualTo(totino2);
-        
+
 
         IdentityMetadata johnCena2 = target("identity/switch").request().post(
-                Entity.entity(new UserRef(johnCena.getPublicKeyHash()),
-                        MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserRef(johnCena.getPublicKeyHash())), IdentityMetadata.class);
         assertThat(johnCena).isEqualTo(johnCena2);
     }
 
     @Test
     public void testSwitchIdentityCurrent() throws Exception {
         IdentityMetadata totino = target("identity").request().post(
-                Entity.entity(new UserName("totino"), MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserName("totino")), IdentityMetadata.class);
 
         target("identity/switch").request().post(
-                Entity.entity(new UserRef(totino.getPublicKeyHash()),
-                        MediaType.APPLICATION_JSON_TYPE),
-                IdentityMetadata.class);
+                Entity.json(new UserRef(totino.getPublicKeyHash())), IdentityMetadata.class);
 
         IdentityMetadata me = target("me").request().get(IdentityMetadata.class);
         assertThat(me).isEqualTo(totino);
