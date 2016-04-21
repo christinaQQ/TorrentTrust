@@ -35,7 +35,7 @@ public class IndexServlet extends HttpServlet {
                 "<script>document.write('<script src=\"http://' + (location.host || 'localhost')"
                         + ".split(':')[0] + ':35729/livereload.js?snipver=1\"></' + 'script>')"
                         + "</script>");
-        writer.print("<script src=\"/hydration.js\"/>");
+        writer.print("<script src=\"/hydration.js\"></script>");
         for (String script : scripts) {
             writer.print(String.format(scriptTemplate, script));
         }
