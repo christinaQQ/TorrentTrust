@@ -1,12 +1,12 @@
 package moe.cdn.cweb.app;
 
 import moe.cdn.cweb.app.dto.IdentityMetadata;
-import moe.cdn.cweb.app.dto.UserName;
 import moe.cdn.cweb.app.dto.UserRef;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,10 +34,9 @@ public class UserTrustTest extends CwebApiTest {
         guaranteeIdentities();
         switchTo(akari);
 
-        boolean success = target("user/trust").request().post(
-                Entity.json(new UserRef(kyouko.getPublicKeyHash())),
-                Boolean.class);
-        assertThat(success).isTrue();
+        Response r = target("user/trust").request().post(
+                Entity.json(new UserRef(kyouko.getPublicKeyHash())));
+        assertThat(r.getStatusInfo().getFamily()).isEqualTo(Response.Status.Family.SUCCESSFUL);
     }
 
     @Test
@@ -45,9 +44,9 @@ public class UserTrustTest extends CwebApiTest {
         guaranteeIdentities();
         switchTo(akari);
 
-        boolean success = target("user/trust").request().post(
-                Entity.json(new UserRef(kyouko.getPublicKeyHash())), Boolean.class);
-        assertThat(success).isTrue();
+        Response r = target("user/trust").request().post(
+                Entity.json(new UserRef(kyouko.getPublicKeyHash())));
+        assertThat(r.getStatusInfo().getFamily()).isEqualTo(Response.Status.Family.SUCCESSFUL);
         List<UserRef> trusted =
                 target("user/trust").request().get(new GenericType<List<UserRef>>() {});
         assertThat(trusted.stream().map(UserRef::getPublicKey).collect(Collectors.toSet()))
@@ -60,12 +59,10 @@ public class UserTrustTest extends CwebApiTest {
         switchTo(akari);
 
         // Add kyouko
-        target("user/trust").request().post(Entity.json(new UserRef(kyouko.getPublicKeyHash())),
-                Boolean.class);
+        target("user/trust").request().post(Entity.json(new UserRef(kyouko.getPublicKeyHash())));
         // delete kyouko
         target("user/trust/delete").request().post(
-                Entity.json(new UserRef(kyouko.getPublicKeyHash())),
-                Boolean.class);
+                Entity.json(new UserRef(kyouko.getPublicKeyHash())));
         List<UserRef> trusted =
                 target("user/trust").request().get(new GenericType<List<UserRef>>() {});
 
@@ -80,11 +77,10 @@ public class UserTrustTest extends CwebApiTest {
 
         // Add yui
         target("user/trust").request().post(
-                Entity.json(new UserRef(yui.getPublicKeyHash())),
-                Boolean.class);
+                Entity.json(new UserRef(yui.getPublicKeyHash())));
         // delete kyouko
         target("user/trust/delete").request().post(
-                Entity.json(new UserRef(kyouko.getPublicKeyHash())), Boolean.class);
+                Entity.json(new UserRef(kyouko.getPublicKeyHash())));
         List<UserRef> trusted =
                 target("user/trust").request().get(new GenericType<List<UserRef>>() {});
 
@@ -99,8 +95,7 @@ public class UserTrustTest extends CwebApiTest {
 
         // Add yui
         target("user/trust").request().post(
-                Entity.json(new UserRef(yui.getPublicKeyHash())),
-                Boolean.class);
+                Entity.json(new UserRef(yui.getPublicKeyHash())));
         // Add yui again
         target("user/trust").request().post(
                 Entity.json(new UserRef(yui.getPublicKeyHash())),
@@ -118,8 +113,7 @@ public class UserTrustTest extends CwebApiTest {
         switchTo(akari);
 
         // Add chinatsu
-        target("user/trust").request().post(Entity.json(new UserRef(chinatsu.getPublicKeyHash())),
-                Boolean.class);
+        target("user/trust").request().post(Entity.json(new UserRef(chinatsu.getPublicKeyHash())));
         List<UserRef> trusted =
                 target("user/trust").request().get(new GenericType<List<UserRef>>() {});
         assertThat(trusted.stream().map(UserRef::getPublicKey).collect(Collectors.toSet()))
@@ -127,19 +121,12 @@ public class UserTrustTest extends CwebApiTest {
         
         // Delete chinatsu
         target("user/trust/delete").request().post(
-                Entity.json(new UserRef(chinatsu.getPublicKeyHash())), Boolean.class);
+                Entity.json(new UserRef(chinatsu.getPublicKeyHash())));
         // Delete chinatsu again
         target("user/trust/delete").request().post(
-                Entity.json(new UserRef(chinatsu.getPublicKeyHash())), Boolean.class);
+                Entity.json(new UserRef(chinatsu.getPublicKeyHash())));
         
         trusted = target("user/trust").request().get(new GenericType<List<UserRef>>() {});
-        assertThat(trusted.stream().map(UserRef::getPublicKey).collect(Collectors.toSet()))
-                .isEmpty();
-    }
-
-    @Test
-    public void testTrustSelf() throws Exception {
-        switchTo(akari);
-        trust(akari);
+        assertThat(trusted.stream().map(UserRef::getPublicKey).collect(Collectors.toSet())).isEmpty();
     }
 }
