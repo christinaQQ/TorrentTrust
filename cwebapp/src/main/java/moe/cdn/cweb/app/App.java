@@ -72,7 +72,7 @@ public class App {
 
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
 
-        servletHandler.addServlet(DefaultServlet.class, "/");
+        servletHandler.addServlet(new ServletHolder(new DefaultServlet()), "/");
         servletHandler.addEventListener(new CwebGuiceServletConfig());
         servletHandler.addEventListener(new CwebApiService());
 

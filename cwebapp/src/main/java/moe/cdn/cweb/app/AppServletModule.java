@@ -21,21 +21,21 @@ import java.util.Map;
  * @author davix
  */
 public class AppServletModule extends ServletModule {
-    private static final boolean DEBUG = true;
+//    private static final boolean DEVELOPMENT = true;
 
     private static Map<String, String> newFileServletInitParameters(URL resourceDirUrl) {
         Map<String, String> appInitParameters = new HashMap<>();
         String resourceBase = resourceDirUrl.toExternalForm();
-        if (DEBUG) {
-            if (resourceBase.endsWith("build/")) {
-                resourceBase = "src/main/resources/app/build";
-            } else if (resourceBase.endsWith("static/")) {
-                resourceBase = "src/main/resources/app/static";
-            } else {
-                throw new CwebConfigurationException(
-                        "Unknown resourceBase init parameter: " + resourceBase);
-            }
-        }
+//        if (DEVELOPMENT) {
+//            if (resourceBase.endsWith("build/")) {
+//                resourceBase = "src/main/resources/app/build/";
+//            } else if (resourceBase.endsWith("static/")) {
+//                resourceBase = "src/main/resources/app/static/";
+//            } else {
+//                throw new CwebConfigurationException(
+//                        "Unknown resourceBase init parameter: " + resourceBase);
+//            }
+//        }
         appInitParameters.put("resourceBase", resourceBase);
         appInitParameters.put("pathInfoOnly", "true");
         appInitParameters.put("dirAllowed", "false");
