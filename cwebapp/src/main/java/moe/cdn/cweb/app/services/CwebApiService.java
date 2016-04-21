@@ -84,8 +84,8 @@ public class CwebApiService implements ServletContextListener {
             dhtPort2 = i;
         }
 
-        String dataFileUriString = sce.getServletContext().getInitParameter(
-                App.STATE_FILE_URI_INIT_PARAM);
+        String dataFileUriString =
+                sce.getServletContext().getInitParameter(App.STATE_FILE_URI_INIT_PARAM);
         Path stateFilePath;
         if (dataFileUriString == null) {
             stateFilePath = DEFAULT_STATE_FILE_PATH;
@@ -99,27 +99,16 @@ public class CwebApiService implements ServletContextListener {
         if (!Files.exists(stateFilePath)) {
             // ok we need to create a user identity here.. no idea how to do
             // that...
-            SecurityProtos.KeyPair keyPair = KeyUtils.generateKeyPair();
-            String publicKey = Base64.getEncoder()
-                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String privateKey = Base64.getEncoder()
-                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String[] lines = {"{",
-                    "\"error_message\": null,",
-                    "\"info_message\": null,",
-                    "\"trusted_identities\": {\"" + publicKey + "\": []},",
-                    "\"possible_trust_algorithms\": [",
+            String[] lines = {"{", "\"error_message\": null,", "\"info_message\": null,",
+                    "\"trusted_identities\": {},", "\"possible_trust_algorithms\": [",
                     "    {\"id\":\"EIGENTRUST\",\"name\":\"Eigentrust\"},",
                     "    {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only friends\"},",
                     "    {\"id\":\"CONNECTED_COMPONENT\",\"name\":\"Anyone in your network\"},",
                     "    {\"id\":\"FRIENDS_OF_FRIENDS\",\"name\":\"Friends of friends\"}", "  ],",
                     "\"current_trust_algorithm\": {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only "
                             + "Friends\"},",
-                    "\"current_identity\": {\"name\":\"Default ID\",\"publicKey\":\"" + publicKey
-                            + "\",\"privateKey\":\"" + privateKey + "\"},",
-                    "\"user_identities\": [{\"name\":\"Default ID\",\"publicKey\":\"" + publicKey
-                            + "\",\"privateKey\":\"" + privateKey + "\"}],",
-                    "\"torrent_lists\": {\"" + publicKey + "\": []}", "}"};
+                    "\"current_identity\": null,", "\"user_identities\": [],",
+                    "\"torrent_lists\": {}", "}"};
             try {
                 Files.write(stateFilePath, Arrays.asList(lines));
             } catch (IOException e) {
@@ -138,41 +127,29 @@ public class CwebApiService implements ServletContextListener {
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
                 CwebModuleService.getInstance().getCwebModule(), appModule);
 
-        primaryNode = injector.getInstance(Key.get(
-                ManagedPeer.class, PrimaryDhtNodeController.class));
-        keyLookupNode = injector.getInstance(Key.get(
-                ManagedPeer.class, KeyLookupDhtNodeController.class));
+        injectAndProvideApi(sce, CwebApi.class, injector);
+        injectAndProvideApi(sce, CwebTrustNetworkApi.class, injector);
+        injectAndProvideApi(sce, CwebIdentityApi.class, injector);
+        injectAndProvideApi(sce, CwebVoteApi.class, injector);
+        injectAndProvideApi(sce, TrustApi.class, injector);
+        injectAndProvideApi(sce, TrustGenerator.class, injector);
 
-        sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(),
-                appModule.getEnvironment());
+        primaryNode =
+                injector.getInstance(Key.get(ManagedPeer.class, PrimaryDhtNodeController.class));
+        keyLookupNode =
+                injector.getInstance(Key.get(ManagedPeer.class, KeyLookupDhtNodeController.class));
 
-        CwebApi cwebApi = injector.getInstance(CwebApi.class);
-        sce.getServletContext().setAttribute(CwebApi.class.getName(), cwebApi);
-
-        CwebTrustNetworkApi trustNetwork = injector.getInstance(CwebTrustNetworkApi.class);
-        sce.getServletContext().setAttribute(CwebTrustNetworkApi.class.getName(), trustNetwork);
-
-        CwebIdentityApi identityApi = injector.getInstance(CwebIdentityApi.class);
-        sce.getServletContext().setAttribute(CwebIdentityApi.class.getName(), identityApi);
-
-        CwebVoteApi voteService = injector.getInstance(CwebVoteApi.class);
-        sce.getServletContext().setAttribute(CwebVoteApi.class.getName(), voteService);
-
-        sce.getServletContext().setAttribute(IdentityEnvironment.class.getName(), appModule
-                .getIdentities());
-
-        TrustGenerator trustGenerator = injector.getInstance(TrustGenerator.class);
-        sce.getServletContext().setAttribute(TrustGenerator.class.getName(), trustGenerator);
-
-        TrustApi trustApi = injector.getInstance(TrustApi.class);
-        sce.getServletContext().setAttribute(TrustApi.class.getName(), trustApi);
+        provideApi(sce, GlobalEnvironment.class, appModule.getEnvironment());
+        provideApi(sce, IdentityEnvironment.class, appModule.getIdentities());
+        provideApi(sce, ManagedPeer.class, primaryNode);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         if (primaryNode != null) {
             try {
-                primaryNode.shutdown().get(); // TODO: Should this shutdown actually
+                primaryNode.shutdown().get(); // TODO: Should this shutdown
+                                              // actually
                 // be blocking?
             } catch (InterruptedException | ExecutionException e) {
                 sce.getServletContext().log(
@@ -189,4 +166,15 @@ public class CwebApiService implements ServletContextListener {
             }
         }
     }
+
+    private static <E> void provideApi(ServletContextEvent sce, Class<E> clazz, E instance) {
+        sce.getServletContext().setAttribute(clazz.getName(), instance);
+    }
+
+    private static <E> void injectAndProvideApi(ServletContextEvent sce,
+            Class<E> clazz,
+            Injector injector) {
+        provideApi(sce, clazz, injector.getInstance(clazz));
+    }
+
 }

@@ -4,7 +4,6 @@ const { Link } = require('react-router');
 
 module.exports = React.createClass({
   propTypes: {
-    currentIdentity: React.PropTypes.any.isRequired,
     userIdentities: React.PropTypes.array.isRequired,
     switchUserIdentity: React.PropTypes.func.isRequired
   },
@@ -14,7 +13,14 @@ module.exports = React.createClass({
     );
   },
   render() {
-    const {name: currentName, publicKey: currentpublicKey} = this.props.currentIdentity;
+    let currentName, currentpublicKey;
+    if (this.props.currentIdentity) {
+      const {name, publicKey} = this.props.currentIdentity;
+      currentName = name;
+      currentpublicKey = publicKey;
+    } else {
+      currentName = 'No users exist';
+    }
     return (
       <li className="dropdown">
         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

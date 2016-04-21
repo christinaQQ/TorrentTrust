@@ -2,6 +2,8 @@ const React = require('React');
 const Navbar = require('./navbar/Navbar.jsx');
 const {DispatchMixin, SubscribeToStateChangesMixin} = require('./mixins');
 const actions = require('../redux/actions');
+const CreateIdentityPage = require('./pages/CreateIdentityPage');
+
 
 module.exports = React.createClass({
   mixins: [DispatchMixin, SubscribeToStateChangesMixin],
@@ -37,7 +39,7 @@ module.exports = React.createClass({
         <div className="container">
           {this.getErrorMessageComponent()}
           {this.getInfoMessageComponent()}
-          {this.props.children}
+          {this.state.current_identity ? this.props.children : <CreateIdentityPage/>}
         </div>
       </div>
     );

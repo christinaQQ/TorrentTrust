@@ -1,10 +1,13 @@
 const React = require('React');
 const CopyToClipboard = require('react-copy-to-clipboard');
-const {SubscribeToStateChangesMixin} = require('../../mixins');
+const {DispatchMixin, SubscribeToStateChangesMixin} = require('../../mixins');
+const actions = require('../../../redux/actions');
 
 module.exports = React.createClass({
-  mixins: [SubscribeToStateChangesMixin],
-  // TODO add success message on copy
+  mixins: [DispatchMixin, SubscribeToStateChangesMixin],
+  onCopy() {
+    this.dispatchAction(actions.setInfoMessage('Key copied to clipboard.'));
+  },
   render() {
     return (
       <div className="row view-key-page">
@@ -13,8 +16,8 @@ module.exports = React.createClass({
           </textarea>
         </div>
         <div className="col-sm-6 col-sm-offset-3">
-          <CopyToClipboard text={this.state.current_identity.publicKey}>
-            <a href="#" className="pull-right btn">Copy to Clipboard</a>
+          <CopyToClipboard onCopy={this.onCopy} text={this.state.current_identity.publicKey}>
+            <span className="pull-right btn">Copy to Clipboard</span>
           </CopyToClipboard>
         </div>
       </div>
