@@ -6,10 +6,7 @@ import moe.cdn.cweb.app.api.CwebApiEndPoint;
 import moe.cdn.cweb.app.api.exceptions.CwebApiEndPointException;
 import moe.cdn.cweb.app.dto.UserRef;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -56,6 +53,9 @@ public class UserTrust extends CwebApiEndPoint {
     @POST
     public Response trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
+        if (publicKey == null) {
+            throw new BadRequestException("Invalid public key");
+        }
         boolean r = getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
         if (r) {
             return Response.ok().build();
@@ -67,6 +67,9 @@ public class UserTrust extends CwebApiEndPoint {
     @Path("delete")
     public Response untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
+        if (publicKey == null) {
+            throw new BadRequestException("Invalid public key");
+        }
         boolean r = getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
         if (r) {
             return Response.ok().build();
