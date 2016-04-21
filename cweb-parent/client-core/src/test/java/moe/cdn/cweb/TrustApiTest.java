@@ -46,6 +46,8 @@ public class TrustApiTest {
     private static final TorrentTrustProtos.SignedUser d_signed =
             TorrentTrustProtos.SignedUser.newBuilder().setUser(d).build();
 
+
+    Map<User, List<User>> userGraph;
     TrustGenerator trustGenerator;
     Map<User, List<Vote>> userVotes;
     TrustApi trustApi;
@@ -70,12 +72,17 @@ public class TrustApiTest {
 
     @Before
     public void setUp() throws Exception {
-        Map<User, List<User>> userGraph = new HashMap<>();
+        userGraph = new HashMap<>();
         userGraph.put(a, Collections.singletonList(b));
         userGraph.put(b, Arrays.asList(a, c));
         userGraph.put(d, Collections.emptyList());
         userGraph.put(c, Collections.emptyList());
 
+
+    }
+
+    @Test
+    public void testTrustCorrelated() throws CwebApiException, ExecutionException, InterruptedException {
         userVotes = new HashMap<>();
         Map<Hash, List<Vote>> userObjVotes = new HashMap<>();
 
@@ -104,13 +111,51 @@ public class TrustApiTest {
 
         trustApi = new TrustApiImpl(api, keyLookupService, trustGenerator);
 
+        double trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.ONLY_FRIENDS);
+        System.out.println("trust = " + trust);
+        assertEquals(1.0, trust, .001); // we will trust this object completely
+
+        trust = trustApi.trustForObject(c, goodAssertion, object2, TrustApi.TrustMetric.ONLY_FRIENDS);
+        assertEquals(0.0, trust, .001); //c is outside our network
     }
 
     @Test
-    public void testTrustCorrelated() throws CwebApiException, ExecutionException, InterruptedException {
+    public void testTrustCorrelatedFriendsofFriends() throws CwebApiException, ExecutionException, InterruptedException {
+
+        userVotes = new HashMap<>();
+        Map<Hash, List<Vote>> userObjVotes = new HashMap<>();
+
+        // user 1 votes good on object 1
+        // user 3 votes good on object 1
+        Vote aVote = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(a.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object1"))).build();
+        Vote bVote = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(c.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object1"))).build();
+
+
+        // user 3 also votes good on object 2
+//        Vote bVote2 = makeVote(object2.getHashValue().toString(), Arrays.asList(goodAssertion), b);
+        Vote bVote2 = Vote.newBuilder().addAssertion(goodAssertion).setOwnerPublicKey(c.getPublicKey()).setContentHash(Hash.newBuilder().setHashValue(ByteString.copyFromUtf8("object2"))).build();
+
+        userVotes.put(a, Arrays.asList(aVote));
+        userVotes.put(c, Arrays.asList(bVote, bVote2));
+
+        userObjVotes.put(object, Arrays.asList(aVote, bVote));
+        userObjVotes.put(object2, Arrays.asList(bVote));
+
+
+        CwebApi api = new CwebApiFakeImpl(userVotes, userGraph, userObjVotes);
+        trustGenerator = new TrustGeneratorImpl(api);
+        KeyLookupService keyLookupService = new FakeKeyLookupServiceImpl(Arrays.asList(a_signed, b_signed, c_signed, d_signed));
+
+        trustApi = new TrustApiImpl(api, keyLookupService, trustGenerator);
 
         double trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.ONLY_FRIENDS);
-        System.out.println("trust = " + trust);
+        assertEquals(0.0, trust, .001); //c is outside our network
+
+        trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.FRIENDS_OF_FRIENDS);
+        assertEquals(1.0, trust, .001); // now we trust them
+
+        trust = trustApi.trustForObject(a, goodAssertion, object2, TrustApi.TrustMetric.CONNECTED_COMPONENT);
+        assertEquals(1.0, trust, .001); // now we trust them
     }
 
     class FakeKeyLookupServiceImpl implements KeyLookupService {

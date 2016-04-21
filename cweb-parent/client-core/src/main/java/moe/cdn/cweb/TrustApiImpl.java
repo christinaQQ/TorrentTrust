@@ -44,10 +44,14 @@ public class TrustApiImpl implements TrustApi {
         for (TorrentTrustProtos.Vote v : votesOnObject) {
             SecurityProtos.Key ownerKey = v.getOwnerPublicKey();
             Optional<TorrentTrustProtos.SignedUser> someVotingUser = keyLookupService.findOwner(ownerKey).get();
+
             if (!someVotingUser.isPresent()) {
                 throw new CwebApiException("Found invalid user vote on object.");
             }
             TorrentTrustProtos.SignedUser votingUser = someVotingUser.get();
+            if (votingUser.getUser() == user) {
+                continue;
+            }
 
             // now calculate the score, sum over these users of the
             // correlation coefficient, trust score, and vote agreement
@@ -59,7 +63,6 @@ public class TrustApiImpl implements TrustApi {
             }
             double agreement = (v.getAssertion(0).getRatingValue() == assertion.getRatingValue()) ? 1.0 : -1.0;
             score = score + userCorrelation * trustScore * agreement;
-            System.out.println("score = " + score);
         }
 
 
