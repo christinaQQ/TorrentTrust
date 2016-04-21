@@ -60,6 +60,10 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
         logger.debug("Getting local trust network for {}", Representations.asString(user));
         LinkedList<ListenableFuture<Optional<User>>> maybeUsers = new LinkedList<>();
         for (TrustAssertion t : user.getTrustedList()) {
+            if (!t.hasPublicKey() || !t.getTrustAssertion().equals(Trust.TRUSTED)) {
+                logger.debug("Dropping {} ({}) from trust list. ", t.getPublicKey(), t.getTrustAssertion());
+                continue;
+            }
             maybeUsers.add(Futures.transform(keyLookupService.findOwner(t.getPublicKey()),
                     (Function<Optional<SignedUser>, Optional<User>>) maybeOwner -> maybeOwner.map(
                             o -> signatureValidationService.validateUser(o) ? o.getUser() : null)));
@@ -72,6 +76,8 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
 
     @Override
     public ListenableFuture<Boolean> addUserAsTrusted(Key publicKey) {
+        // TODO: We allow users to trust/ (make claims on trust) for users/keys
+        // not in the network.
         logger.debug("Adding to trust network: {}", Representations.asString(publicKey));
         TrustAssertion trustAssertion = TrustAssertion.newBuilder().setPublicKey(publicKey)
                 .setTrustAssertion(Trust.TRUSTED).build();
@@ -79,9 +85,19 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
                 keyLookupService.findOwner(keyEnvironment.getKeyPair().getPublicKey()),
                 (AsyncFunction<Optional<SignedUser>, Boolean>) owner -> {
                     if (owner.isPresent()) {
+                        // Handle existing trust assertions
+                        List<TrustAssertion> cleanAssertionList =
+                                owner.get().getUser().getTrustedList().stream()
+                                        .filter(t -> !t.getPublicKey().equals(publicKey))
+                                        .collect(Collectors.toList());
+                        // Clear old assertions and add new one
                         return importService.importUser(owner.get().getUser().toBuilder()
+                                .clearTrusted().addAllTrusted(cleanAssertionList)
                                 .addTrusted(trustAssertion).build());
                     } else {
+                        logger.info("Add trust failed for {}. Current user {} not found.",
+                                Representations.asString(publicKey), Representations
+                                        .asString(keyEnvironment.getKeyPair().getPublicKey()));
                         return Futures.immediateFuture(false);
                     }
                 });
@@ -96,9 +112,18 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
                 keyLookupService.findOwner(keyEnvironment.getKeyPair().getPublicKey()),
                 (AsyncFunction<Optional<SignedUser>, Boolean>) owner -> {
                     if (owner.isPresent()) {
+                        // Handle existing trust assertions
+                        List<TrustAssertion> cleanAssertionList =
+                                owner.get().getUser().getTrustedList().stream()
+                                        .filter(t -> !t.getPublicKey().equals(publicKey))
+                                        .collect(Collectors.toList());
                         return importService.importUser(owner.get().getUser().toBuilder()
+                                .clearTrusted().addAllTrusted(cleanAssertionList)
                                 .addTrusted(trustAssertion).build());
                     } else {
+                        logger.info("Add trust failed for {}. Current user {} not found.",
+                                Representations.asString(publicKey), Representations
+                                        .asString(keyEnvironment.getKeyPair().getPublicKey()));
                         return Futures.immediateFuture(false);
                     }
                 });
@@ -132,12 +157,11 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
     @Override
     public ListenableFuture<Optional<KeyPair>> registerNewUserIdentity(String handle) {
         KeyPair keyPair = KeyUtils.generateKeyPair();
-        User user = User.newBuilder().setHandle(handle)
-                .setPublicKey(keyPair.getPublicKey()).build();
+        User user =
+                User.newBuilder().setHandle(handle).setPublicKey(keyPair.getPublicKey()).build();
         try {
             Signature signature = SignatureUtils.signMessage(keyPair, user);
-            return Futures.transform(
-                    importService.importSignature(user, signature),
+            return Futures.transform(importService.importSignature(user, signature),
                     (Function<Boolean, Optional<KeyPair>>) ok -> ok ? Optional.of(keyPair)
                             : Optional.empty());
         } catch (InvalidKeyException | SignatureException e) {
