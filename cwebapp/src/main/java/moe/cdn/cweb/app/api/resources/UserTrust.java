@@ -58,15 +58,15 @@ public class UserTrust extends CwebApiEndPoint {
     }
 
     @POST
-    public boolean trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
+    public void trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
-        return getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
+        getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
     }
 
     @POST
     @Path("delete")
-    public boolean untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
+    public void untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
-        return getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
+        getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
     }
 }
