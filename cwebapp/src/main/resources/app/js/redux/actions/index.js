@@ -145,7 +145,6 @@ module.exports = actions = {
       persistState(getState())
       .done(() => dispatch(actions.setInfoMessage('Trust algorithm updated successfully.')))
       .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
-
     };
   },
   _serversideSwitchUserIdentity({name, publicKey}) {
@@ -179,9 +178,6 @@ module.exports = actions = {
   },
   _addUserIdentity({name, publicKey, privateKey}) {
     return {type: 'ADD_USER_IDENTITY', name, publicKey, privateKey};
-      // return persistState(getState())
-      //   .done(() => dispatch(actions.setInfoMessage(`Identity ${name} added.`)))
-      //   .fail(() => dispatch(actions.setErrorMessage('Failed to persist state.')));
   },
   setInfoMessage(msg) {
     return {type: 'SET_INFO_MESSAGE', newMessage: msg};

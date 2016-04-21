@@ -19,6 +19,7 @@ module.exports = React.createClass({
         type: 'GET'
       })
       .then((data, textStatus, jqXHR) => {
+        console.log(jqXHR);
         if (jqXHR.status !== 200) {
           return $.Deferred().reject(jqXHR);
         }
