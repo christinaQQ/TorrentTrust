@@ -8560,23 +8560,72 @@ textarea:focus, textarea.form-control:focus {
   margin-bottom: 5px;
 }
 
-.index-page .vote-buttons {
-  margin-left: 1rem;
+.index-page .torrent-search-form a.btn {
+  margin-right: 10px;
+}
+
+.index-page ul.past-torrents {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.index-page ul.past-torrents li {
+  height: 2em;
+  display: block;
+}
+
+.index-page ul.past-torrents li:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.index-page ul.past-torrents li .display-name {
+  vertical-align: middle;
   display: inline-block;
 }
 
-.index-page .vote-buttons .vote-icon {
+.index-page ul.past-torrents li .vote-buttons {
+  margin-left: 1rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.index-page ul.past-torrents li .vote-buttons br {
+  line-height: 5px;
+}
+
+.index-page ul.past-torrents li .vote-buttons .separator {
+  margin-bottom: -1px;
+}
+
+.index-page ul.past-torrents li .vote-buttons .vote-icon {
   color: #CCC;
 }
 
-.index-page .vote-buttons .vote-icon.upvote.active {
+.index-page ul.past-torrents li .vote-buttons .vote-icon.upvote.active {
+  color: #11cc55;
+}
+
+.index-page ul.past-torrents li .vote-buttons .vote-icon.downvote.active {
   color: #ed1c24;
 }
 
-.index-page .vote-buttons .vote-icon.downvote.active {
-  color: #11ccdd;
+.index-page ul.past-torrents .button {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
 }
 
-.index-page .torrent-search-form a.btn {
-  margin-right: 10px;
+.index-page ul.past-torrents .button:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.index-page ul.past-torrents .Centered {
+  vertical-align: middle;
+  display: inline-block;
 }

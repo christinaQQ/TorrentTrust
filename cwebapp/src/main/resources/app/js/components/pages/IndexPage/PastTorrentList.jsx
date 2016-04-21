@@ -9,16 +9,20 @@ module.exports = React.createClass({
   generateListItems() {
     return this.props.torrentList.map(({hash, displayName, upvoted, downvoted}) =>
       <li key={hash}>
-        {displayName}
+        <span className="display-name">{displayName}</span>
         <div className="vote-buttons">
-          <a href="#" onClick={() => this.props.onUpvote({hash})}>
-            <span className={`glyphicon glyphicon-triangle-top vote-icon upvote ${upvoted ? 'active' : ''}`}>
-            </span>
-          </a>
-          <a href="#" onClick={() => this.props.onDownvote({hash})}>
-            <span className={`glyphicon glyphicon-triangle-bottom vote-icon downvote ${downvoted ? 'active' : ''}`}>
-            </span>
-          </a>
+          <div className="separator">
+            <a href="#" onClick={() => this.props.onUpvote({hash})}>
+              <span className={`glyphicon glyphicon-triangle-top vote-icon upvote ${upvoted ? 'active' : ''}`}>
+              </span>
+            </a>
+          </div>
+          <div>
+            <a href="#" onClick={() => this.props.onDownvote({hash})}>
+              <span className={`glyphicon glyphicon-triangle-bottom vote-icon downvote ${downvoted ? 'active' : ''}`}>
+              </span>
+            </a>
+          </div>
         </div>
       </li>
     );
@@ -28,7 +32,7 @@ module.exports = React.createClass({
       return <div>No torrents have been added.</div>;
     }
     return (
-      <ul>
+      <ul className="past-torrents">
         {this.generateListItems()}
       </ul>
     );
