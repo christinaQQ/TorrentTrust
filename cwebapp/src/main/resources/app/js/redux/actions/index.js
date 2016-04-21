@@ -97,7 +97,7 @@ module.exports = actions = {
         contentType: 'application/json'
       })
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 200 && jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         dispatch({type: 'ADD_TRUSTED_IDENTITY', name, publicKey});
@@ -124,7 +124,7 @@ module.exports = actions = {
         contentType: 'application/json'
       })
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 200 && jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         dispatch({type: 'DELETE_TRUSTED_IDENTITY', publicKey});
@@ -163,7 +163,7 @@ module.exports = actions = {
     return (dispatch, getState) => {
       dispatch(actions._serversideSwitchUserIdentity({name, publicKey}))
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 200 && jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         dispatch({type: 'SWITCH_USER_IDENTITY', name, publicKey});
@@ -201,7 +201,7 @@ module.exports = actions = {
         dataType: 'json'
       })
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 200 && jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         publicKey = data.publicKey;
@@ -210,7 +210,7 @@ module.exports = actions = {
         return dispatch(actions._serversideSwitchUserIdentity({name, publicKey}));
       })
       .then((data, textStatus, jqXHR) => {
-        if (jqXHR.status !== 200) {
+        if (jqXHR.status !== 200 && jqXHR.status !== 204) {
           return $.Deferred().reject(jqXHR);
         }
         dispatch({type: 'SWITCH_USER_IDENTITY', name, publicKey});

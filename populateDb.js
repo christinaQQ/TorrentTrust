@@ -24,7 +24,7 @@ async.map(_.range(50), (i, callback) => {
 }, (err, identities) => {
   console.log(identities);
   async.eachSeries(identities, (identity, callback) => {
-    console.log('processing identity ' + identity);
+    console.log('processing identity ' + JSON.stringify(identity));
     const {publicKey, privateKey} = identity;
     najax({
       url: 'http://localhost:8080/api/identity/switch',
@@ -35,7 +35,7 @@ async.map(_.range(50), (i, callback) => {
       dataType: 'json'
     }).fail(e => callback(e))
     .done(data => {
-      async.map(_.range(50), (i, cb) => {
+      async.map(_.range(20), (i, cb) => {
         var toTrust = identities[Math.floor(Math.random() * identities.length)];
         najax({
           url: 'http://localhost:8080/api/user/trust',
@@ -47,7 +47,7 @@ async.map(_.range(50), (i, callback) => {
         .done(data => cb(null, data));
       }, e => {
         if (e) {
-          callback(e);
+          return callback(e);
         }
         async.map(_.range(18), (i, cb) => {
           var magnetLink = magnetLinks[Math.floor(Math.random() * magnetLinks.length)];
