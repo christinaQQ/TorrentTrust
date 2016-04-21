@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 
-import jersey.repackaged.com.google.common.collect.ImmutableSet;
 import moe.cdn.cweb.app.dto.IdentityMetadata;
 import moe.cdn.cweb.app.dto.UserName;
 import moe.cdn.cweb.app.dto.UserRef;
