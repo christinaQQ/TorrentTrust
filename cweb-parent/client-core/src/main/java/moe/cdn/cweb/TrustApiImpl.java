@@ -67,6 +67,9 @@ public class TrustApiImpl implements TrustApi {
             }
             double agreement = v.getAssertion(0).getRatingValue() == assertion.getRatingValue() ? 1.0 : -1.0;
             score = score + userCorrelation * trustScore * agreement;
+//            logger.log(Level.DEBUG, "correlation: " + userCorrelation);
+//            logger.log(Level.DEBUG, "trust: " + trustScore);
+//            logger.log(Level.DEBUG, "agreement: " + agreement);
         }
 
 

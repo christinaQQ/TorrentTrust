@@ -39,7 +39,7 @@ class TrustGeneratorImpl implements TrustGenerator {
         // build the vectors
         Map<SecurityProtos.Hash, Vote> voteVectorA = new HashMap<>();
         List<Vote> aVotes = api.getVotesForUser(a);
-        List<Vote> bVotes = api.getVotesForUser(a);
+        List<Vote> bVotes = api.getVotesForUser(b);
         if (aVotes == null || bVotes == null) {
             return 0.0;
         }
