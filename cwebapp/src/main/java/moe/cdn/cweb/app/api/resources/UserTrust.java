@@ -32,10 +32,7 @@ public class UserTrust extends CwebApiEndPoint {
         if (publicKey == null) {
             throw new BadRequestException("Invalid public key");
         }
-        boolean r = getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
-        if (!r) {
-            throw new CwebApiEndPointException();
-        }
+        getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
     }
 
     @POST
@@ -45,9 +42,6 @@ public class UserTrust extends CwebApiEndPoint {
         if (publicKey == null) {
             throw new BadRequestException("Invalid public key");
         }
-        boolean r = getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
-        if (!r) {
-            throw new CwebApiEndPointException();
-        }
+        getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
     }
 }
