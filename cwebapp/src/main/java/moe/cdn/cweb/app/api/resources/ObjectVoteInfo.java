@@ -55,6 +55,7 @@ public class ObjectVoteInfo extends CwebApiEndPoint {
     }
 
     @GET
+    @Produces({"text/plain"})
     public String getVoteHistory(@PathParam("hash") String hash) throws SignatureException,
             InvalidKeyException, ExecutionException, InterruptedException {
         return getCwebVoteApi()
