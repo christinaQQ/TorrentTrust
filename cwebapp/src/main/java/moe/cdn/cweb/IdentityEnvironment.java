@@ -2,6 +2,7 @@ package moe.cdn.cweb;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Base64;
 import java.util.Comparator;
@@ -84,12 +85,11 @@ public class IdentityEnvironment implements KeyEnvironment, Iterable<KeyPair> {
         return KeyPair.newBuilder().setPrivateKey(privateKey).setPublicKey(publicKey).build();
     }
 
-    public static IdentityEnvironment readFromFile(File configFile) throws IOException {
+    public static IdentityEnvironment readFromStream(InputStream config) throws IOException {
         IdentityEnvironment identityEnvironment = new IdentityEnvironment();
-
         Ini iniFile = new Ini();
         iniFile.getConfig().setMultiSection(true);
-        iniFile.load(configFile);
+        iniFile.load(config);
         if (iniFile.containsKey("identity")) {
             for (Section identity : iniFile.getAll("identity")) {
                 if (!identity.containsKey("privateKey")) {

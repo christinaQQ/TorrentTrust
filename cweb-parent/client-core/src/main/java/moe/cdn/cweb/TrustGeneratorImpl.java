@@ -131,7 +131,7 @@ class TrustGeneratorImpl implements TrustGenerator {
             User u = q.poll();
             if (u == null) {
                 level += 1;
-                if (level >= num_steps || q.isEmpty()) {
+                if (level > num_steps || q.isEmpty()) {
                     return 0;
                 }
                 q.offer(null);
@@ -142,7 +142,7 @@ class TrustGeneratorImpl implements TrustGenerator {
             }
             seen.add(u);
             if (u == b) {
-                return level;
+                return 1.0;
             }
             try {
                 for (User n : api.getTrustedUsersForUser(u)) {
