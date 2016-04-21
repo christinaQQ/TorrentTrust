@@ -11,6 +11,7 @@ import moe.cdn.cweb.IdentityEnvironment;
 import moe.cdn.cweb.TrustApi;
 import moe.cdn.cweb.TrustGenerator;
 import moe.cdn.cweb.app.services.CwebApiService;
+import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
@@ -24,6 +25,10 @@ public abstract class CwebApiEndPoint {
 
     protected Path getStateFilePath() {
         return (Path) servletContext.getAttribute(CwebApiService.STATE_FILE_PATH_ATTRIBUTE);
+    }
+
+    protected ManagedPeer getDhtPeer() {
+        return (ManagedPeer) servletContext.getAttribute(ManagedPeer.class.getName());
     }
 
     protected GlobalEnvironment getCwebEnvironment() {
