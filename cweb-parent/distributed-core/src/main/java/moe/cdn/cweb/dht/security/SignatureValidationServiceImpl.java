@@ -41,6 +41,10 @@ class SignatureValidationServiceImpl implements SignatureValidationService {
             case SHA_256_WITH_RSA:
                 // Check matching public keys
                 if (!user.getPublicKey().equals(signature.getPublicKey())) {
+                    logger.info("User {} and Signature {} use different public keys!",
+                            Representations.asString(user), Representations.asString(signature));
+                    logger.info("User: {}\nSign: {}", Representations.asString(user.getPublicKey()),
+                            Representations.asString(signature.getPublicKey()));
                     return false;
                 }
                 // Validate the signature

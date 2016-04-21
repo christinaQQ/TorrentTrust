@@ -1,5 +1,19 @@
 package moe.cdn.cweb.trust;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
@@ -9,6 +23,7 @@ import com.google.inject.Inject;
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.User.TrustAssertion;
@@ -20,15 +35,6 @@ import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
 
@@ -40,9 +46,9 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
 
     @Inject
     public CwebTrustNetworkApiImpl(KeyLookupService userKeyService,
-                                   CwebSignatureValidationService signatureValidationService,
-                                   CwebImportService importService,
-                                   KeyEnvironment keyEnvironment) {
+            CwebSignatureValidationService signatureValidationService,
+            CwebImportService importService,
+            KeyEnvironment keyEnvironment) {
         this.keyLookupService = checkNotNull(userKeyService);
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
@@ -126,14 +132,16 @@ class CwebTrustNetworkApiImpl implements CwebTrustNetworkApi, CwebIdentityApi {
     @Override
     public ListenableFuture<Optional<KeyPair>> registerNewUserIdentity(String handle) {
         KeyPair keyPair = KeyUtils.generateKeyPair();
+        User user = User.newBuilder().setHandle(handle)
+                .setPublicKey(keyPair.getPublicKey()).build();
         try {
+            Signature signature = SignatureUtils.signMessage(keyPair, user);
             return Futures.transform(
-                    importService.importUser(User.newBuilder()
-                            .setHandle(handle)
-                            .setPublicKey(keyPair.getPublicKey()).build()),
-                    (Function<Boolean, Optional<KeyPair>>) ok ->
-                            ok ? Optional.of(keyPair) : Optional.empty());
+                    importService.importSignature(user, signature),
+                    (Function<Boolean, Optional<KeyPair>>) ok -> ok ? Optional.of(keyPair)
+                            : Optional.empty());
         } catch (InvalidKeyException | SignatureException e) {
+            logger.catching(e);
             return Futures.immediateFailedFuture(e);
         }
     }
