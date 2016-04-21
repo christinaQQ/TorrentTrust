@@ -71,9 +71,8 @@ public class App {
         servletHandler.setInitParameter(DHT_PORT_2_INIT_PARAM, String.valueOf(1718));
 
         servletHandler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
-        ServletHolder defaultServletHolder = new ServletHolder(new DefaultServlet());
 
-        servletHandler.addServlet(defaultServletHolder, "/");
+        servletHandler.addServlet(DefaultServlet.class, "/");
         servletHandler.addEventListener(new CwebGuiceServletConfig());
         servletHandler.addEventListener(new CwebApiService());
 

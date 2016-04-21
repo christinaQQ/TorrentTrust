@@ -1,22 +1,8 @@
 package moe.cdn.cweb.app.services;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.concurrent.ExecutionException;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-
 import moe.cdn.cweb.*;
 import moe.cdn.cweb.app.App;
 import moe.cdn.cweb.app.AppModule;
@@ -28,6 +14,20 @@ import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.concurrent.ExecutionException;
+
 /**
  * @author davix
  */
@@ -36,6 +36,7 @@ public class CwebApiService implements ServletContextListener {
             "moe.cdn.cweb.app.services.state-file-path";
     private static final int DEFAULT_DHT_PORT_1 = 1717;
     private static final int DEFAULT_DHT_PORT_2 = 1718;
+    private static final Path DEFAULT_STATE_FILE_PATH = Paths.get("state.json");
 
     private int dhtPort1 = DEFAULT_DHT_PORT_1;
     private int dhtPort2 = DEFAULT_DHT_PORT_2;
@@ -74,13 +75,17 @@ public class CwebApiService implements ServletContextListener {
             dhtPort1 = i;
         }
 
-        String dataFileUriString =
-                sce.getServletContext().getInitParameter(App.STATE_FILE_URI_INIT_PARAM);
+        String dataFileUriString = sce.getServletContext().getInitParameter(
+                App.STATE_FILE_URI_INIT_PARAM);
         Path stateFilePath;
-        try {
-            stateFilePath = Paths.get(new URI(dataFileUriString));
-        } catch (URISyntaxException e) {
-            throw new CwebConfigurationException("Invalid URI for data file", e);
+        if (dataFileUriString == null) {
+            stateFilePath = DEFAULT_STATE_FILE_PATH;
+        } else {
+            try {
+                stateFilePath = Paths.get(new URI(dataFileUriString));
+            } catch (URISyntaxException e) {
+                throw new CwebConfigurationException("Invalid URI for data file", e);
+            }
         }
         if (!Files.exists(stateFilePath)) {
             // ok we need to create a user identity here.. no idea how to do
@@ -129,7 +134,7 @@ public class CwebApiService implements ServletContextListener {
 
         CwebTrustNetworkApi trustNetwork = injector.getInstance(CwebTrustNetworkApi.class);
         sce.getServletContext().setAttribute(CwebTrustNetworkApi.class.getName(), trustNetwork);
-        
+
         CwebIdentityApi identityApi = injector.getInstance(CwebIdentityApi.class);
         sce.getServletContext().setAttribute(CwebIdentityApi.class.getName(), identityApi);
 
