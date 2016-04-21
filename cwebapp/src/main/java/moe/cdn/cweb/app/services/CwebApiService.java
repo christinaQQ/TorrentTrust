@@ -84,8 +84,8 @@ public class CwebApiService implements ServletContextListener {
             dhtPort2 = i;
         }
 
-        String dataFileUriString = sce.getServletContext().getInitParameter(
-                App.STATE_FILE_URI_INIT_PARAM);
+        String dataFileUriString =
+                sce.getServletContext().getInitParameter(App.STATE_FILE_URI_INIT_PARAM);
         Path stateFilePath;
         if (dataFileUriString == null) {
             stateFilePath = DEFAULT_STATE_FILE_PATH;
@@ -99,26 +99,16 @@ public class CwebApiService implements ServletContextListener {
         if (!Files.exists(stateFilePath)) {
             // ok we need to create a user identity here.. no idea how to do
             // that...
-            SecurityProtos.KeyPair keyPair = KeyUtils.generateKeyPair();
-            String publicKey = Base64.getEncoder()
-                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String privateKey = Base64.getEncoder()
-                    .encodeToString(keyPair.getPublicKey().getRaw().toByteArray());
-            String[] lines = {"{",
-                    "\"error_message\": null,",
-                    "\"info_message\": null,",
-                    "\"trusted_identities\": {},",
-                    "\"possible_trust_algorithms\": [",
+            String[] lines = {"{", "\"error_message\": null,", "\"info_message\": null,",
+                    "\"trusted_identities\": {},", "\"possible_trust_algorithms\": [",
                     "    {\"id\":\"EIGENTRUST\",\"name\":\"Eigentrust\"},",
                     "    {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only friends\"},",
                     "    {\"id\":\"CONNECTED_COMPONENT\",\"name\":\"Anyone in your network\"},",
                     "    {\"id\":\"FRIENDS_OF_FRIENDS\",\"name\":\"Friends of friends\"}", "  ],",
                     "\"current_trust_algorithm\": {\"id\":\"ONLY_FRIENDS\",\"name\":\"Only "
                             + "Friends\"},",
-                    "\"current_identity\": null,",
-                    "\"user_identities\": [],",
-                    "\"torrent_lists\": {}", 
-                    "}"};
+                    "\"current_identity\": null,", "\"user_identities\": [],",
+                    "\"torrent_lists\": {}", "}"};
             try {
                 Files.write(stateFilePath, Arrays.asList(lines));
             } catch (IOException e) {
