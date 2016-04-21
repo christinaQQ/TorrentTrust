@@ -40,7 +40,6 @@ import moe.cdn.cweb.vote.CwebVoteApi;
  * @author davix
  */
 public class CwebApiService implements ServletContextListener {
-    public static volatile Injector injector;
     public static final String STATE_FILE_PATH_ATTRIBUTE =
             "moe.cdn.cweb.app.services.state-file-path";
     private static final int DEFAULT_DHT_PORT_1 = 1717;
@@ -126,7 +125,7 @@ public class CwebApiService implements ServletContextListener {
         } catch (IOException e) {
             throw new CwebConfigurationException(e);
         }
-        injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
+        Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
                 CwebModuleService.getInstance().getCwebModule(), appModule);
 
         injectAndProvideApi(sce, CwebApi.class, injector);

@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+rm cwebapp/target/cwebapp-1.0-SNAPSHOT.jar
 
 ./launch.sh 8001 1701 1702
 ./launch.sh 8002 1801 1802
