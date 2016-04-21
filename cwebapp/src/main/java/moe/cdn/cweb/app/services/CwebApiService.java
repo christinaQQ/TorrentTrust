@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletContextEvent;

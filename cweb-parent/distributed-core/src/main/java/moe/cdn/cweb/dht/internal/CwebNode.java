@@ -47,12 +47,6 @@ public class CwebNode<T extends Message> implements Shutdownable {
 
     public ListenableFuture<CwebGetResults<T>> all(CwebId key) {
         FutureGetWrapper f = new FutureGetWrapper(startAllData(Number160s.fromCwebId(key)));
-        try {
-            f.get();
-        } catch (InterruptedException | ExecutionException e) {
-            // TODO debugging
-            e.printStackTrace();
-        }
         return Futures.transform(f,
                 (Function<GetResponse, CwebGetResultsImpl<T>>) r -> new CwebGetResultsImpl<T>(
                         messageParser, r),

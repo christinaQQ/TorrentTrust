@@ -3,6 +3,7 @@ package moe.cdn.cweb.app.api;
 import javax.ws.rs.ApplicationPath;
 
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
 
@@ -19,6 +20,8 @@ public class CwebApiConfig extends ResourceConfig {
 
         register(ConflictExceptionMapper.class);
         register(NoSuchThingExceptionMapper.class);
+        
+        register(MoxyJsonFeature.class);
 
         packages("moe.cdn.cweb.app.api.resources");
     }

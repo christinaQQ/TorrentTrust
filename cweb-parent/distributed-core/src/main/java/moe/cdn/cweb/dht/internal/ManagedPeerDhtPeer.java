@@ -3,8 +3,12 @@ package moe.cdn.cweb.dht.internal;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.Futures;
@@ -33,15 +37,16 @@ import net.tomp2p.replication.IndirectReplication;
  * @author jim
  */
 public class ManagedPeerDhtPeer implements ManagedPeer {
+
+    private static final Logger logger = LogManager.getLogger();
+
     private final PeerDHT peerDht;
     private final DhtPeerAddress address;
     private Optional<IndirectReplication> replication;
 
     public ManagedPeerDhtPeer(PeerDHT peerDht) {
         this.peerDht = peerDht;
-        this.address = new DhtPeerAddress(new CwebId(peerDht.peer().peerID().toByteArray()),
-                HostAndPort.fromParts(peerDht.peerAddress().inetAddress().getHostAddress(),
-                        peerDht.peerAddress().tcpPort()));
+        this.address = dhtPeerAddressFromPeerAddress(peerDht.peerAddress());
         this.replication = Optional.empty();
     }
 
@@ -50,13 +55,12 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
      * peers.
      *
      * @param peerEnvironment environment containing parameters to build to
-     * @param storageLayer    vlaidated storage layer
+     * @param storageLayer vlaidated storage layer
      * @return a ManagedDhtPeer
      * @throws IOException
      */
     public static ManagedPeerDhtPeer fromEnviroment1(PeerEnvironment peerEnvironment,
-                                                     ValidatedStorageLayer storageLayer) throws
-            IOException {
+            ValidatedStorageLayer storageLayer) throws IOException {
         Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
                 .tcpPort(peerEnvironment.getLocalTcpPort1())
                 .udpPort(peerEnvironment.getLocalUdpPort1()).start();
@@ -65,8 +69,7 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
     }
 
     public static ManagedPeerDhtPeer fromEnviroment2(PeerEnvironment peerEnvironment,
-                                                     ValidatedStorageLayer storageLayer)
-            throws IOException {
+            ValidatedStorageLayer storageLayer) throws IOException {
         Peer peer = new PeerBuilder(Number160s.fromCwebId(peerEnvironment.getMyId()))
                 .tcpPort(peerEnvironment.getLocalTcpPort2())
                 .udpPort(peerEnvironment.getLocalUdpPort2()).start();
@@ -84,6 +87,18 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
         return new PeerAddress(Number160s.fromCwebId(address.getId()), new InetSocketAddress(
                 address.getHostAndPort().getHostText(), address.getHostAndPort().getPort()));
     }
+
+    /**
+     * Translates a {@link PeerAddress} to a {@link DhtPeerAddress}
+     *
+     * @param address
+     * @return
+     */
+    private static DhtPeerAddress dhtPeerAddressFromPeerAddress(PeerAddress address) {
+        return new DhtPeerAddress(new CwebId(address.peerId().toByteArray()),
+                HostAndPort.fromParts(address.inetAddress().getHostAddress(), address.tcpPort()));
+    }
+
 
     public PeerDHT getUnmanaged() {
         return peerDht;
@@ -164,6 +179,12 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
     public void bootstrapToSync(DhtPeerAddress address) {
         peerDht.peer().bootstrap().peerAddress(peerAddressFromDhtPeerAddress(address)).start()
                 .awaitUninterruptibly();
+
+        List<DhtPeerAddress> peers = peerDht.peer().peerBean().peerMap().all().stream()
+                .map(ManagedPeerDhtPeer::dhtPeerAddressFromPeerAddress)
+                .collect(Collectors.toList());
+
+        logger.info("Bootstrapped. We now know {}", peers);
     }
 
     @Override
@@ -171,8 +192,9 @@ public class ManagedPeerDhtPeer implements ManagedPeer {
         if (addresses == null) {
             throw new IllegalArgumentException("addresses must be non-null");
         }
-        bootstrapRawToSync(addresses.stream().map(ManagedPeerDhtPeer::peerAddressFromDhtPeerAddress)
-                .collect(Collectors.toList()));
+        bootstrapRawToSync(
+                addresses.stream().map(ManagedPeerDhtPeer::peerAddressFromDhtPeerAddress)
+                        .collect(Collectors.toList()));
     }
 
     public PeerAddress getRawAddress() {

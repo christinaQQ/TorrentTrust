@@ -19,7 +19,7 @@ public class Bootstrap extends CwebApiEndPoint {
             throws InterruptedException, ExecutionException {
         DhtPeerAddress peer = new DhtPeerAddress(bootstrapper.getId(),
                 HostAndPort.fromParts(bootstrapper.getIp(), bootstrapper.getPort()));
-        getDhtPeer().bootstrapTo(peer).get();
+        getDhtPeer().bootstrapToSync(peer);
         return peer.toString();
     }
 

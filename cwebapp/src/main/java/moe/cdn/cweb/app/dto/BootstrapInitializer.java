@@ -24,6 +24,7 @@ public class BootstrapInitializer {
     public BootstrapInitializer(String ip, CwebId id, int port) {
         this.ip = ip;
         this.port = port;
+        this.id = id;
     }
 
     public String getIp() {

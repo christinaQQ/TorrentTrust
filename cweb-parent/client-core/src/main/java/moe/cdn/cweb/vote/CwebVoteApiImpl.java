@@ -38,9 +38,9 @@ class CwebVoteApiImpl implements CwebVoteApi {
 
     @Inject
     public CwebVoteApiImpl(CwebSignatureValidationService signatureValidationService,
-                           CwebImportService importService,
-                           @VoteDomain CwebMultiMap<SignedVote> voteMap,
-                           @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
+            CwebImportService importService,
+            @VoteDomain CwebMultiMap<SignedVote> voteMap,
+            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
         this.signatureValidationService = checkNotNull(signatureValidationService);
         this.importService = checkNotNull(importService);
         this.voteMap = checkNotNull(voteMap);
@@ -59,7 +59,7 @@ class CwebVoteApiImpl implements CwebVoteApi {
      * Gets the votes that a user has cast on an object.
      *
      * @param objectHash object the vote is cast on
-     * @param user       user casting the vote
+     * @param user user casting the vote
      * @return Future of vote, {@code null} if none exist
      */
     public ListenableFuture<Vote> getUserVote(Hash objectHash, User user) {
@@ -69,7 +69,7 @@ class CwebVoteApiImpl implements CwebVoteApi {
                             votes.stream()
                                     .filter(vote -> vote.getOwnerPublicKey()
                                             .equals(user.getPublicKey()))
-                                    .collect(Collectors.toList());
+                            .collect(Collectors.toList());
                     return filteredVotes.isEmpty() ? null : Iterables.getOnlyElement(filteredVotes);
                 });
     }
@@ -79,28 +79,25 @@ class CwebVoteApiImpl implements CwebVoteApi {
         return Futures
                 .transform(voteHistoryMap.get(user.getPublicKey().getHash()),
                         (AsyncFunction<SignedVoteHistory, List<Vote>>) history -> history == null
-                                                                                  ? Futures
-                                                                                          .immediateFuture(Collections.emptyList())
-                                                                                  : Futures
-                                                                                          .transform(
-                                                                                                  Futures.successfulAsList(
-                                                                                                          history.getHistory().getContentHashList()
-                                                                                                                  .stream()
-                                                                                                                  .map(hash -> getUserVote(hash,
-                                                                                                                          user))
-                                                                                                                  .collect(Collectors.toList())),
-                                                                                                  (Function<List<Vote>, List<Vote>>) votes -> votes.stream()
-                                                                                                          .filter(Objects::nonNull)
-                                                                                                          .collect(Collectors.toList())));
+                                ? Futures.immediateFuture(Collections.emptyList())
+                                : Futures
+                                        .transform(
+                                                Futures.successfulAsList(
+                                                        history.getHistory().getContentHashList()
+                                                                .stream()
+                                                                .map(hash -> getUserVote(hash,
+                                                                        user))
+                                                        .collect(Collectors.toList())),
+                                        (Function<List<Vote>, List<Vote>>) votes -> votes.stream()
+                                                .filter(Objects::nonNull)
+                                                .collect(Collectors.toList())));
     }
 
     @Override
     public ListenableFuture<Integer> getVoteHistorySize(User user) {
         return Futures.transform(voteHistoryMap.get(user.getPublicKey().getHash()),
                 (Function<SignedVoteHistory, Integer>) history -> history == null ? 0
-                                                                                  : history
-                                                                          .getHistory()
-                                                                          .getContentHashCount());
+                        : history.getHistory().getContentHashCount());
     }
 
     @Override

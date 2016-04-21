@@ -45,7 +45,6 @@ public class IdentityMetadata {
         this.privateKey = privateKeyHash;
     }
 
-
     public Hash getPublicKeyHash() {
         return publicKey;
     }
