@@ -1,14 +1,19 @@
 package moe.cdn.cweb.app.api;
 
-import moe.cdn.cweb.*;
+import java.nio.file.Path;
+
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Context;
+
+import moe.cdn.cweb.CwebApi;
+import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.IdentityEnvironment;
+import moe.cdn.cweb.TrustApi;
+import moe.cdn.cweb.TrustGenerator;
 import moe.cdn.cweb.app.services.CwebApiService;
 import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
-
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Context;
-import java.nio.file.Path;
 
 /**
  * @author davix

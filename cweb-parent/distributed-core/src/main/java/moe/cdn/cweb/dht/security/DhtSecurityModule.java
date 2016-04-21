@@ -1,8 +1,8 @@
 package moe.cdn.cweb.dht.security;
 
-import com.google.inject.AbstractModule;
-
 import javax.inject.Singleton;
+
+import com.google.inject.AbstractModule;
 
 /**
  * @author davix

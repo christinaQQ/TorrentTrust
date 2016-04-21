@@ -1,13 +1,15 @@
 package moe.cdn.cweb.security.utils;
 
-import com.google.protobuf.ByteString;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import com.google.protobuf.ByteString;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 
 public class HashUtilsTest {
     private static final byte[] TEST_STRING = "Hello World!".getBytes();

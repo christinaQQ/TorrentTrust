@@ -1,14 +1,15 @@
 package moe.cdn.cweb.app;
 
-import moe.cdn.cweb.app.dto.IdentityMetadata;
-import moe.cdn.cweb.app.dto.UserName;
-import moe.cdn.cweb.app.dto.UserRef;
-import org.junit.Test;
+import static com.google.common.truth.Truth.assertThat;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.Test;
+
+import moe.cdn.cweb.app.dto.IdentityMetadata;
+import moe.cdn.cweb.app.dto.UserName;
+import moe.cdn.cweb.app.dto.UserRef;
 
 /**
  * @author davix

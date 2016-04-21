@@ -1,10 +1,10 @@
 package moe.cdn.cweb.dht.storage;
 
+import java.util.NavigableMap;
+
 import net.tomp2p.dht.Storage;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.storage.Data;
-
-import java.util.NavigableMap;
 
 /**
  * Validates requests that modify the underlying storage.

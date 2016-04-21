@@ -1,26 +1,28 @@
 package moe.cdn.cweb.dht.security;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Provider;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.annotations.KeyLookup;
 import moe.cdn.cweb.security.utils.Representations;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.inject.Provider;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 class KeyLookupServiceImpl implements KeyLookupService {
     private static final Logger logger = LogManager.getLogger();

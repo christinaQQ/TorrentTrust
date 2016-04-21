@@ -1,14 +1,16 @@
 package moe.cdn.cweb.dht.storage;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import javax.inject.Singleton;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+
 import moe.cdn.cweb.dht.storage.annotations.UnstartedStorageMaintenance;
 import net.tomp2p.dht.Storage;
 import net.tomp2p.dht.StorageMemory;
-
-import javax.inject.Singleton;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author davix

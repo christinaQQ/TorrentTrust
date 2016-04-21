@@ -1,10 +1,15 @@
 package moe.cdn.cweb.dht.internal;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
+
 import moe.cdn.cweb.dht.Shutdownable;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.FutureGetWrapper;
 import moe.cdn.cweb.dht.internal.tomp2pcompat.FuturePutWrapper;
@@ -17,10 +22,6 @@ import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 
 /**
  * Entry point for DHT operations. This is a wrapper around a {@link PeerDHT}.

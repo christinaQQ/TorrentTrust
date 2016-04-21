@@ -1,25 +1,32 @@
 package moe.cdn.cweb.security;
 
-import com.google.common.util.concurrent.Futures;
-import com.google.protobuf.Message;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos;
-import moe.cdn.cweb.TorrentTrustProtos.*;
-import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.KeyEnvironment;
-import moe.cdn.cweb.security.utils.HashUtils;
-import moe.cdn.cweb.security.utils.KeyUtils;
-import moe.cdn.cweb.security.utils.SignatureUtils;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.common.util.concurrent.Futures;
+import com.google.protobuf.Message;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.SecurityProtos.Signature;
+import moe.cdn.cweb.TorrentTrustProtos;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
+import moe.cdn.cweb.dht.CwebMultiMap;
+import moe.cdn.cweb.dht.KeyEnvironment;
+import moe.cdn.cweb.security.utils.HashUtils;
+import moe.cdn.cweb.security.utils.KeyUtils;
+import moe.cdn.cweb.security.utils.SignatureUtils;
 
 public class CwebImportServiceImplTest {
 

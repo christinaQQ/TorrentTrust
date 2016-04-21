@@ -1,10 +1,10 @@
 package moe.cdn.cweb.security;
 
-import moe.cdn.cweb.security.utils.HashUtils;
-
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
+
+import moe.cdn.cweb.security.utils.HashUtils;
 
 /**
  * Class containing identifiers user by Cweb. Identifiers are byte arrays of

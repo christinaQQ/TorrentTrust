@@ -1,6 +1,7 @@
 package moe.cdn.cweb.dht.security;
 
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos;
 

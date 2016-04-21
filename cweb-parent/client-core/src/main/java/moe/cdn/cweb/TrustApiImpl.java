@@ -1,13 +1,12 @@
 package moe.cdn.cweb;
 
-import moe.cdn.cweb.dht.security.KeyLookupService;
-
-import javax.inject.Inject;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
+
+import moe.cdn.cweb.dht.security.KeyLookupService;
 
 /**
  * @author eyeung

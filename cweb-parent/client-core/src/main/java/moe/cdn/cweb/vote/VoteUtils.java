@@ -1,6 +1,7 @@
 package moe.cdn.cweb.vote;
 
 import com.google.protobuf.ByteString;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;

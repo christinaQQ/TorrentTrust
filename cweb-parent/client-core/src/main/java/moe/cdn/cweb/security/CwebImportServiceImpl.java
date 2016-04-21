@@ -1,15 +1,29 @@
 package moe.cdn.cweb.security;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.*;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -17,13 +31,6 @@ import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CwebImportServiceImpl implements CwebImportService {
     private static final Logger logger = LogManager.getLogger();

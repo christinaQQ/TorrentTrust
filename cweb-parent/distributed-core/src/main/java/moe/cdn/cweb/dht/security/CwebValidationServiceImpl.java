@@ -1,11 +1,11 @@
 package moe.cdn.cweb.dht.security;
 
 
+import javax.inject.Inject;
+
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
-
-import javax.inject.Inject;
 
 class CwebValidationServiceImpl extends SignatureValidationServiceImpl
         implements CwebSignatureValidationService {

@@ -1,11 +1,11 @@
 package moe.cdn.cweb.app.data;
 
-import moe.cdn.cweb.app.util.StringHashValueAdapter;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import moe.cdn.cweb.app.util.StringHashValueAdapter;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

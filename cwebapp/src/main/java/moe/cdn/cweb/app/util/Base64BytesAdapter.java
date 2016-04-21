@@ -1,7 +1,8 @@
 package moe.cdn.cweb.app.util;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Base64;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * @author davix

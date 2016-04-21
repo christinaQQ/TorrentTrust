@@ -1,9 +1,10 @@
 package moe.cdn.cweb.dht;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import moe.cdn.cweb.security.CwebId;
-
 import java.util.Collection;
+
+import com.google.common.util.concurrent.ListenableFuture;
+
+import moe.cdn.cweb.security.CwebId;
 
 /**
  * Abstraction for operations on a DHT. This interface views the DHT as a

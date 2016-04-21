@@ -1,19 +1,21 @@
 package moe.cdn.cweb.security.utils;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.Message;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
-import moe.cdn.cweb.security.exceptions.MalformedSignatureException;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Message;
+
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.SecurityProtos.Signature;
+import moe.cdn.cweb.SecurityProtos.Signature.SignatureAlgorithm;
+import moe.cdn.cweb.security.exceptions.MalformedSignatureException;
 
 /**
  * Utilities for signing and verification of signatures

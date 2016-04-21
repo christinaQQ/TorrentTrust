@@ -1,15 +1,16 @@
 package moe.cdn.cweb.app;
 
-import moe.cdn.cweb.app.services.CwebApiService;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import moe.cdn.cweb.app.services.CwebApiService;
 
 @Singleton
 public class IndexServlet extends HttpServlet {

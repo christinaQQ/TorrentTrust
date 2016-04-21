@@ -1,8 +1,16 @@
 package moe.cdn.cweb.app;
 
-import com.google.inject.servlet.GuiceFilter;
-import moe.cdn.cweb.app.services.CwebApiService;
-import org.apache.commons.cli.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -10,10 +18,9 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import javax.servlet.DispatcherType;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.EnumSet;
+import com.google.inject.servlet.GuiceFilter;
+
+import moe.cdn.cweb.app.services.CwebApiService;
 
 /**
  * @author davix

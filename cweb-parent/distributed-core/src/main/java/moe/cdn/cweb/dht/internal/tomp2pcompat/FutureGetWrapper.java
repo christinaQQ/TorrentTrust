@@ -1,15 +1,21 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
+import java.util.Map;
+
 import net.tomp2p.connection.ChannelCreator;
 import net.tomp2p.dht.DHTBuilder;
 import net.tomp2p.dht.FutureGet;
-import net.tomp2p.futures.*;
+import net.tomp2p.futures.BaseFuture;
+import net.tomp2p.futures.BaseFutureListener;
+import net.tomp2p.futures.Cancel;
+import net.tomp2p.futures.FutureDone;
+import net.tomp2p.futures.FutureForkJoin;
+import net.tomp2p.futures.FutureResponse;
+import net.tomp2p.futures.FutureRouting;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.DigestResult;
 import net.tomp2p.storage.Data;
-
-import java.util.Map;
 
 /**
  * @author davix

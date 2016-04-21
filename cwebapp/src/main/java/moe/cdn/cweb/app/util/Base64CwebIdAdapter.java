@@ -1,8 +1,8 @@
 package moe.cdn.cweb.app.util;
 
-import moe.cdn.cweb.security.CwebId;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import moe.cdn.cweb.security.CwebId;
 
 /**
  *

@@ -1,10 +1,12 @@
 package moe.cdn.cweb.app.util;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import moe.cdn.cweb.SecurityProtos;
+import java.util.Base64;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.util.Base64;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import moe.cdn.cweb.SecurityProtos;
 
 /**
  * @author davix

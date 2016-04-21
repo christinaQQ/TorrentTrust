@@ -1,12 +1,13 @@
 package moe.cdn.cweb.security;
 
-import com.google.protobuf.Message;
-import moe.cdn.cweb.SecurityProtos.KeyPair;
-import moe.cdn.cweb.SecurityProtos.Signature;
-
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.concurrent.Future;
+
+import com.google.protobuf.Message;
+
+import moe.cdn.cweb.SecurityProtos.KeyPair;
+import moe.cdn.cweb.SecurityProtos.Signature;
 
 /**
  * Persistence for domain objects that need to be cryptographically signed.

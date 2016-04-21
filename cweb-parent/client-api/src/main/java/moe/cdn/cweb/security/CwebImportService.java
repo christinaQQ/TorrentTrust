@@ -1,16 +1,17 @@
 package moe.cdn.cweb.security;
 
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.concurrent.Future;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.Signature;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.concurrent.Future;
 
 public interface CwebImportService extends SignatureImportService {
 

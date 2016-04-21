@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Profile.Section;
 
 import com.google.common.collect.Iterables;

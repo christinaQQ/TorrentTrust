@@ -1,10 +1,10 @@
 package moe.cdn.cweb.security;
 
-import moe.cdn.cweb.SecurityProtos;
-import moe.cdn.cweb.TorrentTrustProtos;
-
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.TorrentTrustProtos;
 
 /**
  * Misc constants used for Cweb

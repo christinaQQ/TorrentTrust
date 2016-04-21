@@ -1,6 +1,18 @@
 package moe.cdn.cweb;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.google.protobuf.ByteString;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Hash.HashAlgorithm;
 import moe.cdn.cweb.SecurityProtos.Key;
@@ -8,12 +20,6 @@ import moe.cdn.cweb.SecurityProtos.Key.KeyType;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.vote.VoteUtils;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author eyeung

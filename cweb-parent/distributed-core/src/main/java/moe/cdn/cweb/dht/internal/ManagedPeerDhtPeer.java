@@ -1,8 +1,15 @@
 package moe.cdn.cweb.dht.internal;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+
 import moe.cdn.cweb.dht.DhtPeerAddress;
 import moe.cdn.cweb.dht.ManagedPeer;
 import moe.cdn.cweb.dht.PeerEnvironment;
@@ -18,12 +25,6 @@ import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.replication.IndirectReplication;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * A {@link PeerDHT} peer that is under management. This allows external sources

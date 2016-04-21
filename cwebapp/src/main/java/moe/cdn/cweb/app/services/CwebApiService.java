@@ -1,9 +1,29 @@
 package moe.cdn.cweb.app.services;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.concurrent.ExecutionException;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import moe.cdn.cweb.*;
+
+import moe.cdn.cweb.CwebApi;
+import moe.cdn.cweb.CwebModuleService;
+import moe.cdn.cweb.GlobalEnvironment;
+import moe.cdn.cweb.IdentityEnvironment;
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.TrustApi;
+import moe.cdn.cweb.TrustGenerator;
 import moe.cdn.cweb.app.App;
 import moe.cdn.cweb.app.AppModule;
 import moe.cdn.cweb.dht.DhtModuleService;
@@ -13,20 +33,6 @@ import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
 import moe.cdn.cweb.vote.CwebVoteApi;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author davix

@@ -1,11 +1,11 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
+import java.util.Map;
+
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
-
-import java.util.Map;
 
 /**
  * API exposed by tomp2p for a "put" or "add" operation.

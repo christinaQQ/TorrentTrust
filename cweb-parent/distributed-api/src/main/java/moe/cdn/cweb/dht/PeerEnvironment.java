@@ -1,8 +1,8 @@
 package moe.cdn.cweb.dht;
 
-import moe.cdn.cweb.security.CwebId;
-
 import java.util.Collection;
+
+import moe.cdn.cweb.security.CwebId;
 
 /**
  * Environment interface for providing parameters to bootstrap the DHT

@@ -1,21 +1,6 @@
 package moe.cdn.cweb.vote;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Inject;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
-import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.TorrentTrustProtos.Vote;
-import moe.cdn.cweb.dht.CwebMultiMap;
-import moe.cdn.cweb.dht.annotations.VoteDomain;
-import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
-import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
-import moe.cdn.cweb.security.CwebImportService;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
@@ -26,7 +11,23 @@ import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Inject;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.dht.CwebMultiMap;
+import moe.cdn.cweb.dht.annotations.VoteDomain;
+import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
+import moe.cdn.cweb.dht.security.CwebSignatureValidationService;
+import moe.cdn.cweb.security.CwebImportService;
 
 class CwebVoteApiImpl implements CwebVoteApi {
 

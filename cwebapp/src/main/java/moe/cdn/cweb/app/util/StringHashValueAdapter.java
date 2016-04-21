@@ -1,7 +1,8 @@
 package moe.cdn.cweb.app.util;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.math.BigInteger;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class StringHashValueAdapter extends XmlAdapter<String, byte[]> {
     @Override

@@ -1,13 +1,14 @@
 package moe.cdn.cweb.app.api.resources;
 
-import moe.cdn.cweb.app.api.CwebApiEndPoint;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
+
+import moe.cdn.cweb.app.api.CwebApiEndPoint;
 
 @Path("setState")
 public class State extends CwebApiEndPoint {

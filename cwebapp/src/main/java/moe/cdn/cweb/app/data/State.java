@@ -1,16 +1,17 @@
 package moe.cdn.cweb.app.data;
 
-import moe.cdn.cweb.SecurityProtos;
-import moe.cdn.cweb.app.util.Base64BytesAdapter;
-import moe.cdn.cweb.app.util.Base64PublicKeyMapAdapter;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import moe.cdn.cweb.SecurityProtos;
+import moe.cdn.cweb.app.util.Base64BytesAdapter;
+import moe.cdn.cweb.app.util.Base64PublicKeyMapAdapter;
 
 /**
  * @author davix

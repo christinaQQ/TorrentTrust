@@ -1,13 +1,14 @@
 package moe.cdn.cweb.app;
 
-import moe.cdn.cweb.app.api.CwebApiConfig;
-import moe.cdn.cweb.app.services.CwebApiService;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
+
+import moe.cdn.cweb.app.api.CwebApiConfig;
+import moe.cdn.cweb.app.services.CwebApiService;
 
 /**
  * @author davix

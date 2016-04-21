@@ -1,10 +1,10 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
+import java.util.Map;
+
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.peers.Number640;
 import net.tomp2p.peers.PeerAddress;
-
-import java.util.Map;
 
 public class PutResponseWrapper implements PutResponse {
     private final PutResponse underlying;

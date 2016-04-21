@@ -1,14 +1,15 @@
 package moe.cdn.cweb.vote;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.TorrentTrustProtos.Vote;
-
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
 import java.util.Collection;
 import java.util.concurrent.Future;
+
+import com.google.common.util.concurrent.ListenableFuture;
+
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
 
 public interface CwebVoteApi {
     /**

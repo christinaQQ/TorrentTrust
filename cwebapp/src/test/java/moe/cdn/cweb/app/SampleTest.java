@@ -1,10 +1,10 @@
 package moe.cdn.cweb.app;
 
-import org.junit.Test;
+import static com.google.common.truth.Truth.assertThat;
 
 import javax.ws.rs.core.Response;
 
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.Test;
 
 public class SampleTest extends CwebTest {
 

@@ -1,9 +1,9 @@
 package moe.cdn.cweb.dht.internal.tomp2pcompat;
 
+import java.util.concurrent.Executor;
+
 import net.tomp2p.futures.BaseFuture;
 import net.tomp2p.futures.BaseFutureListener;
-
-import java.util.concurrent.Executor;
 
 /**
  * @author davix

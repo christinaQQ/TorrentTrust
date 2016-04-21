@@ -1,5 +1,7 @@
 package moe.cdn.cweb.dht;
 
+import java.util.NoSuchElementException;
+
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 
 public interface KeyEnvironment extends Iterable<KeyPair> {

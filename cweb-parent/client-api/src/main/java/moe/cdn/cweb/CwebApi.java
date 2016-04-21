@@ -1,10 +1,10 @@
 package moe.cdn.cweb;
 
+import java.util.List;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.User;
 import moe.cdn.cweb.TorrentTrustProtos.Vote;
-
-import java.util.List;
 
 
 /**

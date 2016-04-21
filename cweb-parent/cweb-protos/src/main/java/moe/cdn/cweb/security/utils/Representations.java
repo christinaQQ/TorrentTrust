@@ -1,12 +1,17 @@
 package moe.cdn.cweb.security.utils;
 
+import java.util.Base64;
+
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.*;
-
-import java.util.Base64;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
 
 /**
  * Methods to turn some of the protos to prettier formats

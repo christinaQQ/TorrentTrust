@@ -1,11 +1,12 @@
 package moe.cdn.cweb.dht.security;
 
+import java.util.Optional;
+
 import com.google.common.util.concurrent.ListenableFuture;
+
 import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
-
-import java.util.Optional;
 
 public interface KeyLookupService {
     /**
