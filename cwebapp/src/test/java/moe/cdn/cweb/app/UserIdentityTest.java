@@ -83,6 +83,7 @@ public class UserIdentityTest extends CwebTest {
                         MediaType.APPLICATION_JSON_TYPE),
                 IdentityMetadata.class);
         assertThat(totino).isEqualTo(totino2);
+        
 
         IdentityMetadata johnCena2 = target("identity/switch").request().post(
                 Entity.entity(new UserRef(johnCena.getPublicKeyHash()),
