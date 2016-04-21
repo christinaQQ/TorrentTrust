@@ -1,6 +1,5 @@
 package moe.cdn.cweb.dht.storage;
 
-import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -9,9 +8,9 @@ import javax.inject.Singleton;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import moe.cdn.cweb.dht.storage.annotations.BackingFile;
 import moe.cdn.cweb.dht.storage.annotations.UnstartedStorageMaintenance;
 import net.tomp2p.dht.Storage;
+import net.tomp2p.dht.StorageMemory;
 
 /**
  * @author davix
@@ -34,7 +33,6 @@ public class StorageModule extends AbstractModule {
         // TODO: implement persistent storage
         bind(ScheduledExecutorService.class).annotatedWith(UnstartedStorageMaintenance.class)
                 .toInstance(Executors.newSingleThreadScheduledExecutor());
-        bind(File.class).annotatedWith(BackingFile.class).toInstance(new File("storage.object"));
-        bind(Storage.class).to(FileBackedStorage.class).in(Singleton.class);
+        bind(Storage.class).to(StorageMemory.class).in(Singleton.class);
     }
 }
