@@ -65,7 +65,7 @@ public class TrustApiImpl implements TrustApi {
             if (v.getAssertionList().isEmpty()) {
                 throw new CwebApiException("No available assertions for a vote cast on object!");
             }
-            double agreement = v.getAssertion(0).getRating() == assertion.getRating() ? 1.0 : -1.0;
+            double agreement = v.getAssertion(0).getRatingValue() == assertion.getRatingValue() ? 1.0 : -1.0;
             score = score + userCorrelation * trustScore * agreement;
         }
 

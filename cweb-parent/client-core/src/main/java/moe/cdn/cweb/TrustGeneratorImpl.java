@@ -27,6 +27,13 @@ class TrustGeneratorImpl implements TrustGenerator {
         this.api = api;
     }
 
+    private double transform(double value) {
+        if (value == 0) {
+            return -1;
+        }
+        return value;
+    }
+
     @Override
     public double correlationCoefficient(User a, User b) throws CwebApiException {
         // build the vectors
@@ -44,8 +51,8 @@ class TrustGeneratorImpl implements TrustGenerator {
         for (Vote v : bVotes) {
             // only handle overlapping content
             if (voteVectorA.containsKey(v.getContentHash())) {
-                score += voteVectorA.get(v.getContentHash()).getAssertion(0).getRatingValue() *
-                        v.getAssertion(0).getRatingValue();
+                score += transform(voteVectorA.get(v.getContentHash()).getAssertion(0).getRatingValue()) *
+                        transform(v.getAssertion(0).getRatingValue());
             }
         }
         return score;
