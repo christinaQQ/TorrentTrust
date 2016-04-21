@@ -26,54 +26,28 @@ public class UserTrust extends CwebApiEndPoint {
                 .map(u -> new UserRef(u.getPublicKey().getHash())).collect(Collectors.toList());
     }
 
-    @GET
-    @Path("search")
-    public String getLocalNetworkBfs(String depth) throws InterruptedException, ExecutionException {
-        Optional<User> currentUser = getCwebTrustNetworkApi().getUserIdentity().get();
-
-        Queue<User> discoveryQueue = new LinkedList<>();
-        Queue<User> frontier = new LinkedList<>();
-        Set<User> seen = new HashSet<>();
-
-        frontier.add(currentUser.get());
-
-        while (!frontier.isEmpty()) {
-            User next = frontier.poll();
-            for (User u : getCwebTrustNetworkApi().getLocalTrustNetwork(next).get()) {
-                if (!seen.contains(u) && !frontier.contains(u)) {
-                    frontier.add(u);
-                }
-            }
-            discoveryQueue.add(next);
-            seen.add(next);
-        }
-        return discoveryQueue.toString();
-    }
-
     @POST
-    public Response trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
+    public void trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
         if (publicKey == null) {
             throw new BadRequestException("Invalid public key");
         }
         boolean r = getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
-        if (r) {
-            return Response.ok().build();
+        if (!r) {
+            throw new CwebApiEndPointException();
         }
-        throw new CwebApiEndPointException();
     }
 
     @POST
     @Path("delete")
-    public Response untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
+    public void untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
         if (publicKey == null) {
             throw new BadRequestException("Invalid public key");
         }
         boolean r = getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
-        if (r) {
-            return Response.ok().build();
+        if (!r) {
+            throw new CwebApiEndPointException();
         }
-        throw new CwebApiEndPointException();
     }
 }

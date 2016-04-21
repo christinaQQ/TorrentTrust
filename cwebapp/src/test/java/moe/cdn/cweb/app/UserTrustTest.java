@@ -133,6 +133,13 @@ public class UserTrustTest extends CwebApiTest {
                 Entity.json(new UserRef(chinatsu.getPublicKeyHash())), Boolean.class);
         
         trusted = target("user/trust").request().get(new GenericType<List<UserRef>>() {});
-        assertThat(trusted.stream().map(UserRef::getPublicKey).collect(Collectors.toSet())).isEmpty();
+        assertThat(trusted.stream().map(UserRef::getPublicKey).collect(Collectors.toSet()))
+                .isEmpty();
+    }
+
+    @Test
+    public void testTrustSelf() throws Exception {
+        switchTo(akari);
+        trust(akari);
     }
 }
