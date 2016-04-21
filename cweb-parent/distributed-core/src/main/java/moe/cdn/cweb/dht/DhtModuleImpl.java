@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import moe.cdn.cweb.dht.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,11 +20,6 @@ import moe.cdn.cweb.SecurityProtos.Hash;
 import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
 import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
-import moe.cdn.cweb.dht.annotations.DhtNodeController;
-import moe.cdn.cweb.dht.annotations.KeyLookup;
-import moe.cdn.cweb.dht.annotations.UserDomain;
-import moe.cdn.cweb.dht.annotations.VoteDomain;
-import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.dht.internal.ManagedPeerDhtPeer;
 import moe.cdn.cweb.dht.security.DhtSecurityModule;
 import moe.cdn.cweb.dht.spi.DhtModule;
@@ -92,7 +88,6 @@ public class DhtModuleImpl extends DhtModule {
         return factory.create(self, domainKey, SignedVoteHistory.PARSER);
     }
 
-    // FIXME: Should CwebMaps be injected at a different level?
     @Provides
     @Singleton
     @UserDomain
@@ -182,8 +177,10 @@ public class DhtModuleImpl extends DhtModule {
         install(new StorageModule());
 
         bind(DhtNodeFactory.class).to(CwebDhtNodeFactory.class).in(Singleton.class);
-        bind(ManagedPeer.class).annotatedWith(DhtNodeController.class).to(ManagedPeerDhtPeer.class)
-                .in(Singleton.class);
+        bind(ManagedPeer.class).annotatedWith(PrimaryDhtNodeController.class)
+                .to(ManagedPeerDhtPeer.class).in(Singleton.class);
+        bind(ManagedPeer.class).annotatedWith(KeyLookupDhtNodeController.class)
+                .to(Key.get(ManagedPeerDhtPeer.class, KeyLookup.class)).in(Singleton.class);
 
         // Register all protobuf types for CwebMapFactory
         bind(new TypeLiteral<CwebMapFactory<SignedUser>>() {})
