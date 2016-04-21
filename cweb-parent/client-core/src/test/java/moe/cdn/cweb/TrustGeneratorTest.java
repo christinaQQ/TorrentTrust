@@ -96,7 +96,7 @@ public class TrustGeneratorTest {
 
     @Test
     public void testTrustCoefficientNumSteps() {
-        assertEquals("indirect connection", 2, trustGenerator.trustCoefficientNumSteps(a, c, 3),
+        assertEquals("indirect connection", 1.0, trustGenerator.trustCoefficientNumSteps(a, c, 3),
                 .001);
         assertEquals("indirect connect not enough steps", 0,
                 trustGenerator.trustCoefficientNumSteps(a, c, 1), .001);

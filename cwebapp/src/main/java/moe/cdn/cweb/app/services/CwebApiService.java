@@ -28,7 +28,8 @@ import moe.cdn.cweb.app.App;
 import moe.cdn.cweb.app.AppModule;
 import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.ManagedPeer;
-import moe.cdn.cweb.dht.annotations.DhtNodeController;
+import moe.cdn.cweb.dht.annotations.KeyLookupDhtNodeController;
+import moe.cdn.cweb.dht.annotations.PrimaryDhtNodeController;
 import moe.cdn.cweb.security.utils.KeyUtils;
 import moe.cdn.cweb.trust.CwebIdentityApi;
 import moe.cdn.cweb.trust.CwebTrustNetworkApi;
@@ -47,14 +48,16 @@ public class CwebApiService implements ServletContextListener {
     private int dhtPort1 = DEFAULT_DHT_PORT_1;
     private int dhtPort2 = DEFAULT_DHT_PORT_2;
     private String[] args;
-    private ManagedPeer peerDht;
+    private ManagedPeer primaryNode;
+    private ManagedPeer keyLookupNode;
 
     public CwebApiService() {
         this.args = new String[0];
     }
 
-    public CwebApiService(int dhtPort1, String... args) {
+    public CwebApiService(int dhtPort1, int dhtPort2, String... args) {
         this.dhtPort1 = dhtPort1;
+        this.dhtPort2 = dhtPort2;
         this.args = args;
     }
 
@@ -78,7 +81,7 @@ public class CwebApiService implements ServletContextListener {
             } catch (NumberFormatException e) {
                 throw new CwebConfigurationException("DHT port must be an integer", e);
             }
-            dhtPort1 = i;
+            dhtPort2 = i;
         }
 
         String dataFileUriString = sce.getServletContext().getInitParameter(
@@ -134,7 +137,10 @@ public class CwebApiService implements ServletContextListener {
         Injector injector = Guice.createInjector(DhtModuleService.getInstance().getDhtModule(),
                 CwebModuleService.getInstance().getCwebModule(), appModule);
 
-        peerDht = injector.getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
+        primaryNode = injector.getInstance(Key.get(
+                ManagedPeer.class, PrimaryDhtNodeController.class));
+        keyLookupNode = injector.getInstance(Key.get(
+                ManagedPeer.class, KeyLookupDhtNodeController.class));
 
         sce.getServletContext().setAttribute(GlobalEnvironment.class.getName(),
                 appModule.getEnvironment());
@@ -163,13 +169,22 @@ public class CwebApiService implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        if (peerDht != null) {
+        if (primaryNode != null) {
             try {
-                peerDht.shutdown().get(); // TODO: Should this shutdown actually
+                primaryNode.shutdown().get(); // TODO: Should this shutdown actually
                 // be blocking?
             } catch (InterruptedException | ExecutionException e) {
-                sce.getServletContext()
-                        .log("An exception occurred while shutting down the local DHT node.", e);
+                sce.getServletContext().log(
+                        "An exception occurred while shutting down the local primary DHT node.", e);
+            }
+        }
+        if (primaryNode != null) {
+            try {
+                keyLookupNode.shutdown().get();
+            } catch (InterruptedException | ExecutionException e) {
+                sce.getServletContext().log(
+                        "An exception occurred while shutting down the local key lookup DHT node.",
+                        e);
             }
         }
     }

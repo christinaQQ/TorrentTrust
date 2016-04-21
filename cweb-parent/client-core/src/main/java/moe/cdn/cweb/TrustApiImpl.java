@@ -7,12 +7,16 @@ import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 
 import moe.cdn.cweb.dht.security.KeyLookupService;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
 
 /**
  * @author eyeung
  */
 public class TrustApiImpl implements TrustApi {
-
+    private static final Logger logger = LogManager.getLogger();
     private final CwebApi cwebApi;
     private final KeyLookupService keyLookupService;
     private final TrustGenerator trustGenerator;
@@ -61,7 +65,7 @@ public class TrustApiImpl implements TrustApi {
             if (v.getAssertionList().isEmpty()) {
                 throw new CwebApiException("No available assertions for a vote cast on object!");
             }
-            double agreement = (v.getAssertion(0).getRatingValue() == assertion.getRatingValue()) ? 1.0 : -1.0;
+            double agreement = v.getAssertion(0).getRating() == assertion.getRating() ? 1.0 : -1.0;
             score = score + userCorrelation * trustScore * agreement;
         }
 

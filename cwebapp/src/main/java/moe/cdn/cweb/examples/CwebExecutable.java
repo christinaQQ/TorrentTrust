@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import moe.cdn.cweb.dht.annotations.KeyLookupDhtNodeController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +25,7 @@ import moe.cdn.cweb.TorrentTrustProtos.Vote;
 import moe.cdn.cweb.dht.DhtModuleService;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.ManagedPeer;
-import moe.cdn.cweb.dht.annotations.DhtNodeController;
+import moe.cdn.cweb.dht.annotations.PrimaryDhtNodeController;
 import moe.cdn.cweb.dht.security.KeyLookupService;
 import moe.cdn.cweb.security.CwebImportService;
 import moe.cdn.cweb.security.utils.HashUtils;
@@ -92,9 +93,12 @@ public class CwebExecutable {
         System.out.println("votes for <Foo>: " + cwebApi.getVotes(HashUtils.hashOf("Foo")).stream()
                 .map(Representations::asString).collect(Collectors.toList()));
 
-        ManagedPeer peerDht =
-                injector.getInstance(Key.get(ManagedPeer.class, DhtNodeController.class));
-        peerDht.shutdown().get();
+        ManagedPeer primaryNode =
+                injector.getInstance(Key.get(ManagedPeer.class, PrimaryDhtNodeController.class));
+        primaryNode.shutdown().get();
+        ManagedPeer keyLookupNode =
+                injector.getInstance(Key.get(ManagedPeer.class, KeyLookupDhtNodeController.class));
+        keyLookupNode.shutdown().get();
 
         // Forcefully quit
         System.exit(0);
