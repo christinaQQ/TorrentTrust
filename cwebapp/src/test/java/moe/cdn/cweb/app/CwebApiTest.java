@@ -27,7 +27,8 @@ public class CwebApiTest extends CwebTest {
     }
 
     protected void trust(IdentityMetadata identity) {
-        Response r = target("user/trust").request().post(Entity.json(identity.getPublicKeyHash()));
+        Response r = target("user/trust").request().post(
+                Entity.json(new UserRef(identity.getPublicKeyHash())));
         assertThat(r.getStatusInfo().getFamily()).isEqualTo(Response.Status.Family.SUCCESSFUL);
     }
 }
