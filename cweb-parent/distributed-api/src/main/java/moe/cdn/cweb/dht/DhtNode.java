@@ -64,6 +64,4 @@ public interface DhtNode<T> {
      * set to the mapping
      */
     ListenableFuture<Boolean> put(CwebId key, T t);
-
-    ListenableFuture<Boolean> remove(CwebId key);
 }

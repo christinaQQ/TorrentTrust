@@ -1,15 +1,29 @@
 package moe.cdn.cweb.security;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.protobuf.Message;
+
 import moe.cdn.cweb.SecurityProtos.Key;
 import moe.cdn.cweb.SecurityProtos.KeyPair;
 import moe.cdn.cweb.SecurityProtos.Signature;
-import moe.cdn.cweb.TorrentTrustProtos.*;
+import moe.cdn.cweb.TorrentTrustProtos.SignedUser;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVote;
+import moe.cdn.cweb.TorrentTrustProtos.SignedVoteHistory;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.TorrentTrustProtos.Vote;
+import moe.cdn.cweb.TorrentTrustProtos.VoteHistory;
 import moe.cdn.cweb.dht.CwebMultiMap;
 import moe.cdn.cweb.dht.KeyEnvironment;
 import moe.cdn.cweb.dht.annotations.UserDomain;
@@ -17,17 +31,6 @@ import moe.cdn.cweb.dht.annotations.VoteDomain;
 import moe.cdn.cweb.dht.annotations.VoteHistoryDomain;
 import moe.cdn.cweb.security.utils.Representations;
 import moe.cdn.cweb.security.utils.SignatureUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CwebImportServiceImpl implements CwebImportService {
     private static final Logger logger = LogManager.getLogger();
@@ -39,10 +42,9 @@ public class CwebImportServiceImpl implements CwebImportService {
 
     @Inject
     public CwebImportServiceImpl(KeyEnvironment keyEnvironment,
-                                 @UserDomain CwebMultiMap<SignedUser> userMap,
-                                 @VoteDomain CwebMultiMap<SignedVote> voteMap,
-                                 @VoteHistoryDomain CwebMultiMap<SignedVoteHistory>
-                                             voteHistoryMap) {
+            @UserDomain CwebMultiMap<SignedUser> userMap,
+            @VoteDomain CwebMultiMap<SignedVote> voteMap,
+            @VoteHistoryDomain CwebMultiMap<SignedVoteHistory> voteHistoryMap) {
 
         this.keyEnvironment = checkNotNull(keyEnvironment);
         this.userMap = checkNotNull(userMap);
@@ -59,10 +61,8 @@ public class CwebImportServiceImpl implements CwebImportService {
     private ListenableFuture<VoteHistory> ensureVoteHistory(Key userPublicKey) {
         return Futures.transform(voteHistoryMap.get(userPublicKey.getHash()),
                 (Function<SignedVoteHistory, VoteHistory>) history -> history == null
-                                                                      ? VoteHistory.newBuilder()
-                                                                              .setOwnerPublicKey
-                                                                                      (userPublicKey).build()
-                                                                      : history.getHistory());
+                        ? VoteHistory.newBuilder().setOwnerPublicKey(userPublicKey).build()
+                        : history.getHistory());
     }
 
     @Override
@@ -89,7 +89,9 @@ public class CwebImportServiceImpl implements CwebImportService {
         // Get existing vote history and add content hash if necessary
         ListenableFuture<VoteHistory> amendedHistory =
                 Futures.transform(ensureVoteHistory(vote.getOwnerPublicKey()),
-                        (Function<VoteHistory, VoteHistory>) history -> { // list of content hashes
+                        (Function<VoteHistory, VoteHistory>) history -> {
+                            // FIXME: should correctly update a vote on a
+                            // duplicate property
                             if (history.getContentHashList().contains(vote.getContentHash())) {
                                 return history;
                             } else {
@@ -101,50 +103,11 @@ public class CwebImportServiceImpl implements CwebImportService {
         ListenableFuture<Boolean> voteHistoryFuture = Futures.transform(amendedHistory,
                 (AsyncFunction<VoteHistory, Boolean>) voteHistory -> importSignature(voteHistory,
                         sign(voteHistory)));
-        return Futures.transform(voteHistoryFuture,
-                (AsyncFunction<Boolean, Boolean>) success -> {
-                    if (success) {
-                        Collection<SignedVote> signedVote = voteMap.all(vote.getContentHash()).get();
-                        if (signedVote == null || signedVote.isEmpty()) {
-                            return importSignature(vote, sign(vote));
-                        } else {
-                            voteMap.remove(vote.getContentHash()).get();
-
-                            Collection<SignedVote> amendedVotes =
-                                    new ArrayList<>(signedVote.size());
-                            for (SignedVote v : signedVote) {
-                                if (v.getVote().getOwnerPublicKey()
-                                        .equals(vote.getOwnerPublicKey())) {
-                                    amendedVotes.add(SignedVote.newBuilder()
-                                    .setSignature(sign(vote))
-                                    .setVote(vote)
-                                    .build());
-                                } else {
-                                    amendedVotes.add(v);
-                                }
-                            }
-                            Iterator<SignedVote> it = amendedVotes.iterator();
-                            SignedVote first = it.next();
-                            Collection<ListenableFuture<Boolean>> futures =
-                                    new ArrayList<>(amendedVotes.size());
-                            ListenableFuture<Boolean> f = voteMap.put(first.getVote()
-                                    .getContentHash(), first);
-                            futures.add(f);
-                            while (it.hasNext()) {
-                                SignedVote next = it.next();
-                                ListenableFuture<Boolean> f2 = voteMap.add(next.getVote()
-                                        .getContentHash(), next);
-                                futures.add(f2);
-                            }
-                            ListenableFuture<List<Boolean>> all = Futures.allAsList(futures);
-                            List<Boolean> b = all.get();
-                            return Futures.immediateFuture(b.stream()
-                                    .allMatch(Boolean ::booleanValue));
-                        }
-                    } else {
-                        return Futures.immediateFuture(false);
-                    }
-                });
+        return Futures
+                .transform(voteHistoryFuture,
+                        (AsyncFunction<Boolean, Boolean>) success -> success
+                                ? importSignature(vote, sign(vote))
+                                : Futures.immediateFuture(false));
     }
 
     @Override

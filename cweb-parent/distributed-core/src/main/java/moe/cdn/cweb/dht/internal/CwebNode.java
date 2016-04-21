@@ -11,12 +11,14 @@ import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
 
 import moe.cdn.cweb.dht.Shutdownable;
-import moe.cdn.cweb.dht.internal.tomp2pcompat.*;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.FutureGetWrapper;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.FuturePutWrapper;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.GetResponse;
+import moe.cdn.cweb.dht.internal.tomp2pcompat.PutResponse;
 import moe.cdn.cweb.dht.util.Number160s;
 import moe.cdn.cweb.security.CwebId;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
-import net.tomp2p.dht.FutureRemove;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
@@ -133,16 +135,5 @@ public class CwebNode<T extends Message> implements Shutdownable {
     @Override
     public ListenableFuture<Void> shutdown() {
         return self.shutdown();
-    }
-
-    public ListenableFuture<Boolean> remove(CwebId key) {
-        FutureRemove start = self.getUnmanaged().remove(Number160s.fromCwebId(key))
-                .domainKey(domainKey).start();
-        return new BaseFutureAsListenableFuture<Boolean, FutureRemove>(start) {
-            @Override
-            protected Boolean toValueAfterGet() {
-                return baseFuture.isSuccess();
-            }
-        };
     }
 }

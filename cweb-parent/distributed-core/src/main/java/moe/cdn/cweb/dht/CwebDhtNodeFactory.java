@@ -68,11 +68,6 @@ class CwebDhtNodeFactory implements DhtNodeFactory {
         }
 
         @Override
-        public ListenableFuture<Boolean> remove(CwebId key) {
-            return cwebNode.remove(key);
-        }
-
-        @Override
         public ListenableFuture<Void> shutdown() {
             return cwebNode.shutdown();
         }
