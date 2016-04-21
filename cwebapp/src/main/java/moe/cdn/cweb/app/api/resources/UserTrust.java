@@ -1,23 +1,19 @@
 package moe.cdn.cweb.app.api.resources;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
+import moe.cdn.cweb.SecurityProtos.Hash;
+import moe.cdn.cweb.TorrentTrustProtos.User;
+import moe.cdn.cweb.app.api.CwebApiEndPoint;
+import moe.cdn.cweb.app.api.exceptions.CwebApiEndPointException;
+import moe.cdn.cweb.app.dto.UserRef;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-
-import moe.cdn.cweb.SecurityProtos.Hash;
-import moe.cdn.cweb.TorrentTrustProtos.User;
-import moe.cdn.cweb.app.api.CwebApiEndPoint;
-import moe.cdn.cweb.app.dto.UserRef;
+import javax.ws.rs.core.Response;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * @author davix
@@ -58,15 +54,23 @@ public class UserTrust extends CwebApiEndPoint {
     }
 
     @POST
-    public void trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
+    public Response trustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
-        getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
+        boolean r = getCwebTrustNetworkApi().addUserAsTrusted(publicKey).get();
+        if (r) {
+            return Response.ok().build();
+        }
+        throw new CwebApiEndPointException();
     }
 
     @POST
     @Path("delete")
-    public void untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
+    public Response untrustUser(UserRef userRef) throws ExecutionException, InterruptedException {
         Hash publicKey = userRef.getPublicKey();
-        getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
+        boolean r = getCwebTrustNetworkApi().removeUserAsTrusted(publicKey).get();
+        if (r) {
+            return Response.ok().build();
+        }
+        throw new CwebApiEndPointException();
     }
 }
